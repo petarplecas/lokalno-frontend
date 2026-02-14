@@ -1,0 +1,57 @@
+@if (loading()) {
+  <div class="dash__loading">
+    <app-spinner size="lg" />
+  </div>
+} @else if (business(); as biz) {
+  <section class="dash">
+    <!-- Status banner -->
+    @if (biz.status === 'PENDING') {
+      <div class="dash__banner dash__banner--pending">
+        Vaš biznis čeka odobrenje administracije.
+      </div>
+    } @else if (biz.status === 'SUSPENDED') {
+      <div class="dash__banner dash__banner--suspended">
+        Vaš biznis je suspendovan. Kontaktirajte podršku.
+      </div>
+    }
+
+    <!-- Business info -->
+    <div class="dash__header">
+      <h1>{{ biz.name }}</h1>
+      <span class="dash__category">{{ biz.category }}</span>
+    </div>
+
+    <!-- Stats grid -->
+    @if (stats(); as s) {
+      <div class="dash__stats">
+        <div class="dash__stat-card">
+          <span class="dash__stat-value">{{ s.discounts.count }}</span>
+          <span class="dash__stat-label">Aktivni popusti</span>
+        </div>
+        <div class="dash__stat-card">
+          <span class="dash__stat-value">{{ s.followers.count }}</span>
+          <span class="dash__stat-label">Pratilaca</span>
+        </div>
+        <div class="dash__stat-card">
+          <span class="dash__stat-value">{{ s.subscription.daysRemaining }}</span>
+          <span class="dash__stat-label">Dana pretplate</span>
+        </div>
+      </div>
+
+      <!-- Subscription info -->
+      <div class="dash__subscription">
+        <span class="dash__sub-tier">{{ s.subscription.tier }}</span>
+        @if (s.subscription.isTrialActive) {
+          <span class="dash__sub-trial">Trial aktivan</span>
+        }
+      </div>
+    }
+
+    <!-- CTA -->
+    @if (biz.status === 'APPROVED') {
+      <a routerLink="/business/discounts/create" class="btn-primary dash__cta">
+        Kreiraj novi popust
+      </a>
+    }
+  </section>
+}

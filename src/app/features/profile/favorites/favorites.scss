@@ -1,0 +1,77 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+.favorites {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.favorites__header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+  }
+}
+
+.favorites__loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-2xl 0;
+}
+
+.favorites__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.favorites__card {
+  @include card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+}
+
+.favorites__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $gradient-primary;
+  color: #fff;
+  font-family: $font-heading;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.favorites__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  strong {
+    font-size: 0.938rem;
+    @include truncate;
+  }
+}
+
+.favorites__meta {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  @include truncate;
+}
+
+.favorites__stats {
+  font-size: 0.75rem;
+  color: $color-primary;
+}

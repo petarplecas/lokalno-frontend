@@ -1,0 +1,216 @@
+@use 'styles/variables' as *;
+
+.detail {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 80px; // Space for sticky CTA
+}
+
+.detail__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+// Hero
+.detail__hero {
+  position: relative;
+}
+
+.detail__image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.detail__badge {
+  position: absolute;
+  bottom: $spacing-md;
+  left: $spacing-md;
+  background: $gradient-primary;
+  color: #fff;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-full;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.detail__actions {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.detail__action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(#fff, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $color-text-secondary;
+  }
+
+  &:hover {
+    background: #fff;
+  }
+
+  &--active svg {
+    color: $color-primary;
+  }
+}
+
+// Business info
+.detail__business {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-bottom: 1px solid $color-divider;
+}
+
+.detail__business-info {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 0.938rem;
+    color: $color-text;
+  }
+}
+
+.detail__business-category {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+}
+
+// Content
+.detail__content {
+  padding: $spacing-md;
+}
+
+.detail__title {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  margin-bottom: $spacing-sm;
+  position: relative;
+  padding-bottom: $spacing-sm;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: $color-primary;
+    border-radius: 2px;
+  }
+}
+
+.detail__description {
+  color: $color-text-secondary;
+  font-size: 0.938rem;
+  line-height: 1.6;
+  margin-top: $spacing-md;
+}
+
+// Info section
+.detail__info {
+  padding: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.detail__section-title {
+  font-family: $font-heading;
+  font-size: 1rem;
+  margin-bottom: $spacing-md;
+}
+
+.detail__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.detail__info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail__info-label {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail__info-value {
+  font-size: 0.938rem;
+  font-weight: 500;
+  color: $color-text;
+}
+
+.detail__address {
+  color: $color-text-secondary;
+  font-size: 0.938rem;
+}
+
+// Claimed coupon
+.detail__claimed {
+  margin: $spacing-md;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  border-radius: $radius-md;
+  color: #fff;
+  text-align: center;
+
+  h3 {
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.detail__coupon-code {
+  font-family: $font-heading;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: $spacing-md 0;
+}
+
+.detail__coupon-expiry {
+  font-size: 0.813rem;
+  opacity: 0.9;
+  margin-bottom: $spacing-md;
+}
+
+// Sticky CTA
+.detail__cta {
+  position: fixed;
+  bottom: 56px; // above bottom nav
+  left: 0;
+  right: 0;
+  padding: $spacing-md;
+  background: $color-surface;
+  border-top: 1px solid $color-divider;
+  z-index: 50;
+}
+
+.detail__cta-btn {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: 1rem;
+}

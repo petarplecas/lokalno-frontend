@@ -1,0 +1,64 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="assets/logos/lokalno-logo-full.svg" alt="Lokalno" width="180" height="60" />
+    </div>
+
+    <h1>Prijava</h1>
+
+    @if (error()) {
+      <div class="auth-error" role="alert">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="vas@email.com"
+          autocomplete="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.errors) {
+          <span class="error-message">
+            @if (form.controls.email.errors['required']) {
+              Email je obavezan.
+            } @else if (form.controls.email.errors['email']) {
+              Unesite validan email.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.touched && form.controls.password.errors) {
+          <span class="error-message">Lozinka je obavezna.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary auth-submit" [disabled]="loading()">
+        @if (loading()) {
+          <app-spinner size="sm" />
+        }
+        Prijavi se
+      </button>
+    </form>
+
+    <p class="auth-link">
+      Nemate nalog? <a routerLink="/auth/register">Registrujte se</a>
+    </p>
+
+    <p class="auth-link">
+      Imate biznis? <a routerLink="/business/register">Registrujte biznis</a>
+    </p>
+  </div>
+</div>

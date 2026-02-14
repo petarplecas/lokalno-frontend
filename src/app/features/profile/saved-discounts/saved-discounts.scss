@@ -1,0 +1,81 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+.saved {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.saved__header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+  }
+}
+
+.saved__loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-2xl 0;
+}
+
+.saved__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.saved__card {
+  @include card;
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+.saved__image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.saved__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.saved__badge {
+  display: inline-block;
+  background: $color-primary;
+  color: #fff;
+  padding: 2px $spacing-sm;
+  border-radius: $radius-full;
+  font-size: 0.688rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.saved__title {
+  font-size: 0.938rem;
+  @include truncate;
+}
+
+.saved__business {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+}

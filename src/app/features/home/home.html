@@ -1,0 +1,93 @@
+<section class="home">
+  <!-- Search bar -->
+  <div class="home__search">
+    <svg class="home__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+    </svg>
+    <input
+      type="search"
+      class="home__search-input"
+      placeholder="Pretraži popuste..."
+      [value]="searchQuery()"
+      (input)="onSearchInput($event)"
+      aria-label="Pretraga popusta"
+    />
+  </div>
+
+  <!-- Category pills -->
+  <div class="home__categories" role="tablist" aria-label="Kategorije">
+    @for (pill of categoryPills; track pill.label; let i = $index) {
+      <button
+        class="home__pill"
+        [class.home__pill--active]="activeCategory() === i"
+        role="tab"
+        [attr.aria-selected]="activeCategory() === i"
+        (click)="onCategoryChange(i)"
+      >
+        {{ pill.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Filter bar -->
+  <div class="home__filter-bar">
+    <span class="home__count">{{ total() }} popusta</span>
+    <select
+      class="home__sort"
+      [value]="activeSortBy()"
+      (change)="onSortChange($event)"
+      aria-label="Sortiraj po"
+    >
+      @for (opt of sortOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="home__loading">
+      <app-spinner size="lg" />
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error()) {
+    <app-empty-state
+      title="Greška pri učitavanju"
+      message="Nije moguće učitati popuste. Proverite internet konekciju."
+      actionLabel="Pokušaj ponovo"
+      (action)="onRetry()"
+    />
+  }
+
+  <!-- Empty state -->
+  @if (isEmpty()) {
+    <app-empty-state
+      icon="🔍"
+      title="Nema pronađenih popusta"
+      [message]="searchQuery() ? 'Pokušajte sa drugim pojmom pretrage' : 'Trenutno nema aktivnih popusta u ovoj kategoriji'"
+    />
+  }
+
+  <!-- Discount grid -->
+  @if (!loading() && discounts().length > 0) {
+    <div class="home__grid">
+      @for (discount of discounts(); track discount.id) {
+        <app-discount-card
+          [discount]="discount"
+          (clicked)="onDiscountClick($event)"
+        />
+      }
+    </div>
+
+    <!-- Infinite scroll sentinel -->
+    @if (hasMore()) {
+      <div appInfiniteScroll (scrolled)="onLoadMore()" class="home__sentinel">
+        @if (loadingMore()) {
+          <app-spinner size="sm" />
+        }
+      </div>
+    }
+  }
+</section>

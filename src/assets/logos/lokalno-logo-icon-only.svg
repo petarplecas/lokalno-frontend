@@ -1,0 +1,27 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main pin shape - simplified for small sizes -->
+  <path d="M 100 35 
+           C 75 35, 60 52, 60 75 
+           C 60 100, 100 140, 100 140 
+           C 100 140, 140 100, 140 75 
+           C 140 52, 125 35, 100 35 Z" 
+        fill="url(#gradient)"/>
+  
+  <!-- Letter L -->
+  <path d="M 88 60 L 88 100 L 112 100" 
+        stroke="white" 
+        stroke-width="10" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+  
+  <!-- Circle detail -->
+  <circle cx="88" cy="60" r="5" fill="white"/>
+  
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#20B2AA"/>
+      <stop offset="100%" style="stop-color:#FF8C42"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,30 @@
+@if (user(); as u) {
+  <section class="profile">
+    <!-- User card -->
+    <div class="profile__card">
+      <div class="profile__avatar">
+        {{ u.firstName.charAt(0) }}{{ u.lastName.charAt(0) }}
+      </div>
+      <h1 class="profile__name">{{ u.firstName }} {{ u.lastName }}</h1>
+      <p class="profile__email">{{ u.email }}</p>
+    </div>
+
+    <!-- Menu -->
+    <nav class="profile__menu">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" class="profile__menu-item">
+          <span class="profile__menu-icon">{{ item.icon }}</span>
+          <span class="profile__menu-label">{{ item.label }}</span>
+          <svg class="profile__menu-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </a>
+      }
+    </nav>
+
+    <!-- Logout -->
+    <button class="profile__logout" (click)="logout()">
+      Odjavi se
+    </button>
+  </section>
+}

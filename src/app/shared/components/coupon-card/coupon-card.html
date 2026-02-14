@@ -1,0 +1,18 @@
+<article class="coupon-card" [class]="'coupon-card--' + coupon().status.toLowerCase()">
+  <div class="coupon-card__left">
+    <span class="coupon-card__discount">
+      {{ coupon().discount.discountType | discountLabel:coupon().discount.discountValue }}
+    </span>
+  </div>
+  <div class="coupon-card__body">
+    <h3 class="coupon-card__title">{{ coupon().discount.title }}</h3>
+    <p class="coupon-card__business">{{ coupon().discount.business.name }}</p>
+    <div class="coupon-card__meta">
+      <span class="coupon-card__code">{{ coupon().code }}</span>
+      <span class="coupon-card__status">{{ statusLabel() }}</span>
+    </div>
+    <p class="coupon-card__expires">
+      Ističe: {{ coupon().expiresAt | date:'dd.MM.yyyy HH:mm' }}
+    </p>
+  </div>
+</article>

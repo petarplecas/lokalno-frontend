@@ -1,0 +1,105 @@
+@use 'styles/variables' as *;
+
+.profile {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.profile__card {
+  text-align: center;
+  padding: $spacing-xl $spacing-md;
+}
+
+.profile__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: $gradient-primary;
+  color: #fff;
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $spacing-md;
+}
+
+.profile__name {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  margin-bottom: $spacing-xs;
+}
+
+.profile__email {
+  color: $color-text-secondary;
+  font-size: 0.875rem;
+}
+
+// Menu
+.profile__menu {
+  background: $color-surface;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.profile__menu-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  color: $color-text;
+  text-decoration: none;
+  transition: background-color 0.15s;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $color-divider;
+  }
+
+  &:hover {
+    background-color: $color-background;
+    text-decoration: none;
+  }
+}
+
+.profile__menu-icon {
+  font-size: 1.25rem;
+  width: 32px;
+  text-align: center;
+}
+
+.profile__menu-label {
+  flex: 1;
+  font-size: 0.938rem;
+  font-weight: 500;
+}
+
+.profile__menu-arrow {
+  width: 20px;
+  height: 20px;
+  color: $color-text-secondary;
+}
+
+// Logout
+.profile__logout {
+  display: block;
+  width: 100%;
+  padding: $spacing-md;
+  background: none;
+  border: 2px solid $color-error;
+  border-radius: $radius-md;
+  color: $color-error;
+  font-family: $font-body;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover {
+    background: $color-error;
+    color: #fff;
+  }
+}

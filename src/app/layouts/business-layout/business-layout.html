@@ -1,0 +1,32 @@
+<header class="biz-header">
+  <span class="biz-header__title">Lokalno Business</span>
+</header>
+<main class="biz-content">
+  <router-outlet />
+</main>
+<nav class="biz-nav" aria-label="Business navigacija">
+  <a routerLink="/business/dashboard" routerLinkActive="active" class="biz-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+    </svg>
+    <span>Dashboard</span>
+  </a>
+  <a routerLink="/business/discounts/create" routerLinkActive="active" class="biz-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
+    </svg>
+    <span>Kreiraj</span>
+  </a>
+  <a routerLink="/business/verify-coupon" routerLinkActive="active" class="biz-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+    <span>Verifikuj</span>
+  </a>
+  <a routerLink="/profile" routerLinkActive="active" class="biz-nav__item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+    </svg>
+    <span>Profil</span>
+  </a>
+</nav>

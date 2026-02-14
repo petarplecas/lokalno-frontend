@@ -1,0 +1,33 @@
+@use 'styles/variables' as *;
+
+.edit-profile {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.edit-profile__header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+  }
+}
+
+.edit-profile__form {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.edit-profile__submit {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: 1rem;
+  margin-top: $spacing-sm;
+}

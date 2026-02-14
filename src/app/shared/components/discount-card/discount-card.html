@@ -1,0 +1,20 @@
+<article class="discount-card" (click)="onClick()" (keydown.enter)="onClick()" tabindex="0" role="button">
+  <div class="discount-card__image">
+    <img [src]="discount().imageUrl" [alt]="discount().title" loading="lazy" />
+    <span class="discount-card__badge">
+      {{ discount().discountType | discountLabel:discount().discountValue }}
+    </span>
+  </div>
+  <div class="discount-card__body">
+    <h3 class="discount-card__title">{{ discount().title }}</h3>
+    <p class="discount-card__business">{{ discount().business.name }}</p>
+    <div class="discount-card__meta">
+      <span class="discount-card__category">{{ discount().business.category }}</span>
+      @if (discount().hasCoupons && discount().availableCoupons !== null) {
+        <span class="discount-card__coupons">
+          {{ discount().availableCoupons }}/{{ discount().totalCoupons }}
+        </span>
+      }
+    </div>
+  </div>
+</article>

@@ -1,0 +1,8 @@
+@if (isInitialized()) {
+  <router-outlet />
+} @else {
+  <div class="app-loading">
+    <app-spinner size="lg" />
+  </div>
+}
+<app-toast-container />

@@ -1,0 +1,35 @@
+<section class="favorites">
+  <div class="favorites__header">
+    <app-back-button />
+    <h1>Omiljeni biznisi</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="favorites__loading">
+      <app-spinner size="md" />
+    </div>
+  } @else if (favorites().length === 0) {
+    <app-empty-state
+      icon="❤️"
+      title="Nema omiljenih biznisa"
+      message="Biznisi koje označite kao omiljene će se pojaviti ovde"
+    />
+  } @else {
+    <div class="favorites__list">
+      @for (biz of favorites(); track biz.id) {
+        <div class="favorites__card">
+          <div class="favorites__avatar">
+            {{ biz.name.charAt(0) }}
+          </div>
+          <div class="favorites__info">
+            <strong>{{ biz.name }}</strong>
+            <span class="favorites__meta">{{ biz.category }} · {{ biz.address }}</span>
+            <span class="favorites__stats">
+              {{ biz.activeDiscountsCount }} aktivnih popusta · {{ biz.followersCount }} pratilaca
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

@@ -1,0 +1,43 @@
+@use 'styles/variables' as *;
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 56px;
+  background: $color-surface;
+  border-top: 1px solid $color-border;
+  z-index: $z-bottom-nav;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: $spacing-xs;
+    color: $color-text-secondary;
+    text-decoration: none;
+    font-size: 0.625rem;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
+
+    &.active {
+      color: $color-primary;
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+}

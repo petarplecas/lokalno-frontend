@@ -1,0 +1,95 @@
+@use 'styles/variables' as *;
+
+.wizard {
+  padding: $spacing-md;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.wizard__top {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.wizard__title {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+}
+
+.wizard__steps {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-lg;
+}
+
+.wizard__step {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--active { background: $color-primary; }
+  &--done { background: $color-primary-light; }
+}
+
+.wizard__step-num {
+  font-size: 0.688rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.wizard__error {
+  background-color: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  margin-bottom: $spacing-md;
+  text-align: center;
+}
+
+.wizard__form {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+
+  h2 {
+    font-family: $font-heading;
+    font-size: 1.125rem;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.wizard__review {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.wizard__review-item {
+  font-size: 0.938rem;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-divider;
+
+  strong {
+    color: $color-text-secondary;
+    font-weight: 500;
+    margin-right: $spacing-sm;
+  }
+}
+
+.wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+
+  button { flex: 1; padding: $spacing-md; }
+}

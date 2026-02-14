@@ -1,0 +1,37 @@
+<section class="edit-profile">
+  <div class="edit-profile__header">
+    <app-back-button />
+    <h1>Izmeni profil</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-profile__form">
+    <div class="form-group">
+      <label for="firstName">Ime</label>
+      <input id="firstName" type="text" formControlName="firstName" />
+      @if (form.controls.firstName.touched && form.controls.firstName.errors) {
+        <span class="error-message">Ime je obavezno (min. 2 karaktera)</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="lastName">Prezime</label>
+      <input id="lastName" type="text" formControlName="lastName" />
+      @if (form.controls.lastName.touched && form.controls.lastName.errors) {
+        <span class="error-message">Prezime je obavezno (min. 2 karaktera)</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="city">Grad</label>
+      <input id="city" type="text" formControlName="city" placeholder="Unesite grad" />
+    </div>
+
+    <button type="submit" class="btn-primary edit-profile__submit" [disabled]="loading()">
+      @if (loading()) {
+        <app-spinner size="sm" />
+      } @else {
+        Sačuvaj izmene
+      }
+    </button>
+  </form>
+</section>
