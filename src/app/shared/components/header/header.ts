@@ -13,7 +13,6 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Header {
   private readonly authService = inject(AuthService);
 
-  readonly showSearch = input(true);
   readonly showProfile = input(true);
 
   readonly isAuthenticated = this.authService.isAuthenticated;

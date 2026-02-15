@@ -68,6 +68,23 @@
     color: $color-text-secondary;
   }
 
+  &__meta-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  &__distance {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: $color-text-secondary;
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
   &__coupons {
     color: $color-primary;
     font-weight: 500;

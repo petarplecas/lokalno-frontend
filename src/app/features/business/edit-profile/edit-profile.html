@@ -1,0 +1,74 @@
+@if (loading()) {
+  <div class="edit-profile" style="display:flex;justify-content:center;padding:3rem">
+    <app-spinner size="lg" />
+  </div>
+} @else {
+  <section class="edit-profile">
+    <div class="edit-profile__top">
+      <app-back-button />
+      <h1 class="edit-profile__title">Izmeni profil biznisa</h1>
+    </div>
+
+    @if (error()) {
+      <div class="edit-profile__error">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-profile__form">
+      <div class="form-group">
+        <label for="name">Naziv biznisa</label>
+        <input id="name" type="text" formControlName="name" maxlength="100" />
+        @if (form.controls.name.touched && form.controls.name.errors) {
+          <span class="error-message">Naziv je obavezan</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="category">Kategorija</label>
+        <select id="category" formControlName="category">
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subCategory">Podkategorija (opciono)</label>
+        <input id="subCategory" type="text" formControlName="subCategory" />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Opis (max 500 karaktera)</label>
+        <textarea id="description" formControlName="description" rows="4" maxlength="500"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Adresa</label>
+        <input id="address" type="text" formControlName="address" />
+        @if (form.controls.address.touched && form.controls.address.errors) {
+          <span class="error-message">Adresa je obavezna</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Telefon</label>
+        <input id="phone" type="tel" formControlName="phone" />
+        @if (form.controls.phone.touched && form.controls.phone.errors) {
+          <span class="error-message">Telefon je obavezan</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="website">Website (opciono)</label>
+        <input id="website" type="url" formControlName="website" placeholder="https://..." />
+      </div>
+
+      <button type="submit" class="btn-primary edit-profile__submit" [disabled]="saving()">
+        @if (saving()) {
+          <app-spinner size="sm" />
+        } @else {
+          Sačuvaj izmene
+        }
+      </button>
+    </form>
+  </section>
+}

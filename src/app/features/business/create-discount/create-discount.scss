@@ -30,12 +30,29 @@
   height: 28px;
   border-radius: 50%;
   background: $color-border;
+  border: none;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: default;
+  transition: background 0.2s, transform 0.15s;
 
   &--active { background: $color-primary; }
   &--done { background: $color-primary-light; }
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.15);
+      background: $color-primary;
+    }
+  }
+
+  &:disabled:not(&--active):not(&--done) {
+    opacity: 0.6;
+  }
 }
 
 .wizard__step-num {

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DiscountService } from '../../core/services/discount.service';
+import { GeolocationService } from '../../core/services/geolocation.service';
 import { Discount, DiscountFilters, DiscountStatus } from '../../core/models';
 import { DiscountCard } from '../../shared/components/discount-card/discount-card';
 import { Spinner } from '../../shared/components/spinner/spinner';
@@ -31,6 +32,7 @@ export class Home implements OnInit {
   private readonly discountService = inject(DiscountService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  readonly geo = inject(GeolocationService);
 
   readonly categoryPills: CategoryPill[] = [
     { label: 'Sve', categories: null },
@@ -57,6 +59,9 @@ export class Home implements OnInit {
   readonly currentPage = signal(1);
   readonly totalPages = signal(1);
   readonly total = signal(0);
+
+  readonly radiusKm = signal(5);
+  readonly locationActive = signal(false);
 
   readonly error = signal(false);
   readonly hasMore = computed(() => this.currentPage() < this.totalPages());
@@ -101,6 +106,44 @@ export class Home implements OnInit {
     void this.router.navigate(['/discounts', discount.id]);
   }
 
+  onToggleLocation(): void {
+    if (this.locationActive()) {
+      this.locationActive.set(false);
+      this.geo.clearLocation();
+      this.loadDiscounts(true);
+      return;
+    }
+
+    if (this.geo.hasLocation()) {
+      this.locationActive.set(true);
+      this.loadDiscounts(true);
+      return;
+    }
+
+    this.geo.requestLocation();
+    // Watch for location to be set, then reload
+    const checkInterval = setInterval(() => {
+      if (this.geo.hasLocation()) {
+        clearInterval(checkInterval);
+        this.locationActive.set(true);
+        this.loadDiscounts(true);
+      } else if (this.geo.permission() === 'denied' || this.geo.permission() === 'unavailable') {
+        clearInterval(checkInterval);
+      }
+    }, 100);
+
+    // Safety timeout
+    setTimeout(() => clearInterval(checkInterval), 15000);
+  }
+
+  onRadiusChange(event: Event): void {
+    const value = +(event.target as HTMLInputElement).value;
+    this.radiusKm.set(value);
+    if (this.locationActive()) {
+      this.loadDiscounts(true);
+    }
+  }
+
   onRetry(): void {
     this.loadDiscounts(true);
   }
@@ -129,6 +172,14 @@ export class Home implements OnInit {
 
     if (pill.categories) {
       filters.category = pill.categories.join(',');
+    }
+
+    // Add geolocation filter
+    const loc = this.geo.location();
+    if (this.locationActive() && loc) {
+      filters.latitude = loc.latitude;
+      filters.longitude = loc.longitude;
+      filters.radiusKm = this.radiusKm();
     }
 
     this.discountService.getDiscounts(filters).subscribe({

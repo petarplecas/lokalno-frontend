@@ -121,6 +121,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./features/business/edit-profile/edit-profile').then(
+            (m) => m.EditBusinessProfile,
+          ),
+      },
+      {
+        path: 'discounts/:id/edit',
+        loadComponent: () =>
+          import('./features/business/edit-discount/edit-discount').then(
+            (m) => m.EditDiscount,
+          ),
+      },
+      {
         path: 'verify-coupon',
         loadComponent: () =>
           import('./features/business/verify-coupon/verify-coupon').then(

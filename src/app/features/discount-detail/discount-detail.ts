@@ -34,7 +34,6 @@ export class DiscountDetail implements OnInit {
 
   readonly discount = signal<Discount | null>(null);
   readonly loading = signal(true);
-  readonly isSaved = signal(false);
   readonly isFavorite = signal(false);
   readonly showClaimDialog = signal(false);
   readonly claimLoading = signal(false);
@@ -51,7 +50,7 @@ export class DiscountDetail implements OnInit {
         this.discount.set(discount);
         this.loading.set(false);
         if (this.isAuthenticated()) {
-          this.checkSavedAndFavorite(discount);
+          this.checkFavorite(discount);
         }
       },
       error: () => {
@@ -59,27 +58,6 @@ export class DiscountDetail implements OnInit {
         this.toastService.error('Popust nije pronađen');
       },
     });
-  }
-
-  toggleSave(): void {
-    if (!this.isAuthenticated()) {
-      void this.router.navigate(['/auth/login']);
-      return;
-    }
-    const d = this.discount();
-    if (!d) return;
-
-    if (this.isSaved()) {
-      this.userService.removeSavedDiscount(d.id).subscribe(() => {
-        this.isSaved.set(false);
-        this.toastService.success('Uklonjeno iz sačuvanih');
-      });
-    } else {
-      this.userService.saveDiscount(d.id).subscribe(() => {
-        this.isSaved.set(true);
-        this.toastService.success('Sačuvano');
-      });
-    }
   }
 
   toggleFavorite(): void {
@@ -139,10 +117,7 @@ export class DiscountDetail implements OnInit {
     this.claimedCoupon.set(null);
   }
 
-  private checkSavedAndFavorite(discount: Discount): void {
-    this.userService.isSaved(discount.id).subscribe({
-      next: (saved) => this.isSaved.set(saved),
-    });
+  private checkFavorite(discount: Discount): void {
     this.userService.isFavorite(discount.business.id).subscribe({
       next: (fav) => this.isFavorite.set(fav),
     });

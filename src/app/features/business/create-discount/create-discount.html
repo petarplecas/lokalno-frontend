@@ -7,9 +7,18 @@
   <!-- Step indicator -->
   <div class="wizard__steps">
     @for (step of steps; track step; let i = $index) {
-      <div class="wizard__step" [class.wizard__step--active]="currentStep() === i" [class.wizard__step--done]="currentStep() > i">
+      <button
+        type="button"
+        class="wizard__step"
+        [class.wizard__step--active]="currentStep() === i"
+        [class.wizard__step--done]="currentStep() > i"
+        [class.wizard__step--clickable]="currentStep() > i"
+        [disabled]="i >= currentStep()"
+        (click)="goToStep(i)"
+        [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step"
+      >
         <span class="wizard__step-num">{{ i + 1 }}</span>
-      </div>
+      </button>
     }
   </div>
 
@@ -51,26 +60,27 @@
       <h2>Tip popusta</h2>
       <div class="form-group">
         <label for="discountType">Tip</label>
-        <select id="discountType" formControlName="discountType">
+        <select id="discountType" formControlName="discountType" (change)="onDiscountTypeChange()">
           @for (type of discountTypes; track type) {
-            <option [value]="type">{{ type }}</option>
+            <option [value]="type">{{ discountTypeLabels[type] }}</option>
           }
         </select>
       </div>
       @if (form.value.discountType !== 'BOGO') {
         <div class="form-group">
-          <label for="discountValue">Vrednost</label>
-          <input id="discountValue" type="number" formControlName="discountValue" min="1" />
-        </div>
-      }
-      @if (form.value.discountType === 'NEW_PRICE') {
-        <div class="form-group">
-          <label for="oldPrice">Stara cena (RSD)</label>
-          <input id="oldPrice" type="number" formControlName="oldPrice" />
-        </div>
-        <div class="form-group">
-          <label for="newPrice">Nova cena (RSD)</label>
-          <input id="newPrice" type="number" formControlName="newPrice" />
+          @if (form.value.discountType === 'PERCENT') {
+            <label for="discountValue">Procenat popusta (%)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" max="100" placeholder="npr. 20" />
+          } @else if (form.value.discountType === 'FIXED') {
+            <label for="discountValue">Iznos popusta (RSD)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
+          } @else {
+            <label for="discountValue">Nova cena (RSD)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 990" />
+          }
+          @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
+            <span class="error-message">Unesite vrednost</span>
+          }
         </div>
       }
     }
@@ -135,7 +145,7 @@
       <h2>Pregled</h2>
       <div class="wizard__review">
         <div class="wizard__review-item"><strong>Naslov:</strong> {{ form.value.title }}</div>
-        <div class="wizard__review-item"><strong>Tip:</strong> {{ form.value.discountType }} - {{ form.value.discountValue }}</div>
+        <div class="wizard__review-item"><strong>Tip:</strong> {{ discountTypeLabels[form.value.discountType!] }}@if (form.value.discountType !== 'BOGO') { — {{ form.value.discountValue }}@if (form.value.discountType === 'PERCENT') {%} @else { RSD}}</div>
         <div class="wizard__review-item"><strong>Od:</strong> {{ form.value.validFrom }}</div>
         <div class="wizard__review-item"><strong>Do:</strong> {{ form.value.validUntil }}</div>
         @if (form.value.hasCoupons) {

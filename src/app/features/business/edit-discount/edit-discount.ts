@@ -3,33 +3,40 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DiscountService } from '../../../core/services/discount.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { DiscountType, DiscountStatus } from '../../../core/models';
+import { DiscountType, Discount } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
-  selector: 'app-create-discount',
-  imports: [ReactiveFormsModule, Spinner, BackButton],
-  templateUrl: './create-discount.html',
-  styleUrl: './create-discount.scss',
+  selector: 'app-edit-discount',
+  imports: [ReactiveFormsModule, Spinner, BackButton, ConfirmDialog],
+  templateUrl: './edit-discount.html',
+  styleUrl: '../create-discount/create-discount.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateDiscount {
+export class EditDiscount implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly discountService = inject(DiscountService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly discountTypes = Object.values(DiscountType);
   readonly currentStep = signal(0);
-  readonly loading = signal(false);
+  readonly loading = signal(true);
+  readonly saving = signal(false);
   readonly error = signal<string | null>(null);
+  readonly showDeleteDialog = signal(false);
+  readonly deleting = signal(false);
+
+  private discountId = '';
 
   readonly steps = ['Slika', 'Info', 'Tip', 'Validnost', 'Kuponi', 'Tagovi', 'Pregled'];
 
@@ -67,6 +74,37 @@ export class CreateDiscount {
     [],
     [],
   ];
+
+  ngOnInit(): void {
+    this.discountId = this.route.snapshot.params['id'];
+    this.discountService.getDiscount(this.discountId).subscribe({
+      next: (d) => this.populateForm(d),
+      error: () => {
+        this.loading.set(false);
+        this.error.set('Popust nije pronađen');
+      },
+    });
+  }
+
+  private populateForm(d: Discount): void {
+    this.form.patchValue({
+      imageUrl: d.imageUrl,
+      title: d.title,
+      description: d.description ?? '',
+      discountType: d.discountType,
+      discountValue: d.discountValue,
+      validFrom: d.validFrom.split('T')[0],
+      validUntil: d.validUntil.split('T')[0],
+      daysOfWeek: d.daysOfWeek.join(','),
+      timeStart: d.timeStart ?? '',
+      timeEnd: d.timeEnd ?? '',
+      hasCoupons: d.hasCoupons,
+      totalCoupons: d.totalCoupons,
+      couponDuration: d.couponDuration ?? 30,
+      tags: d.tags.join(', '),
+    });
+    this.loading.set(false);
+  }
 
   onDiscountTypeChange(): void {
     const type = this.form.controls.discountType.value;
@@ -125,7 +163,7 @@ export class CreateDiscount {
       return;
     }
 
-    this.loading.set(true);
+    this.saving.set(true);
     this.error.set(null);
 
     const v = this.form.getRawValue();
@@ -135,7 +173,7 @@ export class CreateDiscount {
       .filter((d) => !isNaN(d));
 
     this.discountService
-      .createDiscount({
+      .updateDiscount(this.discountId, {
         title: v.title,
         description: v.description || undefined,
         imageUrl: v.imageUrl,
@@ -159,21 +197,39 @@ export class CreateDiscount {
           ? v.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
       })
-      .pipe(
-        switchMap((discount) =>
-          this.discountService.updateStatus(discount.id, DiscountStatus.ACTIVE),
-        ),
-      )
       .subscribe({
         next: () => {
-          this.loading.set(false);
-          this.toastService.success('Popust je kreiran i aktiviran!');
+          this.saving.set(false);
+          this.toastService.success('Popust je ažuriran!');
           void this.router.navigate(['/business/dashboard']);
         },
         error: (err) => {
-          this.loading.set(false);
-          this.error.set(err.error?.message || 'Kreiranje nije uspelo');
+          this.saving.set(false);
+          this.error.set(err.error?.message || 'Ažuriranje nije uspelo');
         },
       });
+  }
+
+  onDelete(): void {
+    this.showDeleteDialog.set(true);
+  }
+
+  onConfirmDelete(): void {
+    this.deleting.set(true);
+    this.discountService.deleteDiscount(this.discountId).subscribe({
+      next: () => {
+        this.toastService.success('Popust je obrisan');
+        void this.router.navigate(['/business/dashboard']);
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.showDeleteDialog.set(false);
+        this.error.set(err.error?.message || 'Brisanje nije uspelo');
+      },
+    });
+  }
+
+  onCancelDelete(): void {
+    this.showDeleteDialog.set(false);
   }
 }

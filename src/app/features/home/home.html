@@ -29,6 +29,47 @@
     }
   </div>
 
+  <!-- Location bar -->
+  <div class="home__location-bar">
+    <button
+      class="home__location-btn"
+      [class.home__location-btn--active]="locationActive()"
+      (click)="onToggleLocation()"
+      [attr.aria-pressed]="locationActive()"
+      aria-label="Koristi moju lokaciju"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="16" height="16">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      @if (geo.loading()) {
+        Učitavanje...
+      } @else if (locationActive()) {
+        U blizini
+      } @else {
+        Moja lokacija
+      }
+    </button>
+
+    @if (locationActive()) {
+      <div class="home__radius">
+        <input
+          type="range"
+          min="1"
+          max="50"
+          step="1"
+          [value]="radiusKm()"
+          (input)="onRadiusChange($event)"
+          aria-label="Radius pretrage"
+        />
+        <span class="home__radius-label">{{ radiusKm() }} km</span>
+      </div>
+    }
+
+    @if (geo.error()) {
+      <p class="home__location-error">{{ geo.error() }}</p>
+    }
+  </div>
+
   <!-- Filter bar -->
   <div class="home__filter-bar">
     <span class="home__count">{{ total() }} popusta</span>

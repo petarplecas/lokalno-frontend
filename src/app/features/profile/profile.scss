@@ -37,6 +37,33 @@
   font-size: 0.875rem;
 }
 
+// Business panel link
+.profile__business-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  background: $gradient-primary;
+  color: #fff;
+  border-radius: $radius-md;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.938rem;
+  transition: opacity 0.2s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+}
+
 // Menu
 .profile__menu {
   background: $color-surface;

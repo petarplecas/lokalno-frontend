@@ -4,9 +4,18 @@
   <!-- Step indicator -->
   <div class="wizard__steps">
     @for (step of steps; track step; let i = $index) {
-      <div class="wizard__step" [class.wizard__step--active]="currentStep() === i" [class.wizard__step--done]="currentStep() > i">
+      <button
+        type="button"
+        class="wizard__step"
+        [class.wizard__step--active]="currentStep() === i"
+        [class.wizard__step--done]="currentStep() > i"
+        [class.wizard__step--clickable]="currentStep() > i"
+        [disabled]="i >= currentStep()"
+        (click)="goToStep(i)"
+        [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step"
+      >
         <span class="wizard__step-num">{{ i + 1 }}</span>
-      </div>
+      </button>
     }
   </div>
 

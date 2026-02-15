@@ -3,25 +3,30 @@
 .header {
   position: sticky;
   top: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
   align-items: center;
-  justify-content: space-between;
   height: 56px;
   padding: 0 $spacing-md;
   background: $color-surface;
   border-bottom: 1px solid $color-border;
   z-index: $z-header;
 
+  &__left {
+    // Empty spacer to balance the grid
+  }
+
   &__logo {
     display: flex;
     align-items: center;
+    justify-content: center;
     text-decoration: none;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
+    justify-content: flex-end;
   }
 
   &__icon {

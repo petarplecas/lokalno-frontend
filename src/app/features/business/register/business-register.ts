@@ -62,9 +62,19 @@ export class BusinessRegister {
     [],
   ];
 
-  isStepValid(): boolean {
-    const fields = this.stepFields[this.currentStep()];
+  isStepValid(step?: number): boolean {
+    const fields = this.stepFields[step ?? this.currentStep()];
     return fields.every((f) => this.form.get(f)?.valid ?? true);
+  }
+
+  private findFirstInvalidStep(): number | null {
+    for (let i = 0; i < this.stepFields.length; i++) {
+      if (!this.isStepValid(i)) {
+        this.stepFields[i].forEach((f) => this.form.get(f)?.markAsTouched());
+        return i;
+      }
+    }
+    return null;
   }
 
   next(): void {
@@ -84,7 +94,20 @@ export class BusinessRegister {
     }
   }
 
+  goToStep(step: number): void {
+    if (step < this.currentStep()) {
+      this.currentStep.set(step);
+    }
+  }
+
   onSubmit(): void {
+    const invalidStep = this.findFirstInvalidStep();
+    if (invalidStep !== null) {
+      this.currentStep.set(invalidStep);
+      this.error.set('Popunite obavezna polja na koraku ' + this.steps[invalidStep]);
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 

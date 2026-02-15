@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Role } from '../../core/models';
 
 @Component({
   selector: 'app-profile',
@@ -17,6 +18,7 @@ export class Profile {
   private readonly authService = inject(AuthService);
 
   readonly user = this.authService.user;
+  readonly Role = Role;
 
   readonly menuItems = [
     { label: 'Izmeni profil', icon: '✏️', route: '/profile/edit' },

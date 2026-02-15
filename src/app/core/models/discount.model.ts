@@ -51,6 +51,7 @@ export interface Discount {
   createdAt: string;
   updatedAt: string;
   business: DiscountBusiness;
+  distanceMeters?: number | null;
 }
 
 export interface SavedDiscountItem {

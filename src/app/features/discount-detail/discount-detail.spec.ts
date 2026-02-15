@@ -165,15 +165,6 @@ describe('DiscountDetail', () => {
     expect(fixture.componentInstance.claimedCoupon()).toEqual(mockCouponRes.coupon);
   });
 
-  it('should toggle save state', () => {
-    const fixture = TestBed.createComponent(DiscountDetail);
-    fixture.detectChanges();
-
-    fixture.componentInstance.toggleSave();
-    expect(mockUserService.saveDiscount).toHaveBeenCalledWith('d1');
-    expect(fixture.componentInstance.isSaved()).toBe(true);
-  });
-
   it('should toggle favorite state', () => {
     const fixture = TestBed.createComponent(DiscountDetail);
     fixture.detectChanges();

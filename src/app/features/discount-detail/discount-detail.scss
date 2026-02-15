@@ -16,6 +16,13 @@
 // Hero
 .detail__hero {
   position: relative;
+
+  app-back-button {
+    position: absolute;
+    top: $spacing-md;
+    left: $spacing-md;
+    z-index: 1;
+  }
 }
 
 .detail__image {

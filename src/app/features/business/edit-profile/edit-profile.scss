@@ -1,0 +1,42 @@
+@use 'styles/variables' as *;
+
+.edit-profile {
+  padding: $spacing-md;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.edit-profile__top {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.edit-profile__title {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+}
+
+.edit-profile__error {
+  background-color: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  margin-bottom: $spacing-md;
+  text-align: center;
+}
+
+.edit-profile__form {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.edit-profile__submit {
+  width: 100%;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+}

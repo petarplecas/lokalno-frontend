@@ -33,12 +33,21 @@
 }
 
 .dash__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: $spacing-lg;
 
   h1 {
     font-family: $font-heading;
     font-size: 1.5rem;
   }
+}
+
+.dash__edit-btn {
+  flex-shrink: 0;
+  font-size: 0.813rem;
+  padding: $spacing-xs $spacing-md;
 }
 
 .dash__category {

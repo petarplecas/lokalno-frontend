@@ -17,8 +17,11 @@
 
     <!-- Business info -->
     <div class="dash__header">
-      <h1>{{ biz.name }}</h1>
-      <span class="dash__category">{{ biz.category }}</span>
+      <div>
+        <h1>{{ biz.name }}</h1>
+        <span class="dash__category">{{ biz.category }}</span>
+      </div>
+      <a routerLink="/business/profile/edit" class="btn-secondary dash__edit-btn">Izmeni profil</a>
     </div>
 
     <!-- Stats grid -->
