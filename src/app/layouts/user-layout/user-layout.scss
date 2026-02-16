@@ -1,0 +1,4 @@
+.user-content {
+  padding-bottom: 72px; // 56px bottom-nav + 16px spacing
+  min-height: calc(100vh - 56px); // subtract header
+}

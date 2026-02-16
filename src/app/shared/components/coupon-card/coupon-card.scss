@@ -1,0 +1,82 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+.coupon-card {
+  @include card;
+
+  display: flex;
+  overflow: hidden;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    min-height: 100px;
+    background: $gradient-primary;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  &__discount {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    padding: $spacing-xs;
+  }
+
+  &__body {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+
+    @include truncate(1);
+  }
+
+  &__business {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__code {
+    font-family: monospace;
+    font-size: 0.813rem;
+    font-weight: 600;
+    color: $color-primary;
+  }
+
+  &__status {
+    font-size: 0.688rem;
+    font-weight: 500;
+    padding: 1px $spacing-xs;
+    border-radius: $radius-sm;
+    background: $color-background;
+  }
+
+  &__expires {
+    font-size: 0.688rem;
+    color: $color-text-secondary;
+  }
+
+  &--expired {
+    opacity: 0.6;
+  }
+
+  &--used .coupon-card__left {
+    background: $color-text-secondary;
+  }
+}

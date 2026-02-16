@@ -1,0 +1,41 @@
+@if (user(); as u) {
+  <section class="profile">
+    <!-- User card -->
+    <div class="profile__card">
+      <div class="profile__avatar">
+        {{ u.firstName.charAt(0) }}{{ u.lastName.charAt(0) }}
+      </div>
+      <h1 class="profile__name">{{ u.firstName }} {{ u.lastName }}</h1>
+      <p class="profile__email">{{ u.email }}</p>
+    </div>
+
+    <!-- Business panel link -->
+    @if (u.role === Role.BUSINESS) {
+      <a routerLink="/business/dashboard" class="profile__business-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        Biznis panel
+      </a>
+    }
+
+    <!-- Menu -->
+    <nav class="profile__menu">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" class="profile__menu-item">
+          <span class="profile__menu-icon">{{ item.icon }}</span>
+          <span class="profile__menu-label">{{ item.label }}</span>
+          <svg class="profile__menu-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </a>
+      }
+    </nav>
+
+    <!-- Logout -->
+    <button class="profile__logout" (click)="logout()">
+      Odjavi se
+    </button>
+  </section>
+}

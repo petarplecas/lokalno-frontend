@@ -1,0 +1,26 @@
+{
+  "name": "LOKALNO - Popusti iz komšiluka",
+  "short_name": "Lokalno",
+  "description": "Pronađi najbolje lokalne popuste u tvom komšiluku",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7fa",
+  "theme_color": "#20B2AA",
+  "icons": [
+    {
+      "src": "assets/logos/lokalno-logo-icon-only.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logos/lokalno-logo-solid.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "lang": "sr"
+}

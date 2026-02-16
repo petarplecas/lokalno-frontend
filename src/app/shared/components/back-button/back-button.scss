@@ -1,0 +1,24 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: $color-surface;
+  border-radius: $radius-full;
+  color: $color-text;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}

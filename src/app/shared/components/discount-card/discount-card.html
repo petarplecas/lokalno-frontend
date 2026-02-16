@@ -1,0 +1,30 @@
+<article class="discount-card" (click)="onClick()" (keydown.enter)="onClick()" tabindex="0" role="button">
+  <div class="discount-card__image">
+    <img [src]="discount().imageUrl" [alt]="discount().title" loading="lazy" />
+    <span class="discount-card__badge">
+      {{ discount().discountType | discountLabel:discount().discountValue }}
+    </span>
+  </div>
+  <div class="discount-card__body">
+    <h3 class="discount-card__title">{{ discount().title }}</h3>
+    <p class="discount-card__business">{{ discount().business.name }}</p>
+    <div class="discount-card__meta">
+      <span class="discount-card__category">{{ discount().business.category }}</span>
+      <span class="discount-card__meta-right">
+        @if (discount().distanceMeters != null) {
+          <span class="discount-card__distance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="12" height="12">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ discount().distanceMeters | distance }}
+          </span>
+        }
+        @if (discount().hasCoupons && discount().availableCoupons !== null) {
+          <span class="discount-card__coupons">
+            {{ discount().availableCoupons }}/{{ discount().totalCoupons }}
+          </span>
+        }
+      </span>
+    </div>
+  </div>
+</article>

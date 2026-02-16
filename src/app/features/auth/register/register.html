@@ -1,0 +1,128 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="assets/logos/lokalno-logo-full.svg" alt="Lokalno" width="180" height="60" />
+    </div>
+
+    <h1>Registracija</h1>
+
+    @if (error()) {
+      <div class="auth-error" role="alert">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Ime</label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="Vaše ime"
+            autocomplete="given-name"
+          />
+          @if (form.controls.firstName.touched && form.controls.firstName.errors) {
+            <span class="error-message">
+              @if (form.controls.firstName.errors['required']) {
+                Ime je obavezno.
+              } @else if (form.controls.firstName.errors['minlength']) {
+                Minimum 2 karaktera.
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Prezime</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Vaše prezime"
+            autocomplete="family-name"
+          />
+          @if (form.controls.lastName.touched && form.controls.lastName.errors) {
+            <span class="error-message">
+              @if (form.controls.lastName.errors['required']) {
+                Prezime je obavezno.
+              } @else if (form.controls.lastName.errors['minlength']) {
+                Minimum 2 karaktera.
+              }
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="vas@email.com"
+          autocomplete="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.errors) {
+          <span class="error-message">
+            @if (form.controls.email.errors['required']) {
+              Email je obavezan.
+            } @else if (form.controls.email.errors['email']) {
+              Unesite validan email.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Minimum 8 karaktera"
+          autocomplete="new-password"
+        />
+        @if (form.controls.password.touched && form.controls.password.errors) {
+          <span class="error-message">
+            @if (form.controls.password.errors['required']) {
+              Lozinka je obavezna.
+            } @else if (form.controls.password.errors['minlength']) {
+              Minimum 8 karaktera.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Potvrdi lozinku</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Ponovite lozinku"
+          autocomplete="new-password"
+        />
+        @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.errors) {
+          <span class="error-message">
+            @if (form.controls.confirmPassword.errors['required']) {
+              Potvrda lozinke je obavezna.
+            } @else if (form.controls.confirmPassword.errors['passwordMismatch']) {
+              Lozinke se ne poklapaju.
+            }
+          </span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary auth-submit" [disabled]="loading()">
+        @if (loading()) {
+          <app-spinner size="sm" />
+        }
+        Registruj se
+      </button>
+    </form>
+
+    <p class="auth-link">
+      Već imate nalog? <a routerLink="/auth/login">Prijavite se</a>
+    </p>
+  </div>
+</div>

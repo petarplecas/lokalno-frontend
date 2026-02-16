@@ -1,0 +1,138 @@
+<div class="business-review">
+  <app-back-button />
+
+  @if (loading()) {
+    <div class="business-review__loading">
+      <app-spinner size="lg" />
+    </div>
+  } @else if (business(); as biz) {
+    <div class="business-review__header">
+      <div class="business-review__avatar">
+        @if (biz.logoUrl) {
+          <img [src]="biz.logoUrl" [alt]="biz.name" />
+        } @else {
+          <span>{{ biz.name.charAt(0) }}</span>
+        }
+      </div>
+      <div class="business-review__title-block">
+        <h1>{{ biz.name }}</h1>
+        <span
+          class="business-review__status"
+          [class.business-review__status--pending]="biz.status === 'PENDING'"
+          [class.business-review__status--approved]="biz.status === 'APPROVED'"
+          [class.business-review__status--suspended]="biz.status === 'SUSPENDED'"
+        >
+          {{ statusLabel(biz.status) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="business-review__details">
+      <div class="business-review__row">
+        <span class="business-review__label">Kategorija</span>
+        <span>{{ biz.category }} — {{ biz.subCategory }}</span>
+      </div>
+
+      @if (biz.description) {
+        <div class="business-review__row">
+          <span class="business-review__label">Opis</span>
+          <span>{{ biz.description }}</span>
+        </div>
+      }
+
+      <div class="business-review__row">
+        <span class="business-review__label">Adresa</span>
+        <span>{{ biz.address }}</span>
+      </div>
+
+      <div class="business-review__row">
+        <span class="business-review__label">Telefon</span>
+        <span>{{ biz.phone }}</span>
+      </div>
+
+      @if (biz.website) {
+        <div class="business-review__row">
+          <span class="business-review__label">Sajt</span>
+          <span>{{ biz.website }}</span>
+        </div>
+      }
+
+      <div class="business-review__row">
+        <span class="business-review__label">Pretplata</span>
+        <span>{{ biz.subscriptionTier }}</span>
+      </div>
+
+      <div class="business-review__row">
+        <span class="business-review__label">Registrovan</span>
+        <span>{{ biz.createdAt | date:'dd.MM.yyyy.' }}</span>
+      </div>
+
+      <div class="business-review__row">
+        <span class="business-review__label">Pratilaca</span>
+        <span>{{ biz.followersCount }}</span>
+      </div>
+
+      <div class="business-review__row">
+        <span class="business-review__label">Aktivnih popusta</span>
+        <span>{{ biz.activeDiscountsCount }}</span>
+      </div>
+    </div>
+
+    @if (biz.status === 'PENDING') {
+      <div class="business-review__actions">
+        <button
+          class="btn-success"
+          [disabled]="actionLoading()"
+          (click)="openApproveDialog()"
+        >
+          Odobri biznis
+        </button>
+        <button
+          class="btn-danger"
+          [disabled]="actionLoading()"
+          (click)="openRejectDialog()"
+        >
+          Odbij biznis
+        </button>
+      </div>
+    } @else if (biz.status === 'APPROVED') {
+      <div class="business-review__actions">
+        <button
+          class="btn-danger"
+          [disabled]="actionLoading()"
+          (click)="openRejectDialog()"
+        >
+          Suspenduj biznis
+        </button>
+      </div>
+    } @else if (biz.status === 'SUSPENDED') {
+      <div class="business-review__actions">
+        <button
+          class="btn-success"
+          [disabled]="actionLoading()"
+          (click)="openApproveDialog()"
+        >
+          Ponovo odobri
+        </button>
+      </div>
+    }
+  }
+
+  @if (showApproveDialog()) {
+    <app-confirm-dialog
+      title="Odobri biznis"
+      message="Da li ste sigurni da želite da odobrite ovaj biznis?"
+      confirmLabel="Odobri"
+      (confirmed)="onApproveConfirm($event)"
+    />
+  }
+
+  @if (showRejectDialog()) {
+    <app-confirm-dialog
+      title="Odbij biznis"
+      message="Da li ste sigurni da želite da suspendujete ovaj biznis?"
+      confirmLabel="Suspenduj"
+      (confirmed)="onRejectConfirm($event)"
+    />
+  }
+</div>

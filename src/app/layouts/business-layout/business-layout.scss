@@ -1,0 +1,87 @@
+@use 'styles/variables' as *;
+
+.biz-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 $spacing-md;
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  z-index: $z-header;
+
+  &__title {
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: $color-primary;
+    text-decoration: none;
+    flex: 1;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__switch {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    text-decoration: none;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-sm;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+      background: $color-background;
+      color: $color-primary;
+      text-decoration: none;
+    }
+  }
+}
+
+.biz-content {
+  padding-bottom: 72px;
+  min-height: calc(100vh - 56px);
+}
+
+.biz-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 56px;
+  background: $color-surface;
+  border-top: 1px solid $color-border;
+  z-index: $z-bottom-nav;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: $spacing-xs;
+    color: $color-text-secondary;
+    text-decoration: none;
+    font-size: 0.625rem;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
+
+    &.active {
+      color: $color-primary;
+    }
+  }
+}

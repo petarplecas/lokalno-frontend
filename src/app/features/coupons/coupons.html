@@ -1,0 +1,53 @@
+<section class="coupons">
+  <h1 class="coupons__title">Moji kuponi</h1>
+
+  <!-- Tabs -->
+  <div class="coupons__tabs" role="tablist">
+    @for (tab of tabs; track tab.status; let i = $index) {
+      <button
+        class="coupons__tab"
+        [class.coupons__tab--active]="activeTab() === i"
+        role="tab"
+        [attr.aria-selected]="activeTab() === i"
+        (click)="onTabChange(i)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="coupons__loading">
+      <app-spinner size="md" />
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error()) {
+    <app-empty-state
+      title="Greška pri učitavanju"
+      message="Nije moguće učitati kupone."
+      actionLabel="Pokušaj ponovo"
+      (action)="onRetry()"
+    />
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && !error() && coupons().length === 0) {
+    <app-empty-state
+      icon="🎟️"
+      [title]="tabs[activeTab()].emptyMessage"
+      message="Kuponi koje preuzmete će se pojaviti ovde"
+    />
+  }
+
+  <!-- Coupon list -->
+  @if (!loading() && coupons().length > 0) {
+    <div class="coupons__list">
+      @for (coupon of coupons(); track coupon.id) {
+        <app-coupon-card [coupon]="coupon" />
+      }
+    </div>
+  }
+</section>

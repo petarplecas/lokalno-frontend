@@ -1,0 +1,176 @@
+<section class="wizard">
+  <div class="wizard__top">
+    <app-back-button />
+    <h1 class="wizard__title">Kreiraj popust</h1>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="wizard__steps">
+    @for (step of steps; track step; let i = $index) {
+      <button
+        type="button"
+        class="wizard__step"
+        [class.wizard__step--active]="currentStep() === i"
+        [class.wizard__step--done]="currentStep() > i"
+        [class.wizard__step--clickable]="currentStep() > i"
+        [disabled]="i >= currentStep()"
+        (click)="goToStep(i)"
+        [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step"
+      >
+        <span class="wizard__step-num">{{ i + 1 }}</span>
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="wizard__error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="wizard__form">
+    <!-- Step 0: Image -->
+    @if (currentStep() === 0) {
+      <h2>Slika popusta</h2>
+      <div class="form-group">
+        <label for="imageUrl">URL slike</label>
+        <input id="imageUrl" type="url" formControlName="imageUrl" placeholder="https://..." />
+        @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors) {
+          <span class="error-message">URL slike je obavezan</span>
+        }
+      </div>
+    }
+
+    <!-- Step 1: Basic info -->
+    @if (currentStep() === 1) {
+      <h2>Osnovne informacije</h2>
+      <div class="form-group">
+        <label for="title">Naslov (max 40 karaktera)</label>
+        <input id="title" type="text" formControlName="title" maxlength="40" />
+        @if (form.controls.title.touched && form.controls.title.errors) {
+          <span class="error-message">Naslov je obavezan</span>
+        }
+      </div>
+      <div class="form-group">
+        <label for="description">Opis (max 200 karaktera)</label>
+        <textarea id="description" formControlName="description" rows="3" maxlength="200"></textarea>
+      </div>
+    }
+
+    <!-- Step 2: Discount type -->
+    @if (currentStep() === 2) {
+      <h2>Tip popusta</h2>
+      <div class="form-group">
+        <label for="discountType">Tip</label>
+        <select id="discountType" formControlName="discountType" (change)="onDiscountTypeChange()">
+          @for (type of discountTypes; track type) {
+            <option [value]="type">{{ discountTypeLabels[type] }}</option>
+          }
+        </select>
+      </div>
+      @if (form.value.discountType !== 'BOGO') {
+        <div class="form-group">
+          @if (form.value.discountType === 'PERCENT') {
+            <label for="discountValue">Procenat popusta (%)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" max="100" placeholder="npr. 20" />
+          } @else if (form.value.discountType === 'FIXED') {
+            <label for="discountValue">Iznos popusta (RSD)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
+          } @else {
+            <label for="discountValue">Nova cena (RSD)</label>
+            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 990" />
+          }
+          @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
+            <span class="error-message">Unesite vrednost</span>
+          }
+        </div>
+      }
+    }
+
+    <!-- Step 3: Validity -->
+    @if (currentStep() === 3) {
+      <h2>Validnost</h2>
+      <div class="form-group">
+        <label for="validFrom">Važi od</label>
+        <input id="validFrom" type="date" formControlName="validFrom" />
+      </div>
+      <div class="form-group">
+        <label for="validUntil">Važi do</label>
+        <input id="validUntil" type="date" formControlName="validUntil" />
+      </div>
+      <div class="form-group">
+        <label for="daysOfWeek">Dani (1=pon, 7=ned, odvojeni zarezom)</label>
+        <input id="daysOfWeek" type="text" formControlName="daysOfWeek" />
+      </div>
+      <div class="form-group">
+        <label for="timeStart">Vreme od (opciono)</label>
+        <input id="timeStart" type="time" formControlName="timeStart" />
+      </div>
+      <div class="form-group">
+        <label for="timeEnd">Vreme do (opciono)</label>
+        <input id="timeEnd" type="time" formControlName="timeEnd" />
+      </div>
+    }
+
+    <!-- Step 4: Coupons -->
+    @if (currentStep() === 4) {
+      <h2>Kuponi</h2>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="hasCoupons" />
+          Omogući kupone
+        </label>
+      </div>
+      @if (form.value.hasCoupons) {
+        <div class="form-group">
+          <label for="totalCoupons">Ukupan broj kupona</label>
+          <input id="totalCoupons" type="number" formControlName="totalCoupons" min="1" />
+        </div>
+        <div class="form-group">
+          <label for="couponDuration">Trajanje kupona (minuta)</label>
+          <input id="couponDuration" type="number" formControlName="couponDuration" min="1" />
+        </div>
+      }
+    }
+
+    <!-- Step 5: Tags -->
+    @if (currentStep() === 5) {
+      <h2>Tagovi</h2>
+      <div class="form-group">
+        <label for="tags">Tagovi (odvojeni zarezom)</label>
+        <input id="tags" type="text" formControlName="tags" placeholder="npr. pizza, ručak, popust" />
+      </div>
+    }
+
+    <!-- Step 6: Review -->
+    @if (currentStep() === 6) {
+      <h2>Pregled</h2>
+      <div class="wizard__review">
+        <div class="wizard__review-item"><strong>Naslov:</strong> {{ form.value.title }}</div>
+        <div class="wizard__review-item"><strong>Tip:</strong> {{ discountTypeLabels[form.value.discountType!] }}@if (form.value.discountType !== 'BOGO') { — {{ form.value.discountValue }}@if (form.value.discountType === 'PERCENT') {%} @else { RSD}}</div>
+        <div class="wizard__review-item"><strong>Od:</strong> {{ form.value.validFrom }}</div>
+        <div class="wizard__review-item"><strong>Do:</strong> {{ form.value.validUntil }}</div>
+        @if (form.value.hasCoupons) {
+          <div class="wizard__review-item"><strong>Kuponi:</strong> {{ form.value.totalCoupons }} ({{ form.value.couponDuration }} min)</div>
+        }
+      </div>
+    }
+
+    <!-- Navigation -->
+    <div class="wizard__nav">
+      @if (currentStep() > 0) {
+        <button type="button" class="btn-secondary" (click)="prev()">Nazad</button>
+      }
+      @if (currentStep() < steps.length - 1) {
+        <button type="button" class="btn-primary" (click)="next()">Dalje</button>
+      }
+      @if (currentStep() === steps.length - 1) {
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          @if (loading()) {
+            <app-spinner size="sm" />
+          } @else {
+            Kreiraj popust
+          }
+        </button>
+      }
+    </div>
+  </form>
+</section>

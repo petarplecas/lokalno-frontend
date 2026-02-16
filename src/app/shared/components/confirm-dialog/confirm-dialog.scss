@@ -1,0 +1,40 @@
+@use 'styles/variables' as *;
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-modal-backdrop;
+  padding: $spacing-md;
+}
+
+.dialog {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: $shadow-lg;
+  z-index: $z-modal;
+
+  &__title {
+    font-size: 1.125rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__message {
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+    line-height: 1.5;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    justify-content: flex-end;
+  }
+}

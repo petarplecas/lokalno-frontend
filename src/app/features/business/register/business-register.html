@@ -1,0 +1,147 @@
+<section class="wizard">
+  <h1 class="wizard__title">Registracija biznisa</h1>
+
+  <!-- Step indicator -->
+  <div class="wizard__steps">
+    @for (step of steps; track step; let i = $index) {
+      <button
+        type="button"
+        class="wizard__step"
+        [class.wizard__step--active]="currentStep() === i"
+        [class.wizard__step--done]="currentStep() > i"
+        [class.wizard__step--clickable]="currentStep() > i"
+        [disabled]="i >= currentStep()"
+        (click)="goToStep(i)"
+        [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step"
+      >
+        <span class="wizard__step-num">{{ i + 1 }}</span>
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="wizard__error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="wizard__form">
+    <!-- Step 0: Account -->
+    @if (currentStep() === 0) {
+      <h2>Podaci o nalogu</h2>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+        @if (form.controls.email.touched && form.controls.email.errors) {
+          <span class="error-message">Unesite validan email</span>
+        }
+      </div>
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input id="password" type="password" formControlName="password" />
+        @if (form.controls.password.touched && form.controls.password.errors) {
+          <span class="error-message">Minimum 8 karaktera</span>
+        }
+      </div>
+      <div class="form-group">
+        <label for="firstName">Ime</label>
+        <input id="firstName" type="text" formControlName="firstName" />
+      </div>
+      <div class="form-group">
+        <label for="lastName">Prezime</label>
+        <input id="lastName" type="text" formControlName="lastName" />
+      </div>
+    }
+
+    <!-- Step 1: Business name -->
+    @if (currentStep() === 1) {
+      <h2>Naziv biznisa</h2>
+      <div class="form-group">
+        <label for="name">Naziv</label>
+        <input id="name" type="text" formControlName="name" placeholder="npr. Picerija Mario" />
+        @if (form.controls.name.touched && form.controls.name.errors) {
+          <span class="error-message">Unesite naziv biznisa</span>
+        }
+      </div>
+    }
+
+    <!-- Step 2: Category -->
+    @if (currentStep() === 2) {
+      <h2>Kategorija</h2>
+      <div class="form-group">
+        <label for="category">Kategorija</label>
+        <select id="category" formControlName="category">
+          <option value="" disabled>Izaberite kategoriju</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="subCategory">Podkategorija (opciono)</label>
+        <input id="subCategory" type="text" formControlName="subCategory" placeholder="npr. Picerija" />
+      </div>
+    }
+
+    <!-- Step 3: Address -->
+    @if (currentStep() === 3) {
+      <h2>Adresa</h2>
+      <div class="form-group">
+        <label for="address">Adresa</label>
+        <input id="address" type="text" formControlName="address" placeholder="npr. Knez Mihailova 1, Beograd" />
+        @if (form.controls.address.touched && form.controls.address.errors) {
+          <span class="error-message">Unesite adresu</span>
+        }
+      </div>
+    }
+
+    <!-- Step 4: Contact -->
+    @if (currentStep() === 4) {
+      <h2>Kontakt</h2>
+      <div class="form-group">
+        <label for="phone">Telefon</label>
+        <input id="phone" type="tel" formControlName="phone" placeholder="npr. 011/1234567" />
+        @if (form.controls.phone.touched && form.controls.phone.errors) {
+          <span class="error-message">Unesite telefon</span>
+        }
+      </div>
+      <div class="form-group">
+        <label for="website">Sajt (opciono)</label>
+        <input id="website" type="url" formControlName="website" placeholder="https://..." />
+      </div>
+    }
+
+    <!-- Step 5: Review -->
+    @if (currentStep() === 5) {
+      <h2>Pregled podataka</h2>
+      <div class="wizard__review">
+        <div class="wizard__review-item"><strong>Email:</strong> {{ form.value.email }}</div>
+        <div class="wizard__review-item"><strong>Ime:</strong> {{ form.value.firstName }} {{ form.value.lastName }}</div>
+        <div class="wizard__review-item"><strong>Biznis:</strong> {{ form.value.name }}</div>
+        <div class="wizard__review-item"><strong>Kategorija:</strong> {{ form.value.category }}</div>
+        <div class="wizard__review-item"><strong>Adresa:</strong> {{ form.value.address }}</div>
+        <div class="wizard__review-item"><strong>Telefon:</strong> {{ form.value.phone }}</div>
+        @if (form.value.website) {
+          <div class="wizard__review-item"><strong>Sajt:</strong> {{ form.value.website }}</div>
+        }
+      </div>
+    }
+
+    <!-- Navigation -->
+    <div class="wizard__nav">
+      @if (currentStep() > 0) {
+        <button type="button" class="btn-secondary" (click)="prev()">Nazad</button>
+      }
+      @if (currentStep() < steps.length - 1) {
+        <button type="button" class="btn-primary" (click)="next()">Dalje</button>
+      }
+      @if (currentStep() === steps.length - 1) {
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+          @if (loading()) {
+            <app-spinner size="sm" />
+          } @else {
+            Registruj biznis
+          }
+        </button>
+      }
+    </div>
+  </form>
+</section>

@@ -1,0 +1,33 @@
+<section class="saved">
+  <div class="saved__header">
+    <app-back-button />
+    <h1>Sačuvani popusti</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="saved__loading">
+      <app-spinner size="md" />
+    </div>
+  } @else if (discounts().length === 0) {
+    <app-empty-state
+      icon="🔖"
+      title="Nema sačuvanih popusta"
+      message="Popusti koje sačuvate će se pojaviti ovde"
+    />
+  } @else {
+    <div class="saved__list">
+      @for (item of discounts(); track item.id) {
+        <div class="saved__card" (click)="goToDiscount(item.id)" (keydown.enter)="goToDiscount(item.id)" tabindex="0" role="button">
+          <img [src]="item.imageUrl" [alt]="item.title" class="saved__image" loading="lazy" />
+          <div class="saved__info">
+            <span class="saved__badge">
+              {{ item.discountType | discountLabel:item.discountValue }}
+            </span>
+            <strong class="saved__title">{{ item.title }}</strong>
+            <span class="saved__business">{{ item.business.name }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

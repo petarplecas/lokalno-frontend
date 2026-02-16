@@ -1,0 +1,113 @@
+@use 'styles/variables' as *;
+
+.verify {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.verify__title {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  margin-bottom: $spacing-lg;
+}
+
+.verify__search {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.verify__input {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgb(32 178 170 / 15%);
+  }
+}
+
+.verify__btn {
+  padding: $spacing-sm $spacing-lg;
+  white-space: nowrap;
+}
+
+.verify__error {
+  background-color: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  margin-bottom: $spacing-md;
+  text-align: center;
+}
+
+.verify__result {
+  background: $color-surface;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: $spacing-lg;
+}
+
+.verify__coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.verify__code {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.verify__status {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--active {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &--used {
+    background: rgba($color-text-secondary, 0.1);
+    color: $color-text-secondary;
+  }
+}
+
+.verify__details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  font-size: 0.938rem;
+
+  p {
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $color-divider;
+  }
+
+  strong {
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+}
+
+.verify__use-btn {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: 1rem;
+  margin-top: $spacing-lg;
+}

@@ -1,0 +1,45 @@
+@use 'styles/variables' as *;
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  height: 56px;
+  padding: 0 $spacing-md;
+  background: $color-text;
+  z-index: $z-header;
+
+  &__title {
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #fff;
+  }
+
+  &__nav a {
+    color: rgb(255 255 255 / 70%);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-sm;
+    transition: color 0.2s, background-color 0.2s;
+
+    &:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    &.active {
+      color: #fff;
+      background: rgb(255 255 255 / 15%);
+    }
+  }
+}
+
+.admin-content {
+  min-height: calc(100vh - 56px);
+  padding: $spacing-md;
+}

@@ -1,0 +1,90 @@
+<div class="admin-businesses">
+  <h1 class="admin-businesses__title">Upravljanje biznisima</h1>
+
+  <div class="admin-businesses__tabs" role="tablist">
+    @for (tab of tabs; track tab.label; let i = $index) {
+      <button
+        class="admin-businesses__tab"
+        [class.admin-businesses__tab--active]="activeTab() === i"
+        role="tab"
+        [attr.aria-selected]="activeTab() === i"
+        (click)="selectTab(i)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="admin-businesses__loading">
+      <app-spinner size="lg" />
+    </div>
+  } @else if (error()) {
+    <app-empty-state
+      title="Greška pri učitavanju"
+      message="Nije moguće učitati biznise."
+      actionLabel="Pokušaj ponovo"
+      (action)="loadBusinesses()"
+    />
+  } @else if (businesses().length === 0) {
+    <app-empty-state
+      title="Nema biznisa"
+      message="Nema biznisa u ovoj kategoriji."
+    />
+  } @else {
+    <p class="admin-businesses__count">Ukupno: {{ total() }}</p>
+
+    <div class="admin-businesses__list">
+      @for (biz of businesses(); track biz.id) {
+        <a class="admin-businesses__card" [routerLink]="['/admin/businesses', biz.id]">
+          <div class="admin-businesses__card-header">
+            <div class="admin-businesses__card-avatar">
+              @if (biz.logoUrl) {
+                <img [src]="biz.logoUrl" [alt]="biz.name" />
+              } @else {
+                <span>{{ biz.name.charAt(0) }}</span>
+              }
+            </div>
+            <div class="admin-businesses__card-info">
+              <h3>{{ biz.name }}</h3>
+              <p>{{ biz.category }} — {{ biz.subCategory }}</p>
+            </div>
+            <span
+              class="admin-businesses__status"
+              [class.admin-businesses__status--pending]="biz.status === 'PENDING'"
+              [class.admin-businesses__status--approved]="biz.status === 'APPROVED'"
+              [class.admin-businesses__status--suspended]="biz.status === 'SUSPENDED'"
+            >
+              {{ statusLabel(biz.status) }}
+            </span>
+          </div>
+          <div class="admin-businesses__card-meta">
+            <span>{{ biz.address }}</span>
+            <span>{{ biz.activeDiscountsCount }} popusta</span>
+            <span>{{ biz.followersCount }} pratilaca</span>
+          </div>
+        </a>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="admin-businesses__pagination">
+        <button
+          class="btn-secondary"
+          [disabled]="currentPage() <= 1"
+          (click)="prevPage()"
+        >
+          Prethodna
+        </button>
+        <span>{{ currentPage() }} / {{ totalPages() }}</span>
+        <button
+          class="btn-secondary"
+          [disabled]="currentPage() >= totalPages()"
+          (click)="nextPage()"
+        >
+          Sledeća
+        </button>
+      </div>
+    }
+  }
+</div>

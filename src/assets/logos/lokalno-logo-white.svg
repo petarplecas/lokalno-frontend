@@ -1,0 +1,18 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bela verzija za tamne pozadine -->
+  <path d="M 100 35 
+           C 75 35, 60 52, 60 75 
+           C 60 100, 100 140, 100 140 
+           C 100 140, 140 100, 140 75 
+           C 140 52, 125 35, 100 35 Z" 
+        fill="white"/>
+  
+  <path d="M 88 60 L 88 100 L 112 100" 
+        stroke="#20B2AA" 
+        stroke-width="10" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+  
+  <circle cx="88" cy="60" r="5" fill="#20B2AA"/>
+</svg>

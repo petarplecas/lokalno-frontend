@@ -1,0 +1,125 @@
+@if (loading()) {
+  <div class="detail__loading">
+    <app-spinner size="lg" />
+  </div>
+} @else if (discount(); as d) {
+  <div class="detail">
+    <!-- Hero image -->
+    <div class="detail__hero">
+      <app-back-button />
+      <img [src]="d.imageUrl" [alt]="d.title" class="detail__image" />
+      <span class="detail__badge">
+        {{ d.discountType | discountLabel:d.discountValue }}
+      </span>
+      <div class="detail__actions">
+        <button
+          class="detail__action-btn"
+          [class.detail__action-btn--active]="isFavorite()"
+          (click)="toggleFavorite()"
+          [attr.aria-label]="isFavorite() ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            @if (isFavorite()) {
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" />
+            } @else {
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            }
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Business info -->
+    <div class="detail__business">
+      <div class="detail__business-info">
+        <strong>{{ d.business.name }}</strong>
+        <span class="detail__business-category">{{ d.business.category }}</span>
+      </div>
+    </div>
+
+    <!-- Title & description -->
+    <div class="detail__content">
+      <h1 class="detail__title">{{ d.title }}</h1>
+      @if (d.description) {
+        <p class="detail__description">{{ d.description }}</p>
+      }
+    </div>
+
+    <!-- Details section -->
+    <div class="detail__info">
+      <h2 class="detail__section-title">Detalji</h2>
+      <div class="detail__info-grid">
+        <div class="detail__info-item">
+          <span class="detail__info-label">Tip</span>
+          <span class="detail__info-value">{{ d.discountType | discountLabel:d.discountValue }}</span>
+        </div>
+        <div class="detail__info-item">
+          <span class="detail__info-label">Važi od</span>
+          <span class="detail__info-value">{{ d.validFrom | date:'dd.MM.yyyy' }}</span>
+        </div>
+        <div class="detail__info-item">
+          <span class="detail__info-label">Važi do</span>
+          <span class="detail__info-value">{{ d.validUntil | date:'dd.MM.yyyy' }}</span>
+        </div>
+        @if (d.hasCoupons) {
+          <div class="detail__info-item">
+            <span class="detail__info-label">Kuponi</span>
+            <span class="detail__info-value">{{ d.availableCoupons }}/{{ d.totalCoupons }} dostupno</span>
+          </div>
+        }
+        @if (d.couponDuration) {
+          <div class="detail__info-item">
+            <span class="detail__info-label">Trajanje kupona</span>
+            <span class="detail__info-value">{{ d.couponDuration }} min</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="detail__info">
+      <h2 class="detail__section-title">Lokacija</h2>
+      <p class="detail__address">{{ d.business.address }}</p>
+    </div>
+
+    <!-- Claimed coupon display -->
+    @if (claimedCoupon(); as coupon) {
+      <div class="detail__claimed" role="alert">
+        <h3>Vaš kupon</h3>
+        <div class="detail__coupon-code">{{ coupon.code }}</div>
+        <p class="detail__coupon-expiry">Ističe: {{ coupon.expiresAt | date:'dd.MM.yyyy HH:mm' }}</p>
+        <button class="btn-secondary" (click)="dismissCoupon()">U redu</button>
+      </div>
+    }
+
+    <!-- Sticky CTA -->
+    @if (d.hasCoupons && !claimedCoupon()) {
+      <div class="detail__cta">
+        <button
+          class="btn-primary detail__cta-btn"
+          [disabled]="claimLoading() || d.availableCoupons === 0"
+          (click)="openClaimDialog()"
+        >
+          @if (claimLoading()) {
+            <app-spinner size="sm" />
+          } @else if (d.availableCoupons === 0) {
+            Nema dostupnih kupona
+          } @else {
+            Pokupite kupon
+          }
+        </button>
+      </div>
+    }
+
+    <!-- Claim confirm dialog -->
+    @if (showClaimDialog()) {
+      <app-confirm-dialog
+        title="Preuzmi kupon"
+        [message]="'Dostupno: ' + d.availableCoupons + '/' + d.totalCoupons + '. Kupon traje ' + (d.couponDuration || 30) + ' minuta nakon preuzimanja. Neiskorišćen kupon se automatski vraća.'"
+        confirmLabel="Preuzmi"
+        cancelLabel="Otkaži"
+        (confirmed)="onClaimConfirm($event)"
+      />
+    }
+  </div>
+}

@@ -1,0 +1,72 @@
+@use 'styles/variables' as *;
+
+.toast-container {
+  position: fixed;
+  top: $spacing-md;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: $z-toast;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  width: calc(100% - #{$spacing-lg * 2});
+  max-width: 400px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  color: #fff;
+  font-size: 0.875rem;
+  box-shadow: $shadow-md;
+  animation: slide-in 0.3s ease-out;
+
+  &--success {
+    background-color: $color-success;
+  }
+
+  &--error {
+    background-color: $color-error;
+  }
+
+  &--warning {
+    background-color: $color-warning;
+  }
+
+  &--info {
+    background-color: $color-info;
+  }
+
+  &__message {
+    flex: 1;
+  }
+
+  &__dismiss {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

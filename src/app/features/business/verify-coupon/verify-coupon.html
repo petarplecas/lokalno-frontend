@@ -1,0 +1,57 @@
+<section class="verify">
+  <h1 class="verify__title">Verifikuj kupon</h1>
+
+  <!-- Search form -->
+  <form [formGroup]="form" (ngSubmit)="onSearch()" class="verify__search">
+    <input
+      type="text"
+      formControlName="code"
+      placeholder="Unesite kod kupona (KUP-XXXX)"
+      class="verify__input"
+    />
+    <button type="submit" class="btn-primary verify__btn" [disabled]="loading()">
+      @if (loading()) {
+        <app-spinner size="sm" />
+      } @else {
+        Pretraži
+      }
+    </button>
+  </form>
+
+  @if (error()) {
+    <div class="verify__error">{{ error() }}</div>
+  }
+
+  <!-- Coupon result -->
+  @if (coupon(); as c) {
+    <div class="verify__result">
+      <div class="verify__coupon-header">
+        <span class="verify__code">{{ c.code }}</span>
+        <span class="verify__status" [class.verify__status--active]="c.status === 'ACTIVE'" [class.verify__status--used]="c.status === 'USED'">
+          {{ c.status }}
+        </span>
+      </div>
+
+      <div class="verify__details">
+        <p><strong>Popust:</strong> {{ c.discount.title }}</p>
+        <p><strong>Tip:</strong> {{ c.discount.discountType | discountLabel:c.discount.discountValue }}</p>
+        <p><strong>Korisnik:</strong> {{ c.user.firstName }} {{ c.user.lastName }}</p>
+        <p><strong>Email:</strong> {{ c.user.email }}</p>
+        <p><strong>Ističe:</strong> {{ c.expiresAt | date:'dd.MM.yyyy HH:mm' }}</p>
+        @if (c.usedAt) {
+          <p><strong>Iskorišćen:</strong> {{ c.usedAt | date:'dd.MM.yyyy HH:mm' }}</p>
+        }
+      </div>
+
+      @if (c.status === 'ACTIVE') {
+        <button class="btn-primary verify__use-btn" [disabled]="using()" (click)="onUse()">
+          @if (using()) {
+            <app-spinner size="sm" />
+          } @else {
+            Iskoristi kupon
+          }
+        </button>
+      }
+    </div>
+  }
+</section>

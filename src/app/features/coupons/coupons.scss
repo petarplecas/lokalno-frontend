@@ -1,0 +1,72 @@
+@use 'styles/variables' as *;
+
+.coupons {
+  padding: $spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.coupons__title {
+  font-family: $font-heading;
+  font-size: 1.25rem;
+  margin-bottom: $spacing-md;
+}
+
+// Tabs
+.coupons__tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid $color-divider;
+  margin-bottom: $spacing-lg;
+}
+
+.coupons__tab {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  background: none;
+  border: none;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $color-text-secondary;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &--active {
+    color: $color-primary;
+
+    &::after {
+      background: $color-primary;
+    }
+  }
+}
+
+// Loading
+.coupons__loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-2xl 0;
+}
+
+// List
+.coupons__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
