@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -32,10 +33,6 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
-              },
-              {
-                "glob": "manifest.webmanifest",
-                "input": "src"
               }
             ],
             "styles": [
@@ -65,7 +62,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -82,7 +80,8 @@
               "buildTarget": "lokalno-frontend:build:production"
             },
             "development": {
-              "buildTarget": "lokalno-frontend:build:development"
+              "buildTarget": "lokalno-frontend:build:development",
+              "ssl": true
             }
           },
           "defaultConfiguration": "development"
