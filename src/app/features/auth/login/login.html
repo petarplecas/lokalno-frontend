@@ -1,10 +1,10 @@
 <div class="auth-page">
   <div class="auth-card">
-    <div class="auth-logo">
-      <img src="assets/logos/lokalno-logo-full.svg" alt="Lokalno" width="180" height="60" />
+    <div class="auth-brand">
+      <img src="assets/logos/lokalno-logo-full.svg" alt="Lokalno logo" class="auth-brand__icon" />
+      <h1 class="auth-brand__name">LOKALNO</h1>
+      <p class="auth-brand__tagline">Popusti iz komšiluka</p>
     </div>
-
-    <h1>Prijava</h1>
 
     @if (error()) {
       <div class="auth-error" role="alert">{{ error() }}</div>

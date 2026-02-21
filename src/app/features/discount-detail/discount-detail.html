@@ -9,7 +9,7 @@
       <app-back-button />
       <img [src]="d.imageUrl" [alt]="d.title" class="detail__image" />
       <span class="detail__badge">
-        {{ d.discountType | discountLabel:d.discountValue }}
+        {{ d.discountType | discountLabel:d.discountValue:d.newPrice }}
       </span>
       <div class="detail__actions">
         <button
@@ -51,7 +51,7 @@
       <div class="detail__info-grid">
         <div class="detail__info-item">
           <span class="detail__info-label">Tip</span>
-          <span class="detail__info-value">{{ d.discountType | discountLabel:d.discountValue }}</span>
+          <span class="detail__info-value">{{ d.discountType | discountLabel:d.discountValue:d.newPrice }}</span>
         </div>
         <div class="detail__info-item">
           <span class="detail__info-label">Važi od</span>
@@ -70,7 +70,7 @@
         @if (d.couponDuration) {
           <div class="detail__info-item">
             <span class="detail__info-label">Trajanje kupona</span>
-            <span class="detail__info-value">{{ d.couponDuration }} min</span>
+            <span class="detail__info-value">{{ d.couponDuration === 1 ? '1 sat' : d.couponDuration === 168 ? '7 dana' : d.couponDuration + ' sati' }}</span>
           </div>
         }
       </div>
@@ -115,7 +115,7 @@
     @if (showClaimDialog()) {
       <app-confirm-dialog
         title="Preuzmi kupon"
-        [message]="'Dostupno: ' + d.availableCoupons + '/' + d.totalCoupons + '. Kupon traje ' + (d.couponDuration || 30) + ' minuta nakon preuzimanja. Neiskorišćen kupon se automatski vraća.'"
+        [message]="'Dostupno: ' + d.availableCoupons + '/' + d.totalCoupons + '. Kupon traje ' + (d.couponDuration === 1 ? '1 sat' : d.couponDuration === 168 ? '7 dana' : (d.couponDuration || 24) + ' sati') + ' nakon preuzimanja. Neiskorišćen kupon se automatski vraća.'"
         confirmLabel="Preuzmi"
         cancelLabel="Otkaži"
         (confirmed)="onClaimConfirm($event)"

@@ -148,9 +148,40 @@
 }
 
 .home__location-error {
-  font-size: 0.75rem;
-  color: $color-error;
-  margin-top: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-text;
+  margin-top: $spacing-sm;
+  background: rgba($color-warning, 0.1);
+  border-left: 3px solid $color-warning;
+  border-radius: $radius-sm;
+  padding: $spacing-sm $spacing-md;
+
+  p {
+    margin: 0;
+  }
+}
+
+.home__location-error-title {
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $spacing-xs !important;
+}
+
+.home__location-error-steps {
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xs !important;
+}
+
+.home__location-error-list {
+  margin: 0;
+  padding-left: $spacing-lg;
+  color: $color-text-secondary;
+  font-size: 0.8rem;
+  line-height: 1.6;
+
+  strong {
+    color: $color-text;
+  }
 }
 
 // Filter bar

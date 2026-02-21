@@ -110,3 +110,32 @@
 
   button { flex: 1; padding: $spacing-md; }
 }
+
+.day-picker {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+
+  &__btn {
+    padding: 6px 10px;
+    border-radius: $radius-sm;
+    border: 1px solid $color-border;
+    background: $color-background;
+    color: $color-text-secondary;
+    font-size: 0.813rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &--active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: #fff;
+    }
+
+    &:hover:not(&--active) {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}

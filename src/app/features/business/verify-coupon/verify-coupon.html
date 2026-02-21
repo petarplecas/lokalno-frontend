@@ -34,7 +34,7 @@
 
       <div class="verify__details">
         <p><strong>Popust:</strong> {{ c.discount.title }}</p>
-        <p><strong>Tip:</strong> {{ c.discount.discountType | discountLabel:c.discount.discountValue }}</p>
+        <p><strong>Tip:</strong> {{ c.discount.discountType | discountLabel:c.discount.discountValue:c.discount.newPrice }}</p>
         <p><strong>Korisnik:</strong> {{ c.user.firstName }} {{ c.user.lastName }}</p>
         <p><strong>Email:</strong> {{ c.user.email }}</p>
         <p><strong>Ističe:</strong> {{ c.expiresAt | date:'dd.MM.yyyy HH:mm' }}</p>

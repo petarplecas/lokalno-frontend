@@ -1,15 +1,14 @@
 <header class="header">
-  <div class="header__left"></div>
-
-  <a routerLink="/home" class="header__logo" aria-label="Početna stranica">
-    <img ngSrc="assets/logos/lokalno-logo-horizontal.svg" alt="Lokalno" width="150" height="40" priority />
+  <a routerLink="/home" class="header__brand" aria-label="Početna stranica">
+    <img ngSrc="assets/logos/lokalno-logo-icon-only.svg" alt="" class="header__logo-icon" width="48" height="48" priority />
+    <span class="header__title">LOKALNO</span>
   </a>
 
   <div class="header__actions">
     @if (showProfile()) {
       <a
         [routerLink]="isAuthenticated() ? '/profile' : '/auth/login'"
-        class="header__icon"
+        class="header__profile"
         [attr.aria-label]="isAuthenticated() ? 'Profil' : 'Prijavi se'"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
