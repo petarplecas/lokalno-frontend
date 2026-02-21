@@ -30,13 +30,10 @@
     <!-- Step 0: Image -->
     @if (currentStep() === 0) {
       <h2>Slika popusta</h2>
-      <div class="form-group">
-        <label for="imageUrl">URL slike</label>
-        <input id="imageUrl" type="url" formControlName="imageUrl" placeholder="https://..." />
-        @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors) {
-          <span class="error-message">URL slike je obavezan</span>
-        }
-      </div>
+      <app-image-upload folder="discounts" [currentUrl]="pendingPreviewUrl()" (pendingBlob)="onPendingImage($event)" />
+      @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors && !form.value.imageUrl) {
+        <span class="error-message">Slika je obavezna</span>
+      }
     }
 
     <!-- Step 1: Basic info -->
@@ -66,20 +63,37 @@
           }
         </select>
       </div>
-      @if (form.value.discountType !== 'BOGO') {
+      @if (form.value.discountType === 'PERCENT') {
         <div class="form-group">
-          @if (form.value.discountType === 'PERCENT') {
-            <label for="discountValue">Procenat popusta (%)</label>
-            <input id="discountValue" type="number" formControlName="discountValue" min="1" max="100" placeholder="npr. 20" />
-          } @else if (form.value.discountType === 'FIXED') {
-            <label for="discountValue">Iznos popusta (RSD)</label>
-            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
-          } @else {
-            <label for="discountValue">Nova cena (RSD)</label>
-            <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 990" />
-          }
+          <label for="discountValue">Procenat popusta (%)</label>
+          <input id="discountValue" type="number" formControlName="discountValue" min="1" max="100" placeholder="npr. 20" />
           @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
-            <span class="error-message">Unesite vrednost</span>
+            <span class="error-message">Unesite vrednost (1–100)</span>
+          }
+        </div>
+      }
+      @if (form.value.discountType === 'FIXED') {
+        <div class="form-group">
+          <label for="discountValue">Iznos popusta (RSD)</label>
+          <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
+          @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
+            <span class="error-message">Unesite iznos</span>
+          }
+        </div>
+      }
+      @if (form.value.discountType === 'NEW_PRICE') {
+        <div class="form-group">
+          <label for="oldPrice">Stara cena (RSD)</label>
+          <input id="oldPrice" type="number" formControlName="oldPrice" min="1" placeholder="npr. 2000" />
+          @if (form.controls.oldPrice.touched && form.controls.oldPrice.errors) {
+            <span class="error-message">Unesite staru cenu</span>
+          }
+        </div>
+        <div class="form-group">
+          <label for="newPrice">Nova cena (RSD)</label>
+          <input id="newPrice" type="number" formControlName="newPrice" min="1" placeholder="npr. 1500" />
+          @if (form.controls.newPrice.touched && form.controls.newPrice.errors) {
+            <span class="error-message">Unesite novu cenu (mora biti manja od stare)</span>
           }
         </div>
       }
@@ -97,8 +111,17 @@
         <input id="validUntil" type="date" formControlName="validUntil" />
       </div>
       <div class="form-group">
-        <label for="daysOfWeek">Dani (1=pon, 7=ned, odvojeni zarezom)</label>
-        <input id="daysOfWeek" type="text" formControlName="daysOfWeek" />
+        <label>Dani u nedelji</label>
+        <div class="day-picker">
+          @for (day of allDays; track day.value) {
+            <button
+              type="button"
+              class="day-picker__btn"
+              [class.day-picker__btn--active]="isDaySelected(day.value)"
+              (click)="toggleDay(day.value)"
+            >{{ day.label }}</button>
+          }
+        </div>
       </div>
       <div class="form-group">
         <label for="timeStart">Vreme od (opciono)</label>
@@ -121,12 +144,16 @@
       </div>
       @if (form.value.hasCoupons) {
         <div class="form-group">
-          <label for="totalCoupons">Ukupan broj kupona</label>
-          <input id="totalCoupons" type="number" formControlName="totalCoupons" min="1" />
+          <label for="totalCoupons">Ukupan broj kupona (opciono — prazno = neograničeno)</label>
+          <input id="totalCoupons" type="number" formControlName="totalCoupons" min="1" placeholder="npr. 100" />
         </div>
         <div class="form-group">
-          <label for="couponDuration">Trajanje kupona (minuta)</label>
-          <input id="couponDuration" type="number" formControlName="couponDuration" min="1" />
+          <label for="couponDuration">Trajanje kupona od preuzimanja</label>
+          <select id="couponDuration" formControlName="couponDuration">
+            @for (opt of couponDurationOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
         </div>
       }
     }
@@ -149,7 +176,7 @@
         <div class="wizard__review-item"><strong>Od:</strong> {{ form.value.validFrom }}</div>
         <div class="wizard__review-item"><strong>Do:</strong> {{ form.value.validUntil }}</div>
         @if (form.value.hasCoupons) {
-          <div class="wizard__review-item"><strong>Kuponi:</strong> {{ form.value.totalCoupons }} ({{ form.value.couponDuration }} min)</div>
+          <div class="wizard__review-item"><strong>Kuponi:</strong> {{ form.value.totalCoupons ?? 'neograničeno' }} · trajanje: {{ getDurationLabel(form.value.couponDuration) }}</div>
         }
       </div>
     }

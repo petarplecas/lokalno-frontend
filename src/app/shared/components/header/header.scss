@@ -3,33 +3,41 @@
 .header {
   position: sticky;
   top: 0;
-  display: grid;
-  grid-template-columns: 40px 1fr 40px;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 56px;
   padding: 0 $spacing-md;
   background: $color-surface;
   border-bottom: 1px solid $color-border;
   z-index: $z-header;
 
-  &__left {
-    // Empty spacer to balance the grid
-  }
-
-  &__logo {
+  &__brand {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: $spacing-sm;
     text-decoration: none;
+  }
+
+  &__logo-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: $color-primary;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
   }
 
-  &__icon {
+  &__profile {
     display: flex;
     align-items: center;
     justify-content: center;

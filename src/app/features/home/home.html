@@ -66,7 +66,21 @@
     }
 
     @if (geo.error()) {
-      <p class="home__location-error">{{ geo.error() }}</p>
+      <div class="home__location-error">
+        @if (geo.error() === 'denied') {
+          <p class="home__location-error-title">Lokacija je blokirana</p>
+          <p class="home__location-error-steps">
+            Da omogućite lokaciju:
+          </p>
+          <ol class="home__location-error-list">
+            <li>Kliknite na ikonu <strong>katanca</strong> (ili <strong>i</strong>) levo od adrese u pregledaču</li>
+            <li>Pronađite <strong>Lokacija</strong> i postavite na <strong>Dozvoli</strong></li>
+            <li>Osvežite stranicu</li>
+          </ol>
+        } @else {
+          <p>{{ geo.error() }}</p>
+        }
+      </div>
     }
   </div>
 

@@ -3,7 +3,6 @@ export enum DiscountType {
   FIXED = 'FIXED',
   NEW_PRICE = 'NEW_PRICE',
   BOGO = 'BOGO',
-  COUPON = 'COUPON',
 }
 
 export enum DiscountStatus {

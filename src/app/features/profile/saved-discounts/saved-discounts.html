@@ -21,7 +21,7 @@
           <img [src]="item.imageUrl" [alt]="item.title" class="saved__image" loading="lazy" />
           <div class="saved__info">
             <span class="saved__badge">
-              {{ item.discountType | discountLabel:item.discountValue }}
+              {{ item.discountType | discountLabel:item.discountValue:item.newPrice }}
             </span>
             <strong class="saved__title">{{ item.title }}</strong>
             <span class="saved__business">{{ item.business.name }}</span>

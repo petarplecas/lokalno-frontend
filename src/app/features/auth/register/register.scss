@@ -6,33 +6,47 @@
   justify-content: center;
   min-height: 100dvh;
   padding: $spacing-md;
-  background-color: $color-background;
+  background: $gradient-primary;
 }
 
 .auth-card {
   width: 100%;
   max-width: 400px;
   background: $color-surface;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-md;
-  padding: $spacing-xl;
-
-  h1 {
-    font-family: $font-heading;
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: $spacing-lg;
-    color: $color-text;
-  }
+  border-radius: $radius-xl;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 15%);
+  padding: $spacing-xl $spacing-xl $spacing-lg;
 }
 
-.auth-logo {
-  text-align: center;
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: $spacing-lg;
 
-  img {
-    height: 48px;
-    width: auto;
+  &__icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__name {
+    font-family: $font-heading;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: $gradient-primary;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  &__tagline {
+    font-family: $font-body;
+    font-size: 0.85rem;
+    color: $color-text-secondary;
+    margin: $spacing-xs 0 0;
   }
 }
 
@@ -44,12 +58,6 @@
   font-size: 0.875rem;
   margin-bottom: $spacing-md;
   text-align: center;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
 }
 
 .auth-submit {
@@ -68,6 +76,6 @@
 
   a {
     color: $color-primary;
-    font-weight: 500;
+    font-weight: 600;
   }
 }

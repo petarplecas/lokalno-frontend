@@ -2,7 +2,7 @@
   <div class="discount-card__image">
     <img [src]="discount().imageUrl" [alt]="discount().title" loading="lazy" />
     <span class="discount-card__badge">
-      {{ discount().discountType | discountLabel:discount().discountValue }}
+      {{ discount().discountType | discountLabel:discount().discountValue:discount().newPrice }}
     </span>
   </div>
   <div class="discount-card__body">

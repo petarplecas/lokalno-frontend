@@ -45,7 +45,6 @@ export class EditDiscount implements OnInit {
     [DiscountType.FIXED]: 'Fiksni iznos (RSD)',
     [DiscountType.BOGO]: '1+1 gratis',
     [DiscountType.NEW_PRICE]: 'Nova cena',
-    [DiscountType.COUPON]: 'Kupon',
   };
 
   readonly form = this.fb.nonNullable.group({

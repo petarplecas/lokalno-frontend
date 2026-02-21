@@ -39,12 +39,12 @@ export class GeolocationService {
         this.loading.set(false);
         if (err.code === err.PERMISSION_DENIED) {
           this.permission.set('denied');
-          this.error.set('Pristup lokaciji je odbijen. Omogućite lokaciju u podešavanjima pregledača.');
+          this.error.set('denied');
         } else if (err.code === err.POSITION_UNAVAILABLE) {
           this.permission.set('unavailable');
-          this.error.set('Lokacija nije dostupna');
+          this.error.set('Lokacija trenutno nije dostupna. Proverite da li je GPS uključen.');
         } else {
-          this.error.set('Greška pri dobijanju lokacije');
+          this.error.set('Nije moguće dobiti lokaciju. Pokušajte ponovo.');
         }
       },
       {
