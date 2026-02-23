@@ -43,6 +43,7 @@
         @if (form.controls.password.touched && form.controls.password.errors) {
           <span class="error-message">Lozinka je obavezna.</span>
         }
+        <a routerLink="/auth/forgot-password" class="forgot-link">Zaboravili ste lozinku?</a>
       </div>
 
       <button type="submit" class="btn-primary auth-submit" [disabled]="loading()">

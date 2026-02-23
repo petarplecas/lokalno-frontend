@@ -124,6 +124,30 @@ export class AuthService {
     );
   }
 
+  forgotPassword(email: string): Observable<void> {
+    return this.http
+      .post<void>(`${this.authUrl}/forgot-password`, { email })
+      .pipe(map(() => undefined));
+  }
+
+  resetPassword(token: string, password: string): Observable<void> {
+    return this.http
+      .post<void>(`${this.authUrl}/reset-password`, { token, password })
+      .pipe(map(() => undefined));
+  }
+
+  verifyEmail(token: string): Observable<void> {
+    return this.http
+      .post<void>(`${this.authUrl}/verify-email`, { token })
+      .pipe(map(() => undefined));
+  }
+
+  resendVerification(): Observable<void> {
+    return this.http
+      .post<void>(`${this.authUrl}/resend-verification`, {}, { withCredentials: true })
+      .pipe(map(() => undefined));
+  }
+
   private clearState(): void {
     this.currentUser.set(null);
     this.accessToken.set(null);

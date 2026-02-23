@@ -1,0 +1,46 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <img src="assets/logos/lokalno-logo-full.svg" alt="Lokalno logo" class="auth-brand__icon" />
+      <h1 class="auth-brand__name">LOKALNO</h1>
+    </div>
+
+    @if (loading()) {
+    <div class="auth-loading">
+      <app-spinner size="md" />
+      <p>Verificiramo email adresu...</p>
+    </div>
+    } @else if (success()) {
+    <div class="auth-success" role="status">
+      <span class="success-icon">✓</span>
+      <p>Email je uspešno verificiran!</p>
+      <p class="success-note">Možeš koristiti sve funkcionalnosti aplikacije.</p>
+    </div>
+    <p class="auth-link">
+      <a routerLink="/home">Idi na početnu</a>
+    </p>
+    } @else {
+    <div class="auth-error-state">
+      <span class="error-icon">✕</span>
+      <p>{{ error() }}</p>
+    </div>
+
+    @if (resendSuccess()) {
+    <div class="auth-success resend-success" role="status">
+      <p>Novi verifikacijski email je poslat. Proveri inbox.</p>
+    </div>
+    } @else {
+    <button class="btn-primary auth-submit" (click)="resend()" [disabled]="resendLoading()">
+      @if (resendLoading()) {
+      <app-spinner size="sm" />
+      }
+      Pošalji novi email
+    </button>
+    }
+
+    <p class="auth-link">
+      <a routerLink="/auth/login">Nazad na prijavu</a>
+    </p>
+    }
+  </div>
+</div>

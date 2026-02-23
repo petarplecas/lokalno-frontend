@@ -1,0 +1,146 @@
+@use 'styles/variables' as *;
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: $spacing-md;
+  background: $gradient-primary;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: $color-surface;
+  border-radius: $radius-xl;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 15%);
+  padding: $spacing-xl $spacing-xl $spacing-lg;
+}
+
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  &__icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__name {
+    font-family: $font-heading;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: $gradient-primary;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+}
+
+.auth-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+
+  p {
+    font-size: 0.9rem;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.auth-success {
+  text-align: center;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.08);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+
+  .success-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: $color-primary;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $color-text;
+    margin: 0 0 $spacing-xs;
+  }
+
+  .success-note {
+    font-size: 0.8rem;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.resend-success {
+  padding: $spacing-sm $spacing-md;
+
+  p {
+    margin: 0;
+  }
+}
+
+.auth-error-state {
+  text-align: center;
+  padding: $spacing-md;
+  background: rgba($color-error, 0.08);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+
+  .error-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: $color-error;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $color-text;
+    margin: 0;
+  }
+}
+
+.auth-submit {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: 1rem;
+  gap: $spacing-sm;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: $spacing-md;
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+
+  a {
+    color: $color-primary;
+    font-weight: 600;
+  }
+}

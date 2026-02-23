@@ -135,7 +135,7 @@ describe('Login', () => {
 
   it('should show error message on login failure', () => {
     mockAuthService.login.mockReturnValue(
-      throwError(() => ({ error: { message: 'Invalid credentials' } })),
+      throwError(() => ({ error: { message: 'Pogrešan email ili lozinka' } })),
     );
     const fixture = TestBed.createComponent(Login);
     fixture.detectChanges();
@@ -145,8 +145,31 @@ describe('Login', () => {
     });
     fixture.componentInstance.onSubmit();
     fixture.detectChanges();
-    expect(fixture.componentInstance.error()).toBe('Invalid credentials');
+    expect(fixture.componentInstance.error()).toBe('Pogrešan email ili lozinka');
     expect(fixture.nativeElement.querySelector('.auth-error')).toBeTruthy();
+  });
+
+  it('should show fallback Serbian error when no message from server', () => {
+    mockAuthService.login.mockReturnValue(
+      throwError(() => ({ error: {} })),
+    );
+    const fixture = TestBed.createComponent(Login);
+    fixture.detectChanges();
+    fixture.componentInstance.form.setValue({
+      email: 'test@test.com',
+      password: 'wrong',
+    });
+    fixture.componentInstance.onSubmit();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.error()).toBe('Prijava nije uspela. Pokušajte ponovo.');
+  });
+
+  it('should render forgot password link', () => {
+    const fixture = TestBed.createComponent(Login);
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('a.forgot-link') as HTMLAnchorElement | null;
+    expect(link).toBeTruthy();
+    expect(link?.textContent?.trim()).toBe('Zaboravili ste lozinku?');
   });
 
   it('should show loading state during submission', () => {
