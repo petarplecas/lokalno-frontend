@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.lokalno.rs',
+  apiUrl: 'https://api.ulokalu.rs',
 };
