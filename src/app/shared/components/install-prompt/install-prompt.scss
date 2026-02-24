@@ -10,9 +10,8 @@
   box-shadow: $shadow-lg;
   padding: $spacing-md;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $spacing-md;
+  flex-direction: column;
+  gap: $spacing-sm;
   z-index: $z-modal;
   animation: slideUp 0.3s ease-out;
 }
@@ -41,13 +40,12 @@
   font-family: $font-body;
   font-size: 14px;
   color: $color-text;
-  white-space: nowrap;
 }
 
 .install-actions {
   display: flex;
   gap: $spacing-xs;
-  flex-shrink: 0;
+  justify-content: flex-end;
 }
 
 .btn-install {
