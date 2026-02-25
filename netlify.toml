@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build -- --configuration=production"
+  command = "sed \"s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/\" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts && sed \"s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/\" src/environments/environment.example.ts > src/environments/environment.ts && npm run build -- --configuration=production"
   publish = "dist/lokalno-frontend/browser"
 
 # SPA routing — sve rute idu na index.html
