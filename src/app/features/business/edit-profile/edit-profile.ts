@@ -12,10 +12,11 @@ import { ToastService } from '../../../core/services/toast.service';
 import { BUSINESS_CATEGORIES, MyBusiness } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { MapPicker, SelectedLocation } from '../../../shared/components/map-picker/map-picker';
 
 @Component({
   selector: 'app-edit-business-profile',
-  imports: [ReactiveFormsModule, Spinner, BackButton],
+  imports: [ReactiveFormsModule, Spinner, BackButton, MapPicker],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +38,8 @@ export class EditBusinessProfile implements OnInit {
     subCategory: [''],
     description: ['', [Validators.maxLength(500)]],
     address: ['', [Validators.required]],
+    latitude: [0 as number],
+    longitude: [0 as number],
     phone: ['', [Validators.required]],
     website: [''],
   });
@@ -51,6 +54,10 @@ export class EditBusinessProfile implements OnInit {
     });
   }
 
+  readonly currentLat = signal(44.8176);
+  readonly currentLng = signal(20.4633);
+  readonly currentAddress = signal('');
+
   private populateForm(biz: MyBusiness): void {
     this.form.patchValue({
       name: biz.name,
@@ -58,10 +65,23 @@ export class EditBusinessProfile implements OnInit {
       subCategory: biz.subCategory ?? '',
       description: biz.description ?? '',
       address: biz.address,
+      latitude: biz.latitude,
+      longitude: biz.longitude,
       phone: biz.phone,
       website: biz.website ?? '',
     });
+    this.currentLat.set(biz.latitude);
+    this.currentLng.set(biz.longitude);
+    this.currentAddress.set(biz.address);
     this.loading.set(false);
+  }
+
+  onLocationSelected(loc: SelectedLocation): void {
+    this.form.patchValue({
+      address: loc.address,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+    });
   }
 
   onSubmit(): void {
@@ -82,6 +102,8 @@ export class EditBusinessProfile implements OnInit {
         subCategory: v.subCategory || undefined,
         description: v.description || undefined,
         address: v.address,
+        latitude: v.latitude || undefined,
+        longitude: v.longitude || undefined,
         phone: v.phone,
         website: v.website || undefined,
       })

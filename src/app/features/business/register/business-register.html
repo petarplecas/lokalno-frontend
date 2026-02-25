@@ -84,13 +84,13 @@
     <!-- Step 3: Address -->
     @if (currentStep() === 3) {
       <h2>Adresa</h2>
-      <div class="form-group">
-        <label for="address">Adresa</label>
-        <input id="address" type="text" formControlName="address" placeholder="npr. Knez Mihailova 1, Beograd" />
-        @if (form.controls.address.touched && form.controls.address.errors) {
-          <span class="error-message">Unesite adresu</span>
-        }
-      </div>
+      <p class="wizard__hint">Pretražite adresu ili prevucite pin na tačnu lokaciju.</p>
+      <app-map-picker
+        (locationSelected)="onLocationSelected($event)"
+      />
+      @if (form.controls.address.touched && form.controls.address.errors) {
+        <span class="error-message">Izaberite adresu na mapi</span>
+      }
     }
 
     <!-- Step 4: Contact -->

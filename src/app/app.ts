@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { ToastContainer } from './shared/components/toast-container/toast-container';
@@ -12,12 +12,8 @@ import { InstallPrompt } from './shared/components/install-prompt/install-prompt
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App implements OnInit {
+export class App {
   private readonly authService = inject(AuthService);
 
   readonly isInitialized = this.authService.isInitialized;
-
-  ngOnInit(): void {
-    this.authService.initializeAuth().subscribe();
-  }
 }

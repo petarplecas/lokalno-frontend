@@ -39,11 +39,11 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should call initializeAuth on init', async () => {
+  it('should expose isInitialized from authService', async () => {
     const { mockAuthService } = await setup();
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    expect(mockAuthService.initializeAuth).toHaveBeenCalled();
+    expect(fixture.componentInstance.isInitialized).toBe(mockAuthService.isInitialized);
   });
 
   it('should show spinner when not initialized', async () => {

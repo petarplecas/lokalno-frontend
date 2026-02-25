@@ -1,0 +1,37 @@
+@use 'styles/variables' as *;
+
+.city-autocomplete {
+  width: 100%;
+
+  // Override Mapbox geocoder default styles to match app design
+  :global(.mapboxgl-ctrl-geocoder) {
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    font-family: $font-body;
+    font-size: 0.938rem;
+
+    input {
+      color: $color-text;
+      height: 44px;
+      padding: 0 $spacing-md 0 40px;
+
+      &::placeholder {
+        color: $color-text-secondary;
+      }
+
+      &:focus {
+        border-color: $color-primary;
+        outline: none;
+      }
+    }
+
+    .mapboxgl-ctrl-geocoder--icon-search {
+      top: 13px;
+      left: 12px;
+      fill: $color-text-secondary;
+    }
+  }
+}

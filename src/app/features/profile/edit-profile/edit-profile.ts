@@ -12,10 +12,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { BackButton } from '../../../shared/components/back-button/back-button';
 import { Spinner } from '../../../shared/components/spinner/spinner';
+import { CityAutocomplete } from '../../../shared/components/city-autocomplete/city-autocomplete';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, BackButton, Spinner],
+  imports: [ReactiveFormsModule, BackButton, Spinner, CityAutocomplete],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +35,7 @@ export class EditProfile implements OnInit {
   });
 
   readonly loading = signal(false);
+  readonly currentCity = signal('');
 
   ngOnInit(): void {
     const user = this.authService.user();
@@ -43,7 +45,12 @@ export class EditProfile implements OnInit {
         lastName: user.lastName,
         city: user.city ?? '',
       });
+      this.currentCity.set(user.city ?? '');
     }
+  }
+
+  onCitySelected(city: string): void {
+    this.form.patchValue({ city });
   }
 
   onSubmit(): void {

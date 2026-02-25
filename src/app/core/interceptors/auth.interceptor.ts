@@ -55,7 +55,9 @@ export const authInterceptor: HttpInterceptorFn = (
             isRefreshing = false;
 
             if (!refreshed) {
-              authService.logout();
+              if (authService.isInitialized()) {
+                authService.logout();
+              }
               return throwError(() => error);
             }
 
@@ -68,7 +70,9 @@ export const authInterceptor: HttpInterceptorFn = (
           }),
           catchError((refreshError) => {
             isRefreshing = false;
-            authService.logout();
+            if (authService.isInitialized()) {
+              authService.logout();
+            }
             return throwError(() => refreshError);
           }),
         );

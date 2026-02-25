@@ -10,10 +10,11 @@ import { BusinessService } from '../../../core/services/business.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { BUSINESS_CATEGORIES } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
+import { MapPicker, SelectedLocation } from '../../../shared/components/map-picker/map-picker';
 
 @Component({
   selector: 'app-business-register',
-  imports: [ReactiveFormsModule, Spinner],
+  imports: [ReactiveFormsModule, Spinner, MapPicker],
   templateUrl: './business-register.html',
   styleUrl: './business-register.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,10 +58,18 @@ export class BusinessRegister {
     ['email', 'password', 'firstName', 'lastName'],
     ['name'],
     ['category'],
-    ['address'],
+    ['address', 'latitude', 'longitude'],
     ['phone'],
     [],
   ];
+
+  onLocationSelected(loc: SelectedLocation): void {
+    this.form.patchValue({
+      address: loc.address,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+    });
+  }
 
   isStepValid(step?: number): boolean {
     const fields = this.stepFields[step ?? this.currentStep()];

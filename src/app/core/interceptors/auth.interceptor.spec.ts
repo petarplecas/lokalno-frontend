@@ -20,6 +20,7 @@ describe('authInterceptor', () => {
     token: jest.Mock;
     refreshAccessToken: jest.Mock;
     logout: jest.Mock;
+    isInitialized: jest.Mock;
   };
 
   const apiUrl = environment.apiUrl;
@@ -29,6 +30,7 @@ describe('authInterceptor', () => {
       token: jest.fn().mockReturnValue(null),
       refreshAccessToken: jest.fn(),
       logout: jest.fn(),
+      isInitialized: jest.fn().mockReturnValue(true),
     };
 
     TestBed.configureTestingModule({

@@ -42,8 +42,13 @@
       </div>
 
       <div class="form-group">
-        <label for="address">Adresa</label>
-        <input id="address" type="text" formControlName="address" />
+        <label>Adresa i lokacija</label>
+        <app-map-picker
+          [initialLat]="currentLat()"
+          [initialLng]="currentLng()"
+          [initialAddress]="currentAddress()"
+          (locationSelected)="onLocationSelected($event)"
+        />
         @if (form.controls.address.touched && form.controls.address.errors) {
           <span class="error-message">Adresa je obavezna</span>
         }

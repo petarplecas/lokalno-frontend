@@ -22,8 +22,11 @@
     </div>
 
     <div class="form-group">
-      <label for="city">Grad</label>
-      <input id="city" type="text" formControlName="city" placeholder="Unesite grad" />
+      <label>Grad</label>
+      <app-city-autocomplete
+        [initialValue]="currentCity()"
+        (citySelected)="onCitySelected($event)"
+      />
     </div>
 
     <button type="submit" class="btn-primary edit-profile__submit" [disabled]="loading()">

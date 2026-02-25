@@ -108,6 +108,12 @@
   }
 }
 
+.wizard__hint {
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+}
+
 .wizard__nav {
   display: flex;
   justify-content: space-between;
