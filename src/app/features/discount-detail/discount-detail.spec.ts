@@ -174,6 +174,33 @@ describe('DiscountDetail', () => {
     expect(fixture.componentInstance.isFavorite()).toBe(true);
   });
 
+  it('should toggle save state', () => {
+    const fixture = TestBed.createComponent(DiscountDetail);
+    fixture.detectChanges();
+
+    fixture.componentInstance.toggleSave();
+    expect(mockUserService.saveDiscount).toHaveBeenCalledWith('d1');
+    expect(fixture.componentInstance.isSaved()).toBe(true);
+  });
+
+  it('should remove saved discount when already saved', () => {
+    mockUserService.isSaved.mockReturnValue(of(true));
+    const fixture = TestBed.createComponent(DiscountDetail);
+    fixture.detectChanges();
+
+    fixture.componentInstance.toggleSave();
+    expect(mockUserService.removeSavedDiscount).toHaveBeenCalledWith('d1');
+    expect(fixture.componentInstance.isSaved()).toBe(false);
+  });
+
+  it('should render business name as link to business profile', () => {
+    const fixture = TestBed.createComponent(DiscountDetail);
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('.detail__business-link');
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toContain('/businesses/b1');
+  });
+
   it('should show error toast on fetch failure', () => {
     mockDiscountService.getDiscount.mockReturnValue(throwError(() => new Error('fail')));
     const fixture = TestBed.createComponent(DiscountDetail);

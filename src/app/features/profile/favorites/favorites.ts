@@ -5,6 +5,7 @@ import {
   signal,
   OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { FavoriteBusinessItem } from '../../../core/models';
 import { BackButton } from '../../../shared/components/back-button/back-button';
@@ -20,6 +21,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 })
 export class Favorites implements OnInit {
   private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
 
   readonly favorites = signal<FavoriteBusinessItem[]>([]);
   readonly loading = signal(true);
@@ -32,5 +34,9 @@ export class Favorites implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  goToBusiness(id: string): void {
+    void this.router.navigate(['/businesses', id]);
   }
 }

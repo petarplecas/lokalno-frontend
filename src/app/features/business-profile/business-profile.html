@@ -1,0 +1,119 @@
+@if (loading()) {
+  <div class="biz-profile__loading">
+    <app-spinner size="lg" />
+  </div>
+} @else if (business(); as biz) {
+  <div class="biz-profile">
+    <!-- Sticky header -->
+    <div class="biz-profile__header">
+      <app-back-button />
+    </div>
+
+    <!-- Hero -->
+    <div class="biz-profile__hero">
+      <div class="biz-profile__logo">
+        @if (biz.logoUrl) {
+          <img [src]="biz.logoUrl" [alt]="biz.name" />
+        } @else {
+          <span>{{ biz.name.charAt(0) }}</span>
+        }
+      </div>
+      <div class="biz-profile__hero-info">
+        <h1 class="biz-profile__name">{{ biz.name }}</h1>
+        <span class="biz-profile__category">{{ biz.category }} · {{ biz.subCategory }}</span>
+        <div class="biz-profile__meta">
+          <span class="biz-profile__followers">{{ biz.followersCount }} pratilaca</span>
+          <button
+            class="biz-profile__follow-btn"
+            [class.biz-profile__follow-btn--active]="isFavorite()"
+            (click)="toggleFavorite()"
+            [attr.aria-label]="isFavorite() ? 'Otprati biznis' : 'Prati biznis'"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              @if (isFavorite()) {
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" />
+              } @else {
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              }
+            </svg>
+            {{ isFavorite() ? 'Praćeno' : 'Prati' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info section: description, phone, website -->
+    @if (biz.description || biz.phone || biz.website) {
+      <div class="biz-profile__info">
+        @if (biz.description) {
+          <p class="biz-profile__description">{{ biz.description }}</p>
+        }
+        @if (biz.phone) {
+          <a class="biz-profile__contact" [href]="'tel:' + biz.phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="16" height="16">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            {{ biz.phone }}
+          </a>
+        }
+        @if (biz.website) {
+          <a class="biz-profile__contact" [href]="biz.website" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="16" height="16">
+              <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            {{ biz.website }}
+          </a>
+        }
+      </div>
+    }
+
+    <!-- Location -->
+    <div class="biz-profile__location">
+      <h2 class="biz-profile__section-title">Lokacija</h2>
+      <p class="biz-profile__address">{{ biz.address }}</p>
+      @if (biz.latitude && biz.longitude) {
+        <app-map-view
+          [lat]="biz.latitude"
+          [lng]="biz.longitude"
+          [label]="biz.name"
+        />
+      }
+    </div>
+
+    <!-- Discounts feed -->
+    <div class="biz-profile__discounts" appInfiniteScroll (loadMore)="onLoadMore()">
+      <h2 class="biz-profile__section-title">
+        Aktivni popusti
+        @if (biz.activeDiscountsCount > 0) {
+          <span class="biz-profile__count">{{ biz.activeDiscountsCount }}</span>
+        }
+      </h2>
+
+      @if (discountsLoading()) {
+        <div class="biz-profile__discounts-loading">
+          <app-spinner size="md" />
+        </div>
+      } @else if (discounts().length === 0) {
+        <app-empty-state
+          icon="🏷️"
+          title="Nema aktivnih popusta"
+          message="Ovaj biznis trenutno nema aktivnih popusta"
+        />
+      } @else {
+        <div class="biz-profile__grid">
+          @for (discount of discounts(); track discount.id) {
+            <app-discount-card
+              [discount]="discount"
+              (clicked)="onDiscountClick($event)"
+            />
+          }
+        </div>
+        @if (discountsLoadingMore()) {
+          <div class="biz-profile__load-more">
+            <app-spinner size="sm" />
+          </div>
+        }
+      }
+    </div>
+  </div>
+}

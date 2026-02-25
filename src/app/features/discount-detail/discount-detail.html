@@ -11,35 +11,58 @@
       <span class="detail__badge">
         {{ d.discountType | discountLabel:d.discountValue:d.newPrice }}
       </span>
-      <div class="detail__actions">
-        <button
-          class="detail__action-btn"
-          [class.detail__action-btn--active]="isFavorite()"
-          (click)="toggleFavorite()"
-          [attr.aria-label]="isFavorite() ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            @if (isFavorite()) {
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" />
-            } @else {
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            }
-          </svg>
-        </button>
-      </div>
     </div>
 
     <!-- Business info -->
     <div class="detail__business">
-      <div class="detail__business-info">
-        <strong>{{ d.business.name }}</strong>
-        <span class="detail__business-category">{{ d.business.category }}</span>
-      </div>
+      <a
+        class="detail__business-link"
+        [routerLink]="['/businesses', d.business.id]"
+        aria-label="Pogledaj profil biznisa {{ d.business.name }}"
+      >
+        <div class="detail__business-info">
+          <strong>{{ d.business.name }}</strong>
+          <span class="detail__business-category">{{ d.business.category }}</span>
+        </div>
+        <svg class="detail__business-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </a>
+      <button
+        class="detail__action-btn"
+        [class.detail__action-btn--active]="isFavorite()"
+        (click)="toggleFavorite()"
+        [attr.aria-label]="isFavorite() ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          @if (isFavorite()) {
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" />
+          } @else {
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          }
+        </svg>
+      </button>
     </div>
 
     <!-- Title & description -->
     <div class="detail__content">
-      <h1 class="detail__title">{{ d.title }}</h1>
+      <div class="detail__title-row">
+        <h1 class="detail__title">{{ d.title }}</h1>
+        <button
+          class="detail__action-btn"
+          [class.detail__action-btn--active]="isSaved()"
+          (click)="toggleSave()"
+          [attr.aria-label]="isSaved() ? 'Ukloni iz sačuvanih' : 'Sačuvaj popust'"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            @if (isSaved()) {
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="currentColor" />
+            } @else {
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            }
+          </svg>
+        </button>
+      </div>
       @if (d.description) {
         <p class="detail__description">{{ d.description }}</p>
       }
@@ -80,6 +103,13 @@
     <div class="detail__info">
       <h2 class="detail__section-title">Lokacija</h2>
       <p class="detail__address">{{ d.business.address }}</p>
+      @if (d.business.latitude && d.business.longitude) {
+        <app-map-view
+          [lat]="d.business.latitude"
+          [lng]="d.business.longitude"
+          [label]="d.business.name"
+        />
+      }
     </div>
 
     <!-- Claimed coupon display -->

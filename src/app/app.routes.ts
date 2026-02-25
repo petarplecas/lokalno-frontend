@@ -75,6 +75,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'businesses/:id',
+        loadComponent: () =>
+          import('./features/business-profile/business-profile').then(
+            (m) => m.BusinessProfile,
+          ),
+      },
+      {
         path: 'coupons',
         canActivate: [authGuard],
         loadComponent: () =>
