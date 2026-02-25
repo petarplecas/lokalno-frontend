@@ -17,14 +17,14 @@ import { BusinessDetail } from '../../core/models/business.model';
 import { Discount, DiscountStatus } from '../../core/models';
 import { DiscountCard } from '../../shared/components/discount-card/discount-card';
 import { MapView } from '../../shared/components/map-view/map-view';
-import { BackButton } from '../../shared/components/back-button/back-button';
+import { PageHeader } from '../../shared/components/page-header/page-header';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
 
 @Component({
   selector: 'app-business-profile',
-  imports: [DiscountCard, MapView, BackButton, Spinner, EmptyState, InfiniteScrollDirective],
+  imports: [DiscountCard, MapView, PageHeader, Spinner, EmptyState, InfiniteScrollDirective],
   templateUrl: './business-profile.html',
   styleUrl: './business-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

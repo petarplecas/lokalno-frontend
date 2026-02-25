@@ -3,11 +3,8 @@
     <app-spinner size="lg" />
   </div>
 } @else {
+  <app-page-header title="Izmeni profil biznisa" />
   <section class="edit-profile">
-    <div class="edit-profile__top">
-      <app-back-button />
-      <h1 class="edit-profile__title">Izmeni profil biznisa</h1>
-    </div>
 
     @if (error()) {
       <div class="edit-profile__error">{{ error() }}</div>

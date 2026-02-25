@@ -52,16 +52,14 @@
 
     @if (locationActive()) {
       <div class="home__radius">
-        <input
-          type="range"
-          min="1"
-          max="50"
-          step="1"
-          [value]="radiusKm()"
-          (input)="onRadiusChange($event)"
-          aria-label="Radius pretrage"
-        />
-        <span class="home__radius-label">{{ radiusKm() }} km</span>
+        @for (option of radiusOptions; track option) {
+          <button
+            class="home__radius-chip"
+            [class.home__radius-chip--active]="radiusKm() === option"
+            (click)="onRadiusSelect(option)"
+            [attr.aria-pressed]="radiusKm() === option"
+          >{{ radiusLabel(option) }}</button>
+        }
       </div>
     }
 

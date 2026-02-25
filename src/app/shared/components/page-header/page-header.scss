@@ -1,0 +1,55 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+.page-header {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  height: 56px;
+  padding: 0 $spacing-md;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 0 rgba(32, 178, 170, 0.15), 0 2px 12px rgba(0, 0, 0, 0.06);
+  z-index: $z-header;
+
+  &__back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    border-radius: $radius-full;
+    color: $color-text;
+    transition: background-color 0.2s, color 0.2s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(32, 178, 170, 0.08);
+      color: $color-primary;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $color-text;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__spacer {
+    width: 44px;
+  }
+}

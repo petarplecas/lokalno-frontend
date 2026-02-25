@@ -10,13 +10,13 @@ import { Location } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { CityAutocomplete } from '../../../shared/components/city-autocomplete/city-autocomplete';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, BackButton, Spinner, CityAutocomplete],
+  imports: [ReactiveFormsModule, PageHeader, Spinner, CityAutocomplete],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -14,12 +14,12 @@ import {
 import { Location } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 
 @Component({
   selector: 'app-change-password',
-  imports: [ReactiveFormsModule, BackButton, Spinner],
+  imports: [ReactiveFormsModule, PageHeader, Spinner],
   templateUrl: './change-password.html',
   styleUrl: './change-password.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

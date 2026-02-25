@@ -12,12 +12,12 @@ import { UploadService } from '../../../core/services/upload.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { DiscountType, DiscountStatus } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ImageUpload, PendingImageBlob } from '../../../shared/components/image-upload/image-upload';
 
 @Component({
   selector: 'app-create-discount',
-  imports: [ReactiveFormsModule, Spinner, BackButton, ImageUpload],
+  imports: [ReactiveFormsModule, Spinner, PageHeader, ImageUpload],
   templateUrl: './create-discount.html',
   styleUrl: './create-discount.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

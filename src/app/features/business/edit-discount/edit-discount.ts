@@ -11,12 +11,12 @@ import { DiscountService } from '../../../core/services/discount.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { DiscountType, Discount } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-edit-discount',
-  imports: [ReactiveFormsModule, Spinner, BackButton, ConfirmDialog],
+  imports: [ReactiveFormsModule, Spinner, PageHeader, ConfirmDialog],
   templateUrl: './edit-discount.html',
   styleUrl: '../create-discount/create-discount.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

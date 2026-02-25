@@ -8,13 +8,13 @@ import {
 import { Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { FavoriteBusinessItem } from '../../../core/models';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'app-favorites',
-  imports: [BackButton, Spinner, EmptyState],
+  imports: [PageHeader, Spinner, EmptyState],
   templateUrl: './favorites.html',
   styleUrl: './favorites.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

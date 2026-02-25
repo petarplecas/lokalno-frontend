@@ -24,6 +24,7 @@ export class MapView implements AfterViewInit, OnDestroy {
   readonly lat = input.required<number>();
   readonly lng = input.required<number>();
   readonly label = input<string>('');
+  readonly interactive = input(false);
 
   readonly mapContainer = viewChild<ElementRef>('mapContainer');
 
@@ -55,7 +56,7 @@ export class MapView implements AfterViewInit, OnDestroy {
       style: 'mapbox://styles/mapbox/streets-v12',
       center: [this.lng(), this.lat()],
       zoom: 15,
-      interactive: false,
+      interactive: this.interactive(),
     });
 
     new mapboxgl.Marker({ color: '#20B2AA' })

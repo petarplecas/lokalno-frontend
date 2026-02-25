@@ -11,12 +11,12 @@ import { AdminService } from '../../../core/services/admin.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { BusinessDetail, BusinessStatus } from '../../../core/models/business.model';
 import { Spinner } from '../../../shared/components/spinner/spinner';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-business-review',
-  imports: [DatePipe, Spinner, BackButton, ConfirmDialog],
+  imports: [DatePipe, Spinner, PageHeader, ConfirmDialog],
   templateUrl: './business-review.html',
   styleUrl: './business-review.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,7 +64,13 @@ export class BusinessReview implements OnInit {
   onRejectConfirm(confirmed: boolean): void {
     this.showRejectDialog.set(false);
     if (!confirmed) return;
-    this.updateStatus(BusinessStatus.SUSPENDED);
+    const biz = this.business();
+    // PENDING → REJECTED (odbijanje zahteva), APPROVED → SUSPENDED (suspenzija aktivnog biznisa)
+    const status =
+      biz?.status === BusinessStatus.PENDING
+        ? BusinessStatus.REJECTED
+        : BusinessStatus.SUSPENDED;
+    this.updateStatus(status);
   }
 
   private updateStatus(status: BusinessStatus): void {
@@ -75,8 +81,13 @@ export class BusinessReview implements OnInit {
     this.adminService.updateBusinessStatus(biz.id, status).subscribe({
       next: () => {
         this.actionLoading.set(false);
-        const label = status === BusinessStatus.APPROVED ? 'odobren' : 'suspendovan';
-        this.toastService.success(`Biznis je ${label}.`);
+        const labels: Record<BusinessStatus, string> = {
+          [BusinessStatus.APPROVED]: 'odobren',
+          [BusinessStatus.REJECTED]: 'odbijen',
+          [BusinessStatus.SUSPENDED]: 'suspendovan',
+          [BusinessStatus.PENDING]: 'ažuriran',
+        };
+        this.toastService.success(`Biznis je ${labels[status]}.`);
         void this.router.navigate(['/admin/businesses']);
       },
       error: () => {
@@ -92,6 +103,8 @@ export class BusinessReview implements OnInit {
         return 'Na čekanju';
       case BusinessStatus.APPROVED:
         return 'Odobren';
+      case BusinessStatus.REJECTED:
+        return 'Odbijen';
       case BusinessStatus.SUSPENDED:
         return 'Suspendovan';
     }

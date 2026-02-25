@@ -11,12 +11,12 @@ import { BusinessService } from '../../../core/services/business.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { BUSINESS_CATEGORIES, MyBusiness } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { MapPicker, SelectedLocation } from '../../../shared/components/map-picker/map-picker';
 
 @Component({
   selector: 'app-edit-business-profile',
-  imports: [ReactiveFormsModule, Spinner, BackButton, MapPicker],
+  imports: [ReactiveFormsModule, Spinner, PageHeader, MapPicker],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

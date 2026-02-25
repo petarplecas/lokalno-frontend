@@ -4,10 +4,7 @@
   </div>
 } @else if (business(); as biz) {
   <div class="biz-profile">
-    <!-- Sticky header -->
-    <div class="biz-profile__header">
-      <app-back-button />
-    </div>
+    <app-page-header [title]="biz.name" />
 
     <!-- Hero -->
     <div class="biz-profile__hero">
@@ -76,6 +73,7 @@
           [lat]="biz.latitude"
           [lng]="biz.longitude"
           [label]="biz.name"
+          [interactive]="true"
         />
       }
     </div>

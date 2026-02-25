@@ -62,6 +62,7 @@ export class Home implements OnInit {
 
   readonly radiusKm = signal(5);
   readonly locationActive = signal(false);
+  readonly radiusOptions = [0.5, 1, 2, 5, 10, 20];
 
   readonly error = signal(false);
   readonly hasMore = computed(() => this.currentPage() < this.totalPages());
@@ -136,12 +137,15 @@ export class Home implements OnInit {
     setTimeout(() => clearInterval(checkInterval), 15000);
   }
 
-  onRadiusChange(event: Event): void {
-    const value = +(event.target as HTMLInputElement).value;
+  onRadiusSelect(value: number): void {
     this.radiusKm.set(value);
     if (this.locationActive()) {
       this.loadDiscounts(true);
     }
+  }
+
+  radiusLabel(value: number): string {
+    return value < 1 ? '500 m' : value + ' km';
   }
 
   onRetry(): void {

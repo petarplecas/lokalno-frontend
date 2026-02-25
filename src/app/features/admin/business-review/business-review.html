@@ -1,6 +1,5 @@
+<app-page-header title="Pregled biznisa" />
 <div class="business-review">
-  <app-back-button />
-
   @if (loading()) {
     <div class="business-review__loading">
       <app-spinner size="lg" />
@@ -20,6 +19,7 @@
           class="business-review__status"
           [class.business-review__status--pending]="biz.status === 'PENDING'"
           [class.business-review__status--approved]="biz.status === 'APPROVED'"
+          [class.business-review__status--rejected]="biz.status === 'REJECTED'"
           [class.business-review__status--suspended]="biz.status === 'SUSPENDED'"
         >
           {{ statusLabel(biz.status) }}
@@ -115,6 +115,10 @@
           Ponovo odobri
         </button>
       </div>
+    } @else if (biz.status === 'REJECTED') {
+      <div class="business-review__info">
+        Zahtev za registraciju je odbijen. Ovaj status je konačan.
+      </div>
     }
   }
 
@@ -128,11 +132,20 @@
   }
 
   @if (showRejectDialog()) {
-    <app-confirm-dialog
-      title="Odbij biznis"
-      message="Da li ste sigurni da želite da suspendujete ovaj biznis?"
-      confirmLabel="Suspenduj"
-      (confirmed)="onRejectConfirm($event)"
-    />
+    @if (business()?.status === 'PENDING') {
+      <app-confirm-dialog
+        title="Odbij zahtev"
+        message="Da li ste sigurni da želite da odbijete ovaj zahtev za registraciju? Ova akcija je trajna."
+        confirmLabel="Odbij"
+        (confirmed)="onRejectConfirm($event)"
+      />
+    } @else {
+      <app-confirm-dialog
+        title="Suspenduj biznis"
+        message="Da li ste sigurni da želite da suspendujete ovaj biznis?"
+        confirmLabel="Suspenduj"
+        (confirmed)="onRejectConfirm($event)"
+      />
+    }
   }
 </div>
