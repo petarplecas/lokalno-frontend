@@ -29,6 +29,7 @@ export class PendingBusinesses implements OnInit {
   readonly tabs: StatusTab[] = [
     { label: 'Na čekanju', status: BusinessStatus.PENDING },
     { label: 'Odobreni', status: BusinessStatus.APPROVED },
+    { label: 'Odbijeni', status: BusinessStatus.REJECTED },
     { label: 'Suspendovani', status: BusinessStatus.SUSPENDED },
     { label: 'Svi', status: null },
   ];
@@ -95,6 +96,8 @@ export class PendingBusinesses implements OnInit {
         return 'Na čekanju';
       case BusinessStatus.APPROVED:
         return 'Odobren';
+      case BusinessStatus.REJECTED:
+        return 'Odbijen';
       case BusinessStatus.SUSPENDED:
         return 'Suspendovan';
     }

@@ -77,9 +77,9 @@ describe('PendingBusinesses', () => {
     const fixture = TestBed.createComponent(PendingBusinesses);
     fixture.detectChanges();
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    expect(tabs.length).toBe(4);
+    expect(tabs.length).toBe(5);
     expect(tabs[0].textContent.trim()).toBe('Na čekanju');
-    expect(tabs[3].textContent.trim()).toBe('Svi');
+    expect(tabs[4].textContent.trim()).toBe('Svi');
   });
 
   it('should switch to Approved tab and call getAllBusinesses', () => {
@@ -103,7 +103,7 @@ describe('PendingBusinesses', () => {
     mockAdminService.getAllBusinesses.mockReturnValue(of(emptyResponse));
 
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    tabs[3].click();
+    tabs[4].click();
     fixture.detectChanges();
 
     expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, undefined);

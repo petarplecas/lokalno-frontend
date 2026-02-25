@@ -142,7 +142,7 @@ describe('BusinessReview', () => {
     const comp = fixture.componentInstance;
 
     comp.onRejectConfirm(true);
-    expect(mockAdminService.updateBusinessStatus).toHaveBeenCalledWith('b1', BusinessStatus.SUSPENDED);
+    expect(mockAdminService.updateBusinessStatus).toHaveBeenCalledWith('b1', BusinessStatus.REJECTED);
   });
 
   it('should not call updateBusinessStatus when dialog is cancelled', () => {

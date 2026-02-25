@@ -144,9 +144,14 @@
       color: $color-success;
     }
 
-    &--suspended {
+    &--rejected {
       background: rgba($color-error, 0.1);
       color: $color-error;
+    }
+
+    &--suspended {
+      background: rgba(#e67e22, 0.1);
+      color: #e67e22;
     }
   }
 

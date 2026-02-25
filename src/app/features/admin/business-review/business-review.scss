@@ -70,10 +70,24 @@
       color: $color-success;
     }
 
-    &--suspended {
+    &--rejected {
       background: rgba($color-error, 0.1);
       color: $color-error;
     }
+
+    &--suspended {
+      background: rgba(#e67e22, 0.1);
+      color: #e67e22;
+    }
+  }
+
+  &__info {
+    padding: $spacing-md;
+    background: rgba($color-error, 0.05);
+    border: 1px solid rgba($color-error, 0.2);
+    border-radius: $radius-md;
+    font-size: 0.875rem;
+    color: $color-error;
   }
 
   &__details {

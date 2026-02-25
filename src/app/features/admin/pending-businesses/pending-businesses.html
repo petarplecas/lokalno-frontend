@@ -53,6 +53,7 @@
               class="admin-businesses__status"
               [class.admin-businesses__status--pending]="biz.status === 'PENDING'"
               [class.admin-businesses__status--approved]="biz.status === 'APPROVED'"
+              [class.admin-businesses__status--rejected]="biz.status === 'REJECTED'"
               [class.admin-businesses__status--suspended]="biz.status === 'SUSPENDED'"
             >
               {{ statusLabel(biz.status) }}

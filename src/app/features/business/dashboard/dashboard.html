@@ -9,9 +9,13 @@
       <div class="dash__banner dash__banner--pending">
         Vaš biznis čeka odobrenje administracije.
       </div>
+    } @else if (biz.status === 'REJECTED') {
+      <div class="dash__banner dash__banner--rejected">
+        Vaš zahtev za registraciju je odbijen. Kontaktirajte podršku na tim&#64;ulokalu.rs.
+      </div>
     } @else if (biz.status === 'SUSPENDED') {
       <div class="dash__banner dash__banner--suspended">
-        Vaš biznis je suspendovan. Kontaktirajte podršku.
+        Vaš biznis je suspendovan. Kontaktirajte podršku na tim&#64;ulokalu.rs.
       </div>
     }
 
