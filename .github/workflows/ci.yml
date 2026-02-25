@@ -37,6 +37,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create environment files
+        env:
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+        run: |
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.example.ts > src/environments/environment.ts
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts
+
       - name: Run TypeScript check
         run: npx tsc --noEmit
 
@@ -60,6 +67,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Create environment files
+        env:
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+        run: |
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.example.ts > src/environments/environment.ts
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts
 
       - name: Run unit tests
         run: npm test -- --ci --coverage
@@ -91,6 +105,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Create environment files
+        env:
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+        run: |
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.example.ts > src/environments/environment.ts
+          sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts
 
       - name: Build for production
         run: npm run build -- --configuration=production
