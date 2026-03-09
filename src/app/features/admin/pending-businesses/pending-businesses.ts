@@ -32,7 +32,6 @@ export class PendingBusinesses implements OnInit {
     { label: 'Istekli trial', status: BusinessStatus.TRIAL_EXPIRED },
     { label: 'Odbijeni', status: BusinessStatus.REJECTED },
     { label: 'Suspendovani', status: BusinessStatus.SUSPENDED },
-    { label: 'Svi', status: null },
   ];
 
   readonly activeTab = signal(0);

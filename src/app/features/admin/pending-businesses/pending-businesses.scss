@@ -15,6 +15,13 @@
     gap: $spacing-xs;
     margin-bottom: $spacing-lg;
     border-bottom: 2px solid $color-divider;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &__tab {
