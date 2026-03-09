@@ -32,6 +32,7 @@ export class BusinessReview implements OnInit {
   readonly actionLoading = signal(false);
   readonly showApproveDialog = signal(false);
   readonly showRejectDialog = signal(false);
+  readonly showExtendTrialDialog = signal(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -53,6 +54,31 @@ export class BusinessReview implements OnInit {
 
   openRejectDialog(): void {
     this.showRejectDialog.set(true);
+  }
+
+  openExtendTrialDialog(): void {
+    this.showExtendTrialDialog.set(true);
+  }
+
+  onExtendTrialConfirm(confirmed: boolean): void {
+    this.showExtendTrialDialog.set(false);
+    if (!confirmed) return;
+    const biz = this.business();
+    if (!biz) return;
+    this.actionLoading.set(true);
+    this.adminService.extendTrial(biz.id).subscribe({
+      next: () => {
+        this.actionLoading.set(false);
+        this.toastService.success('Trial je produžen za 30 dana.');
+        this.adminService.getBusiness(biz.id).subscribe({
+          next: (updated) => this.business.set(updated),
+        });
+      },
+      error: () => {
+        this.actionLoading.set(false);
+        this.toastService.error('Greška pri produžavanju triala.');
+      },
+    });
   }
 
   onApproveConfirm(confirmed: boolean): void {
@@ -86,6 +112,7 @@ export class BusinessReview implements OnInit {
           [BusinessStatus.REJECTED]: 'odbijen',
           [BusinessStatus.SUSPENDED]: 'suspendovan',
           [BusinessStatus.PENDING]: 'ažuriran',
+          [BusinessStatus.TRIAL_EXPIRED]: 'ažuriran',
         };
         this.toastService.success(`Biznis je ${labels[status]}.`);
         void this.router.navigate(['/admin/businesses']);
@@ -107,6 +134,8 @@ export class BusinessReview implements OnInit {
         return 'Odbijen';
       case BusinessStatus.SUSPENDED:
         return 'Suspendovan';
+      case BusinessStatus.TRIAL_EXPIRED:
+        return 'Istekli trial';
     }
   }
 }

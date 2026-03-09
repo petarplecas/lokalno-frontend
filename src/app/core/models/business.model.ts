@@ -3,6 +3,7 @@ export enum BusinessStatus {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
   SUSPENDED = 'SUSPENDED',
+  TRIAL_EXPIRED = 'TRIAL_EXPIRED',
 }
 
 export enum SubscriptionTier {

@@ -156,6 +156,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'discounts/:id/stats',
+        loadComponent: () =>
+          import('./features/business/discount-stats/discount-stats').then(
+            (m) => m.DiscountStats,
+          ),
+      },
+      {
         path: 'discounts/:id/edit',
         loadComponent: () =>
           import('./features/business/edit-discount/edit-discount').then(

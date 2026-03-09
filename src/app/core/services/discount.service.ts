@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   Discount,
   DiscountFilters,
+  DiscountStats,
   DiscountStatus,
   CreateDiscountRequest,
   UpdateDiscountRequest,
@@ -59,5 +60,9 @@ export class DiscountService {
 
   claimCoupon(id: string): Observable<ClaimCouponResponse> {
     return this.http.post<ClaimCouponResponse>(`${this.url}/${id}/claim-coupon`, {});
+  }
+
+  getDiscountStats(id: string): Observable<DiscountStats> {
+    return this.http.get<DiscountStats>(`${this.url}/${id}/stats`);
   }
 }

@@ -114,6 +114,19 @@ export interface CreateDiscountRequest {
   tags: string[];
 }
 
+export interface DiscountStats {
+  views: number;
+  saves: number;
+  hasCoupons: boolean;
+  totalCoupons: number | null;
+  availableCoupons: number | null;
+  claimedCoupons: number;
+  activeCoupons: number;
+  usedCoupons: number;
+  expiredCoupons: number;
+  claimRate: number | null;
+}
+
 export interface UpdateDiscountRequest {
   title?: string;
   description?: string;

@@ -55,6 +55,7 @@
               [class.admin-businesses__status--approved]="biz.status === 'APPROVED'"
               [class.admin-businesses__status--rejected]="biz.status === 'REJECTED'"
               [class.admin-businesses__status--suspended]="biz.status === 'SUSPENDED'"
+              [class.admin-businesses__status--trial-expired]="biz.status === 'TRIAL_EXPIRED'"
             >
               {{ statusLabel(biz.status) }}
             </span>

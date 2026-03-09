@@ -73,13 +73,14 @@ describe('PendingBusinesses', () => {
     expect(mockAdminService.getPendingBusinesses).toHaveBeenCalledWith(1);
   });
 
-  it('should render 4 tabs', () => {
+  it('should render 6 tabs', () => {
     const fixture = TestBed.createComponent(PendingBusinesses);
     fixture.detectChanges();
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    expect(tabs.length).toBe(5);
+    expect(tabs.length).toBe(6);
     expect(tabs[0].textContent.trim()).toBe('Na čekanju');
-    expect(tabs[4].textContent.trim()).toBe('Svi');
+    expect(tabs[2].textContent.trim()).toBe('Istekli trial');
+    expect(tabs[5].textContent.trim()).toBe('Svi');
   });
 
   it('should switch to Approved tab and call getAllBusinesses', () => {
@@ -96,6 +97,20 @@ describe('PendingBusinesses', () => {
     expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, BusinessStatus.APPROVED);
   });
 
+  it('should load TRIAL_EXPIRED businesses when Istekli trial tab is selected', () => {
+    const fixture = TestBed.createComponent(PendingBusinesses);
+    fixture.detectChanges();
+    mockAdminService.getAllBusinesses.mockClear();
+    mockAdminService.getAllBusinesses.mockReturnValue(of(emptyResponse));
+
+    const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
+    tabs[2].click(); // Istekli trial tab
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.activeTab()).toBe(2);
+    expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, BusinessStatus.TRIAL_EXPIRED);
+  });
+
   it('should switch to All tab with no status filter', () => {
     const fixture = TestBed.createComponent(PendingBusinesses);
     fixture.detectChanges();
@@ -103,7 +118,7 @@ describe('PendingBusinesses', () => {
     mockAdminService.getAllBusinesses.mockReturnValue(of(emptyResponse));
 
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    tabs[4].click();
+    tabs[5].click(); // Svi tab is now index 5
     fixture.detectChanges();
 
     expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, undefined);
@@ -137,5 +152,6 @@ describe('PendingBusinesses', () => {
     expect(comp.statusLabel(BusinessStatus.PENDING)).toBe('Na čekanju');
     expect(comp.statusLabel(BusinessStatus.APPROVED)).toBe('Odobren');
     expect(comp.statusLabel(BusinessStatus.SUSPENDED)).toBe('Suspendovan');
+    expect(comp.statusLabel(BusinessStatus.TRIAL_EXPIRED)).toBe('Istekli trial');
   });
 });

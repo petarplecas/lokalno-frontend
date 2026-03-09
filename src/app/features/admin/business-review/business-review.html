@@ -21,6 +21,7 @@
           [class.business-review__status--approved]="biz.status === 'APPROVED'"
           [class.business-review__status--rejected]="biz.status === 'REJECTED'"
           [class.business-review__status--suspended]="biz.status === 'SUSPENDED'"
+          [class.business-review__status--trial-expired]="biz.status === 'TRIAL_EXPIRED'"
         >
           {{ statusLabel(biz.status) }}
         </span>
@@ -105,6 +106,16 @@
           Suspenduj biznis
         </button>
       </div>
+    } @else if (biz.status === 'TRIAL_EXPIRED') {
+      <div class="business-review__actions">
+        <button
+          class="btn-success"
+          [disabled]="actionLoading()"
+          (click)="openExtendTrialDialog()"
+        >
+          Produži trial
+        </button>
+      </div>
     } @else if (biz.status === 'SUSPENDED') {
       <div class="business-review__actions">
         <button
@@ -128,6 +139,15 @@
       message="Da li ste sigurni da želite da odobrite ovaj biznis?"
       confirmLabel="Odobri"
       (confirmed)="onApproveConfirm($event)"
+    />
+  }
+
+  @if (showExtendTrialDialog()) {
+    <app-confirm-dialog
+      title="Produži trial"
+      message="Da li ste sigurni da želite da produžite trial za još 30 dana?"
+      confirmLabel="Produži"
+      (confirmed)="onExtendTrialConfirm($event)"
     />
   }
 

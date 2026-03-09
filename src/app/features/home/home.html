@@ -97,6 +97,11 @@
     </select>
   </div>
 
+  <!-- Guest conversion badge -->
+  @if (guestTracker.shouldShowBadge()) {
+    <app-guest-conversion-badge />
+  }
+
   <!-- Loading state -->
   @if (loading()) {
     <div class="home__loading">

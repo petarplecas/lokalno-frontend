@@ -262,7 +262,11 @@ export class CreateDiscount {
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.message || 'Kreiranje nije uspelo');
+          if (err.status === 403) {
+            this.error.set('Pretplata je istekla. Kreiranje popusta nije moguće.');
+          } else {
+            this.error.set(err.error?.message || 'Kreiranje nije uspelo');
+          }
         },
       });
   }

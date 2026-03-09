@@ -3,7 +3,12 @@
     <app-spinner size="lg" />
   </div>
 } @else {
-  <app-page-header title="Izmeni popust" />
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+    <app-page-header title="Izmeni popust" />
+    <a [routerLink]="['/business/discounts', discountId, 'stats']" class="btn-secondary" style="font-size:0.875rem">
+      Statistike
+    </a>
+  </div>
   <section class="wizard">
 
     <!-- Step indicator -->

@@ -36,4 +36,8 @@ export class AdminService {
   updateBusinessStatus(id: string, status: BusinessStatus): Observable<ApiMessage> {
     return this.http.patch<ApiMessage>(`${this.url}/${id}/status`, { status });
   }
+
+  extendTrial(id: string): Observable<ApiMessage> {
+    return this.http.post<ApiMessage>(`${this.url}/${id}/extend-trial`, {});
+  }
 }

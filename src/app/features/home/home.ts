@@ -15,6 +15,8 @@ import { DiscountCard } from '../../shared/components/discount-card/discount-car
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
+import { GuestConversionBadge } from '../../shared/components/guest-conversion-badge/guest-conversion-badge';
+import { GuestTrackerService } from '../../core/services/guest-tracker.service';
 
 interface CategoryPill {
   label: string;
@@ -23,7 +25,7 @@ interface CategoryPill {
 
 @Component({
   selector: 'app-home',
-  imports: [DiscountCard, Spinner, EmptyState, InfiniteScrollDirective],
+  imports: [DiscountCard, Spinner, EmptyState, InfiniteScrollDirective, GuestConversionBadge],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,7 @@ export class Home implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly geo = inject(GeolocationService);
+  readonly guestTracker = inject(GuestTrackerService);
 
   readonly categoryPills: CategoryPill[] = [
     { label: 'Sve', categories: null },
@@ -104,6 +107,7 @@ export class Home implements OnInit {
   }
 
   onDiscountClick(discount: Discount): void {
+    this.guestTracker.trackView(discount.id);
     void this.router.navigate(['/discounts', discount.id]);
   }
 

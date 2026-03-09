@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { DiscountService } from '../../../core/services/discount.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { DiscountType, Discount } from '../../../core/models';
@@ -16,7 +16,7 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
 
 @Component({
   selector: 'app-edit-discount',
-  imports: [ReactiveFormsModule, Spinner, PageHeader, ConfirmDialog],
+  imports: [ReactiveFormsModule, RouterLink, Spinner, PageHeader, ConfirmDialog],
   templateUrl: './edit-discount.html',
   styleUrl: '../create-discount/create-discount.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +36,7 @@ export class EditDiscount implements OnInit {
   readonly showDeleteDialog = signal(false);
   readonly deleting = signal(false);
 
-  private discountId = '';
+  protected discountId = '';
 
   readonly steps = ['Slika', 'Info', 'Tip', 'Validnost', 'Kuponi', 'Tagovi', 'Pregled'];
 

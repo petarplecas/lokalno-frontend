@@ -79,6 +79,11 @@
       background: rgba(#e67e22, 0.1);
       color: #e67e22;
     }
+
+    &--trial-expired {
+      background: rgba($color-secondary, 0.15);
+      color: darken($color-secondary, 15%);
+    }
   }
 
   &__info {

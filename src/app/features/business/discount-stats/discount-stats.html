@@ -1,0 +1,45 @@
+<app-page-header title="Statistike popusta" />
+
+@if (loading()) {
+  <div class="ds__loading">
+    <app-spinner size="lg" />
+  </div>
+} @else if (error()) {
+  <p class="ds__error">Greška pri učitavanju statistika.</p>
+} @else if (stats(); as s) {
+  <div class="ds__grid">
+    <div class="ds__card">
+      <span class="ds__value">{{ s.views }}</span>
+      <span class="ds__label">Pregleda</span>
+    </div>
+    <div class="ds__card">
+      <span class="ds__value">{{ s.saves }}</span>
+      <span class="ds__label">Sačuvano</span>
+    </div>
+
+    @if (s.hasCoupons) {
+      <div class="ds__card">
+        <span class="ds__value">{{ s.claimedCoupons }} / {{ s.totalCoupons ?? '∞' }}</span>
+        <span class="ds__label">Iskorišćeno kupona</span>
+      </div>
+      <div class="ds__card">
+        <span class="ds__value">{{ s.claimRate !== null ? s.claimRate + '%' : '—' }}</span>
+        <span class="ds__label">Stopa prihvatanja</span>
+      </div>
+      <div class="ds__card">
+        <span class="ds__value">{{ s.availableCoupons ?? '∞' }}</span>
+        <span class="ds__label">Dostupno kupona</span>
+      </div>
+      <div class="ds__card">
+        <span class="ds__value">{{ s.usedCoupons }}</span>
+        <span class="ds__label">Upotrebljeno</span>
+      </div>
+    }
+  </div>
+
+  <div class="ds__actions">
+    <a [routerLink]="['/business/discounts', discountId, 'edit']" class="btn-secondary">
+      Izmeni popust
+    </a>
+  </div>
+}

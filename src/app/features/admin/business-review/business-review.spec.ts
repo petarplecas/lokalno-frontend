@@ -32,6 +32,7 @@ describe('BusinessReview', () => {
   const mockAdminService = {
     getBusiness: jest.fn(),
     updateBusinessStatus: jest.fn(),
+    extendTrial: jest.fn(),
   };
 
   const mockToastService = {
@@ -70,6 +71,7 @@ describe('BusinessReview', () => {
     jest.restoreAllMocks();
     mockAdminService.getBusiness.mockReset();
     mockAdminService.updateBusinessStatus.mockReset();
+    mockAdminService.extendTrial.mockReset();
     mockToastService.success.mockReset();
     mockToastService.error.mockReset();
     TestBed.resetTestingModule();
@@ -163,5 +165,58 @@ describe('BusinessReview', () => {
     expect(comp.statusLabel(BusinessStatus.PENDING)).toBe('Na čekanju');
     expect(comp.statusLabel(BusinessStatus.APPROVED)).toBe('Odobren');
     expect(comp.statusLabel(BusinessStatus.SUSPENDED)).toBe('Suspendovan');
+    expect(comp.statusLabel(BusinessStatus.TRIAL_EXPIRED)).toBe('Istekli trial');
+  });
+
+  it('should show extend trial button for TRIAL_EXPIRED business', () => {
+    const trialExpiredBusiness = { ...mockBusiness, status: BusinessStatus.TRIAL_EXPIRED };
+    mockAdminService.getBusiness.mockReturnValue(of(trialExpiredBusiness));
+
+    const fixture = TestBed.createComponent(BusinessReview);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('.business-review__actions .btn-success');
+    expect(button).toBeTruthy();
+    expect(button.textContent.trim()).toContain('Produži trial');
+  });
+
+  it('should open extend trial dialog on click', () => {
+    const trialExpiredBusiness = { ...mockBusiness, status: BusinessStatus.TRIAL_EXPIRED };
+    mockAdminService.getBusiness.mockReturnValue(of(trialExpiredBusiness));
+
+    const fixture = TestBed.createComponent(BusinessReview);
+    fixture.detectChanges();
+    const comp = fixture.componentInstance;
+
+    expect(comp.showExtendTrialDialog()).toBe(false);
+    comp.openExtendTrialDialog();
+    expect(comp.showExtendTrialDialog()).toBe(true);
+  });
+
+  it('should call extendTrial and show success toast on confirm', () => {
+    const trialExpiredBusiness = { ...mockBusiness, status: BusinessStatus.TRIAL_EXPIRED };
+    mockAdminService.getBusiness.mockReturnValue(of(trialExpiredBusiness));
+    mockAdminService.extendTrial.mockReturnValue(of({ message: 'Trial extended by 30 days' }));
+
+    const fixture = TestBed.createComponent(BusinessReview);
+    fixture.detectChanges();
+    const comp = fixture.componentInstance;
+
+    comp.onExtendTrialConfirm(true);
+
+    expect(mockAdminService.extendTrial).toHaveBeenCalledWith('b1');
+    expect(mockToastService.success).toHaveBeenCalledWith('Trial je produžen za 30 dana.');
+  });
+
+  it('should not call extendTrial when dialog is cancelled', () => {
+    const trialExpiredBusiness = { ...mockBusiness, status: BusinessStatus.TRIAL_EXPIRED };
+    mockAdminService.getBusiness.mockReturnValue(of(trialExpiredBusiness));
+
+    const fixture = TestBed.createComponent(BusinessReview);
+    fixture.detectChanges();
+    const comp = fixture.componentInstance;
+
+    comp.onExtendTrialConfirm(false);
+    expect(mockAdminService.extendTrial).not.toHaveBeenCalled();
   });
 });

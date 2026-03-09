@@ -35,6 +35,16 @@
     background: rgba(#e67e22, 0.1);
     color: #e67e22;
   }
+
+  &--expired {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+
+  &--warning {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+  }
 }
 
 .dash__header {

@@ -17,6 +17,10 @@
       <div class="dash__banner dash__banner--suspended">
         Vaš biznis je suspendovan. Kontaktirajte podršku na tim&#64;ulokalu.rs.
       </div>
+    } @else if (biz.status === 'TRIAL_EXPIRED') {
+      <div class="dash__banner dash__banner--expired">
+        Vaš trial period je istekao. Kontaktirajte nas na tim&#64;ulokalu.rs za produženje.
+      </div>
     }
 
     <!-- Business info -->
@@ -44,6 +48,13 @@
           <span class="dash__stat-label">Dana pretplate</span>
         </div>
       </div>
+
+      <!-- Subscription status banner -->
+      @if (s.subscription.isTrialActive && s.subscription.daysRemaining <= 7) {
+        <div class="dash__banner dash__banner--warning">
+          Trial ističe za {{ s.subscription.daysRemaining }} dan(a).
+        </div>
+      }
 
       <!-- Subscription info -->
       <div class="dash__subscription">
