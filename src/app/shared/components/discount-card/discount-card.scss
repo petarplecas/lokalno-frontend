@@ -1,14 +1,19 @@
 @use 'styles/variables' as *;
 @use 'styles/mixins' as *;
 
+// =========================================================
+// DISCOUNT CARD — Redesigned
+// =========================================================
+
 .discount-card {
   @include card;
 
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
+    transform: translateY(-2px);
     box-shadow: $shadow-md;
   }
 
@@ -16,77 +21,269 @@
     @include focus-ring;
   }
 
+  // ── Image area ──────────────────────────────────────────
   &__image {
     position: relative;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.3s;
     }
   }
 
-  &__badge {
-    position: absolute;
-    top: $spacing-sm;
-    right: $spacing-sm;
-    background: $color-secondary;
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 2px $spacing-sm;
-    border-radius: $radius-sm;
+  &:hover &__image img {
+    transform: scale(1.04);
   }
 
+  // Featured variant: landscape ratio
+  &--featured &__image {
+    aspect-ratio: 16 / 9;
+  }
+
+  // Gradient overlay so text is always legible on any image
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0%) 20%,
+      rgb(0 0 0 / 65%) 100%
+    );
+    pointer-events: none;
+  }
+
+  // ── Discount hero value — bottom-left on image ──────────
+  // Primary marketing element: ~3x larger than previous badge
+  &__discount-hero {
+    position: absolute;
+    bottom: $spacing-sm;
+    left: $spacing-sm;
+    font-family: $font-heading;
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 2px 6px rgb(0 0 0 / 40%);
+  }
+
+  &--featured &__discount-hero {
+    font-size: 2rem;
+    bottom: $spacing-md;
+    left: $spacing-md;
+  }
+
+  // ── Type badge — top-left, color-coded per discount type ─
+  &__type-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px $spacing-xs;
+    border-radius: $radius-full;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #fff;
+
+    &--percent   { background: $color-secondary; }
+    &--fixed     { background: $color-primary; }
+    &--new-price { background: #27ae60; }
+    &--bogo      { background: #8e44ad; }
+  }
+
+  // ── Save button — top-right, frosted glass ───────────────
+  &__save-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 88%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
+    transition: all 0.2s;
+
+    svg {
+      width: 13px;
+      height: 13px;
+      color: $color-text-secondary;
+      fill: none;
+      transition: color 0.2s, fill 0.2s;
+    }
+
+    &:hover {
+      background: #fff;
+      transform: scale(1.15);
+    }
+
+    &--saved svg {
+      color: $color-primary;
+      fill: $color-primary;
+    }
+  }
+
+  // ── Card body ────────────────────────────────────────────
   &__body {
-    padding: $spacing-sm $spacing-md $spacing-md;
+    padding: $spacing-sm;
   }
 
   &__title {
-    font-size: 0.938rem;
+    font-size: 0.875rem;
     font-weight: 600;
+    color: $color-text;
+    line-height: 1.3;
     margin-bottom: 2px;
 
     @include truncate(1);
   }
 
   &__business {
-    font-size: 0.813rem;
+    font-size: 0.75rem;
     color: $color-text-secondary;
     margin-bottom: $spacing-xs;
 
     @include truncate(1);
   }
 
-  &__meta {
+  // ── Price comparison row ─────────────────────────────────
+  // Loss aversion: strikethrough oldPrice + teal newPrice
+  &__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__new-price {
+    font-family: $font-heading;
+    font-size: 0.938rem;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  &__old-price {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    text-decoration: line-through;
+  }
+
+  // ── Urgency badge ────────────────────────────────────────
+  &__urgency {
+    margin-bottom: $spacing-xs;
+  }
+
+  &__urgency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: $radius-full;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    &--hot {
+      background: rgb(231 76 60 / 10%);
+      color: #e74c3c;
+      border: 1px solid rgb(231 76 60 / 20%);
+
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        background: #e74c3c;
+        border-radius: 50%;
+        animation: dc-pulse 1.4s ease-in-out infinite;
+      }
+    }
+
+    &--warm {
+      background: rgb(243 156 18 / 10%);
+      color: #f39c12;
+      border: 1px solid rgb(243 156 18 / 20%);
+    }
+
+    &--new {
+      background: rgb(32 178 170 / 10%);
+      color: $color-primary;
+      border: 1px solid rgb(32 178 170 / 20%);
+    }
+  }
+
+  @keyframes dc-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  // ── Coupon progress bar ──────────────────────────────────
+  // Visual scarcity signal: replaces old "3/25" gray micro-text
+  &__coupon-bar {
+    margin-bottom: $spacing-xs;
+  }
+
+  &__coupon-bar-track {
+    height: 3px;
+    background: $color-border;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__coupon-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: $color-primary;
+    transition: width 0.3s;
+
+    &--critical {
+      background: #e74c3c;
+    }
+  }
+
+  // ── Footer: social proof + distance ─────────────────────
+  &__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.75rem;
-    color: $color-text-secondary;
+    margin-top: $spacing-xs;
   }
 
-  &__meta-right {
-    display: flex;
+  &__saves {
+    display: inline-flex;
     align-items: center;
-    gap: $spacing-sm;
+    gap: 3px;
+    font-size: 0.688rem;
+    color: $color-text-secondary;
+
+    svg {
+      width: 11px;
+      height: 11px;
+      flex-shrink: 0;
+    }
   }
 
   &__distance {
     display: inline-flex;
     align-items: center;
     gap: 2px;
+    font-size: 0.688rem;
     color: $color-text-secondary;
 
     svg {
+      width: 11px;
+      height: 11px;
       flex-shrink: 0;
     }
-  }
-
-  &__coupons {
-    color: $color-primary;
-    font-weight: 500;
   }
 }

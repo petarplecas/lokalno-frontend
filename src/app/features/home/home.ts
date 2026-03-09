@@ -9,7 +9,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DiscountService } from '../../core/services/discount.service';
+import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
 import { GeolocationService } from '../../core/services/geolocation.service';
+import { ToastService } from '../../core/services/toast.service';
 import { Discount, DiscountFilters, DiscountStatus } from '../../core/models';
 import { DiscountCard } from '../../shared/components/discount-card/discount-card';
 import { Spinner } from '../../shared/components/spinner/spinner';
@@ -32,19 +35,22 @@ interface CategoryPill {
 })
 export class Home implements OnInit {
   private readonly discountService = inject(DiscountService);
+  private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly geo = inject(GeolocationService);
   readonly guestTracker = inject(GuestTrackerService);
 
   readonly categoryPills: CategoryPill[] = [
-    { label: 'Sve', categories: null },
-    { label: 'Hrana', categories: ['RESTORANI', 'KAFICI', 'FAST_FOOD', 'PEKARE', 'POSLASTICARNICE'] },
-    { label: 'Lepota', categories: ['KOZMETIKA', 'FRIZERSKI_SALONI'] },
-    { label: 'Fitness', categories: ['FITNESS'] },
-    { label: 'Moda', categories: ['PRODAVNICE'] },
-    { label: 'Dom', categories: ['SUPERMARKETI'] },
-    { label: 'Usluge', categories: ['ZABAVA', 'BAROVI'] },
+    { label: '🏷️ Sve', categories: null },
+    { label: '🍕 Hrana', categories: ['RESTORANI', 'KAFICI', 'FAST_FOOD', 'PEKARE', 'POSLASTICARNICE'] },
+    { label: '💅 Lepota', categories: ['KOZMETIKA', 'FRIZERSKI_SALONI'] },
+    { label: '💪 Fitness', categories: ['FITNESS'] },
+    { label: '👗 Moda', categories: ['PRODAVNICE'] },
+    { label: '🏠 Dom', categories: ['SUPERMARKETI'] },
+    { label: '🛎️ Usluge', categories: ['ZABAVA', 'BAROVI'] },
   ];
 
   readonly sortOptions = [
@@ -71,6 +77,12 @@ export class Home implements OnInit {
   readonly hasMore = computed(() => this.currentPage() < this.totalPages());
   readonly isEmpty = computed(() => !this.loading() && !this.error() && this.discounts().length === 0);
 
+  // Featured: first 3 discounts displayed in horizontal scroll above grid
+  readonly featuredDiscounts = computed(() => this.discounts().slice(0, 3));
+
+  // Optimistic save state — Set of saved discount IDs
+  readonly savedDiscountIds = signal<Set<string>>(new Set());
+
   private readonly limit = 20;
   private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -79,6 +91,53 @@ export class Home implements OnInit {
 
     this.destroyRef.onDestroy(() => {
       if (this.searchTimeout) clearTimeout(this.searchTimeout);
+    });
+  }
+
+  isDiscountSaved(discountId: string): boolean {
+    return this.savedDiscountIds().has(discountId);
+  }
+
+  onSaveToggled(event: { discount: Discount; save: boolean }): void {
+    if (!this.authService.isAuthenticated()) {
+      void this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    const { discount, save } = event;
+
+    // Optimistic update
+    this.savedDiscountIds.update((ids) => {
+      const next = new Set(ids);
+      if (save) {
+        next.add(discount.id);
+      } else {
+        next.delete(discount.id);
+      }
+      return next;
+    });
+
+    const request$ = save
+      ? this.userService.saveDiscount(discount.id)
+      : this.userService.removeSavedDiscount(discount.id);
+
+    request$.subscribe({
+      next: () => {
+        this.toastService.success(save ? 'Popust sačuvan' : 'Uklonjeno iz sačuvanih');
+      },
+      error: () => {
+        // Rollback on error
+        this.savedDiscountIds.update((ids) => {
+          const next = new Set(ids);
+          if (save) {
+            next.delete(discount.id);
+          } else {
+            next.add(discount.id);
+          }
+          return next;
+        });
+        this.toastService.error('Akcija nije uspela');
+      },
     });
   }
 

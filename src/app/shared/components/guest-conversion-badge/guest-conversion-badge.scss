@@ -2,23 +2,22 @@
 
 .gcb {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: $spacing-md;
-  background: $color-surface;
-  border: 1px solid rgba($color-primary, 0.3);
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
   border-radius: $radius-md;
   padding: $spacing-md;
   box-shadow: $shadow-sm;
-  margin-bottom: $spacing-md;
 
   &__content {
     flex: 1;
   }
 
   &__text {
-    font-size: 0.875rem;
-    color: $color-text;
+    font-size: 0.813rem;
+    color: rgb(255 255 255 / 90%);
     margin: 0 0 $spacing-sm;
+    line-height: 1.4;
   }
 
   &__actions {
@@ -29,24 +28,30 @@
   }
 
   &__cta {
-    font-size: 0.875rem;
+    font-size: 0.813rem;
+    font-weight: 700;
     padding: $spacing-xs $spacing-md;
+    background: #fff;
+    color: $color-primary;
+    border-radius: $radius-full;
+    text-decoration: none;
+    display: inline-block;
   }
 
   &__login {
-    font-size: 0.813rem;
-    color: $color-text-secondary;
+    font-size: 0.75rem;
+    color: rgb(255 255 255 / 80%);
     text-decoration: none;
 
     &:hover {
-      color: $color-primary;
+      color: #fff;
     }
   }
 
   &__dismiss {
     background: none;
     border: none;
-    color: $color-text-secondary;
+    color: rgb(255 255 255 / 70%);
     cursor: pointer;
     font-size: 1rem;
     padding: 0;
@@ -54,7 +59,7 @@
     line-height: 1;
 
     &:hover {
-      color: $color-text;
+      color: #fff;
     }
   }
 }

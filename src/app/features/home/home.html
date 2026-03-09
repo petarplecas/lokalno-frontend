@@ -97,11 +97,6 @@
     </select>
   </div>
 
-  <!-- Guest conversion badge -->
-  @if (guestTracker.shouldShowBadge()) {
-    <app-guest-conversion-badge />
-  }
-
   <!-- Loading state -->
   @if (loading()) {
     <div class="home__loading">
@@ -128,13 +123,40 @@
     />
   }
 
-  <!-- Discount grid -->
   @if (!loading() && discounts().length > 0) {
+    <!-- Featured section — horizontal scroll, top 3 discounts -->
+    <div class="home__featured">
+      <div class="home__featured-header">
+        <span class="home__featured-title">🔥 Istaknuto</span>
+      </div>
+      <div class="home__featured-scroll">
+        @for (discount of featuredDiscounts(); track discount.id) {
+          <app-discount-card
+            [discount]="discount"
+            [isSaved]="isDiscountSaved(discount.id)"
+            [featured]="true"
+            (clicked)="onDiscountClick($event)"
+            (saveToggled)="onSaveToggled($event)"
+          />
+        }
+      </div>
+    </div>
+
+    <!-- All discounts grid -->
+    <h2 class="home__section-title">Svi popusti</h2>
     <div class="home__grid">
-      @for (discount of discounts(); track discount.id) {
+      @for (discount of discounts(); track discount.id; let i = $index) {
+        <!-- Inline guest conversion banner after 4th card (spans 2 cols) -->
+        @if (i === 4 && guestTracker.shouldShowBadge()) {
+          <div class="home__guest-banner-slot">
+            <app-guest-conversion-badge />
+          </div>
+        }
         <app-discount-card
           [discount]="discount"
+          [isSaved]="isDiscountSaved(discount.id)"
           (clicked)="onDiscountClick($event)"
+          (saveToggled)="onSaveToggled($event)"
         />
       }
     </div>

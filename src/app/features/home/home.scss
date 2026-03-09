@@ -231,15 +231,61 @@
   padding: $spacing-2xl 0;
 }
 
+// Featured section — horizontal scroll above main grid
+.home__featured {
+  margin-bottom: $spacing-md;
+}
+
+.home__featured-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.home__featured-title {
+  font-family: $font-heading;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.home__featured-scroll {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: $spacing-xs;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Featured cards have fixed width for horizontal scroll
+  app-discount-card {
+    flex-shrink: 0;
+    width: 260px;
+  }
+}
+
+// Section title above main grid
+.home__section-title {
+  font-family: $font-heading;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-text;
+  margin-bottom: $spacing-sm;
+}
+
 // Grid
 .home__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
+}
 
-  @include mobile-only {
-    grid-template-columns: 1fr;
-  }
+// Guest conversion banner — inline in grid, spans both columns
+.home__guest-banner-slot {
+  grid-column: 1 / -1;
 }
 
 // Infinite scroll sentinel
