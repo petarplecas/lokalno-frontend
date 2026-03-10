@@ -1,9 +1,14 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+// =========================================================
+// DISCOUNT DETAIL — Redesigned
+// =========================================================
 
 .detail {
   max-width: 600px;
   margin: 0 auto;
-  padding-bottom: 80px; // Space for sticky CTA
+  padding-bottom: 140px; // Space for sticky CTA (progress bar + actions)
 }
 
 .detail__loading {
@@ -13,66 +18,173 @@
   min-height: 50vh;
 }
 
-// Hero
+// ── Hero ──────────────────────────────────────────────────
 .detail__hero {
   position: relative;
-
-  app-back-button {
-    position: absolute;
-    top: $spacing-md;
-    left: $spacing-md;
-    z-index: 1;
-  }
+  height: 300px;
+  overflow: hidden;
 }
 
-.detail__image {
+.detail__hero-img {
   width: 100%;
-  height: 240px;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.detail__badge {
+.detail__hero-overlay {
   position: absolute;
-  bottom: $spacing-md;
-  left: $spacing-md;
-  background: $gradient-primary;
-  color: #fff;
-  padding: $spacing-xs $spacing-md;
-  border-radius: $radius-full;
-  font-weight: 600;
-  font-size: 0.875rem;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 20%) 0%,
+    rgb(0 0 0 / 0%) 35%,
+    rgb(0 0 0 / 70%) 100%
+  );
+  pointer-events: none;
 }
 
-.detail__action-btn {
+.detail__back {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  z-index: 2;
+}
+
+// Type badge — top left (after back button)
+.detail__type-badge {
+  position: absolute;
+  top: $spacing-md;
+  left: calc($spacing-md + 44px); // offset past back button
+  display: inline-flex;
+  align-items: center;
+  padding: 3px $spacing-sm;
+  border-radius: $radius-full;
+  font-size: 0.688rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  z-index: 2;
+
+  &--percent   { background: $color-secondary; }
+  &--fixed     { background: $color-primary; }
+  &--new-price { background: #27ae60; }
+  &--bogo      { background: #8e44ad; }
+}
+
+// Save button — top right
+.detail__save-btn {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: $color-background;
+  background: rgb(255 255 255 / 88%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s;
-  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+  z-index: 2;
+  transition: transform 0.2s, background 0.2s;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     color: $color-text-secondary;
+    fill: none;
+    transition: color 0.2s, fill 0.2s;
   }
 
   &:hover {
-    background: $color-border;
+    background: #fff;
+    transform: scale(1.1);
   }
 
-  &--active svg {
+  &--saved svg {
     color: $color-primary;
+    fill: $color-primary;
   }
 }
 
-// Business info
+// Hero panel — bottom overlay with discount value + title + urgency
+.detail__hero-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md;
+  z-index: 2;
+}
+
+.detail__hero-value {
+  font-family: $font-heading;
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 40%);
+  margin-bottom: 4px;
+}
+
+.detail__hero-title {
+  font-family: $font-heading;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+  margin: 0 0 $spacing-xs;
+}
+
+// Urgency badge
+.detail__urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.688rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &--hot {
+    background: rgb(231 76 60 / 90%);
+    color: #fff;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      border-radius: 50%;
+      animation: dd-pulse 1.4s ease-in-out infinite;
+    }
+  }
+
+  &--warm {
+    background: rgb(243 156 18 / 90%);
+    color: #fff;
+  }
+
+  &--new {
+    background: rgb(32 178 170 / 90%);
+    color: #fff;
+  }
+}
+
+@keyframes dd-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+// ── Business strip ────────────────────────────────────────
 .detail__business {
   display: flex;
   align-items: center;
@@ -93,6 +205,21 @@
   &:hover .detail__business-info strong {
     color: $color-primary;
   }
+}
+
+.detail__business-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  background: $gradient-primary;
+  color: #fff;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .detail__business-info {
@@ -122,87 +249,232 @@
   flex-shrink: 0;
 }
 
-// Content
-.detail__content {
-  padding: $spacing-md;
-}
-
-.detail__title-row {
+.detail__fav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid $color-border;
   display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-sm;
-}
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
 
-.detail__title {
-  font-family: $font-heading;
-  font-size: 1.25rem;
-  flex: 1;
-  position: relative;
-  padding-bottom: $spacing-sm;
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $color-text-secondary;
+    fill: none;
+    transition: color 0.2s, fill 0.2s;
+  }
 
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: $color-primary;
-    border-radius: 2px;
+  &:hover {
+    background: $color-border;
+  }
+
+  &--active svg {
+    color: #e74c3c;
+    fill: #e74c3c;
   }
 }
 
-.detail__description {
-  color: $color-text-secondary;
-  font-size: 0.938rem;
-  line-height: 1.6;
-  margin-top: $spacing-md;
+// ── Quick stats ───────────────────────────────────────────
+.detail__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: $color-divider;
+  border-bottom: 1px solid $color-divider;
 }
 
-// Info section
-.detail__info {
+.detail__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: $spacing-sm $spacing-xs;
+  background: $color-surface;
+  text-align: center;
+}
+
+.detail__stat-icon {
+  width: 20px;
+  height: 20px;
+  color: $color-primary;
+  flex-shrink: 0;
+}
+
+.detail__stat-value {
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: $color-text;
+  line-height: 1.2;
+}
+
+.detail__stat-sub {
+  font-size: 0.688rem;
+  color: $color-text-secondary;
+  line-height: 1.2;
+
+  &--urgent {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+}
+
+// Coupon progress in stats cell
+.detail__coupon-track {
+  width: 100%;
+  max-width: 64px;
+  height: 4px;
+  background: $color-border;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.detail__coupon-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: $color-primary;
+  transition: width 0.3s;
+
+  &--critical {
+    background: #e74c3c;
+  }
+}
+
+// ── Price comparison ──────────────────────────────────────
+.detail__price-section {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+  padding: $spacing-md $spacing-md $spacing-xs;
+}
+
+.detail__price-new {
+  font-family: $font-heading;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $color-primary;
+}
+
+.detail__price-old {
+  font-size: 0.938rem;
+  color: $color-text-secondary;
+  text-decoration: line-through;
+}
+
+.detail__price-savings {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $spacing-xs;
+  background: rgb(32 178 170 / 12%);
+  color: $color-primary;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+// ── Generic section ───────────────────────────────────────
+.detail__section {
   padding: $spacing-md;
   border-top: 1px solid $color-divider;
 }
 
 .detail__section-title {
   font-family: $font-heading;
-  font-size: 1rem;
-  margin-bottom: $spacing-md;
-}
-
-.detail__info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
-}
-
-.detail__info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.detail__info-label {
-  font-size: 0.75rem;
-  color: $color-text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.detail__info-value {
   font-size: 0.938rem;
-  font-weight: 500;
+  font-weight: 700;
   color: $color-text;
+  margin-bottom: $spacing-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detail__description {
+  color: $color-text-secondary;
+  font-size: 0.938rem;
+  line-height: 1.65;
+  margin: 0;
 }
 
 .detail__address {
   color: $color-text-secondary;
   font-size: 0.938rem;
+  margin-bottom: $spacing-sm;
 }
 
-// Claimed coupon
+// ── Conditions ────────────────────────────────────────────
+.detail__conditions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.detail__condition {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-xs;
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  line-height: 1.4;
+}
+
+.detail__condition-icon {
+  width: 15px;
+  height: 15px;
+  color: #27ae60;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+// ── Social proof ──────────────────────────────────────────
+.detail__social {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.detail__social-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.813rem;
+  color: $color-text-secondary;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Tags ──────────────────────────────────────────────────
+.detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md $spacing-md;
+}
+
+.detail__tag {
+  padding: 3px $spacing-sm;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+}
+
+// ── Claimed coupon ────────────────────────────────────────
 .detail__claimed {
   margin: $spacing-md;
   padding: $spacing-lg;
@@ -210,18 +482,24 @@
   border-radius: $radius-md;
   color: #fff;
   text-align: center;
+}
 
-  h3 {
-    margin-bottom: $spacing-sm;
-  }
+.detail__claimed-label {
+  font-size: 0.813rem;
+  font-weight: 600;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: $spacing-xs;
 }
 
 .detail__coupon-code {
-  font-family: $font-heading;
-  font-size: 1.75rem;
+  font-family: monospace;
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: 2px;
-  padding: $spacing-md 0;
+  letter-spacing: 4px;
+  padding: $spacing-sm 0;
+  word-break: break-all;
 }
 
 .detail__coupon-expiry {
@@ -230,20 +508,96 @@
   margin-bottom: $spacing-md;
 }
 
-// Sticky CTA
+.detail__coupon-dismiss {
+  width: 100%;
+}
+
+// ── Sticky CTA ────────────────────────────────────────────
 .detail__cta {
   position: fixed;
   bottom: 56px; // above bottom nav
   left: 0;
   right: 0;
-  padding: $spacing-md;
+  padding: $spacing-sm $spacing-md $spacing-md;
   background: $color-surface;
   border-top: 1px solid $color-divider;
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 8%);
   z-index: 50;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.detail__cta-progress {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.detail__cta-track {
+  flex: 1;
+  height: 4px;
+  background: $color-border;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.detail__cta-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: $color-primary;
+  transition: width 0.3s;
+
+  &--critical {
+    background: #e74c3c;
+  }
+}
+
+.detail__cta-count {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.detail__cta-actions {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
 }
 
 .detail__cta-btn {
-  width: 100%;
-  padding: $spacing-md;
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
   font-size: 1rem;
+}
+
+.detail__cta-save {
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $color-text-secondary;
+    fill: none;
+    transition: color 0.2s, fill 0.2s;
+  }
+
+  &:hover {
+    background: $color-background;
+  }
+
+  &--saved svg {
+    color: $color-primary;
+    fill: $color-primary;
+  }
 }

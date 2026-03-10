@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +15,8 @@ import { DiscountType, DiscountStatus } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ImageUpload, PendingImageBlob } from '../../../shared/components/image-upload/image-upload';
+// Steps: 0=Osnove, 1=Vrednost, 2=Raspored, 3=Kuponi, 4=Pregled
+const STEP_COUNT = 5;
 
 @Component({
   selector: 'app-create-discount',
@@ -29,61 +32,88 @@ export class CreateDiscount {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  readonly discountTypes = Object.values(DiscountType);
+  readonly DiscountType = DiscountType;
   readonly currentStep = signal(0);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly showAdvanced = signal(false);
 
-  readonly steps = ['Slika', 'Info', 'Tip', 'Validnost', 'Kuponi', 'Tagovi', 'Pregled'];
+  readonly steps = ['Osnove', 'Vrednost', 'Raspored', 'Kuponi', 'Pregled'];
+  readonly stepIcons = ['📝', '💰', '📅', '🎟️', '✅'];
 
-  readonly discountTypeLabels: Record<DiscountType, string> = {
-    [DiscountType.PERCENT]: 'Procenat (%)',
-    [DiscountType.FIXED]: 'Fiksni iznos (RSD)',
-    [DiscountType.BOGO]: '1+1 gratis',
-    [DiscountType.NEW_PRICE]: 'Nova cena',
+  readonly discountTypeInfo: Record<DiscountType, { badge: string; name: string; desc: string; cssClass: string }> = {
+    [DiscountType.PERCENT]:   { badge: '-X%',    name: 'Procenat',     desc: 'Kupac plaća X% manje od redovne cene',   cssClass: 'percent' },
+    [DiscountType.FIXED]:     { badge: '-X RSD',  name: 'Fiksni iznos', desc: 'Oduzima se tačan iznos u dinarima',      cssClass: 'fixed' },
+    [DiscountType.NEW_PRICE]: { badge: 'X RSD',   name: 'Nova cena',    desc: 'Cena je uvek ista, bez obzira na staru', cssClass: 'new-price' },
+    [DiscountType.BOGO]:      { badge: '1+1',     name: '1+1 Gratis',   desc: 'Drugi artikl iste vrste ide gratis',     cssClass: 'bogo' },
   };
 
-  readonly form = this.fb.nonNullable.group({
-    imageUrl: ['', [Validators.required]],
-    title: ['', [Validators.required, Validators.maxLength(40)]],
-    description: ['', [Validators.maxLength(200)]],
-    discountType: ['PERCENT' as DiscountType, [Validators.required]],
-    discountValue: [0, [Validators.required, Validators.min(1)]],
-    oldPrice: [null as number | null],
-    newPrice: [null as number | null],
-    validFrom: ['', [Validators.required]],
-    validUntil: ['', [Validators.required]],
-    daysOfWeek: [[1, 2, 3, 4, 5, 6, 7]],
-    timeStart: [''],
-    timeEnd: [''],
-    hasCoupons: [false],
-    totalCoupons: [null as number | null],
-    couponDuration: [24],
-    tags: [''],
-  });
+  readonly allDiscountTypes = Object.values(DiscountType);
 
   readonly allDays = [
-    { value: 1, label: 'Pon' },
-    { value: 2, label: 'Uto' },
-    { value: 3, label: 'Sre' },
-    { value: 4, label: 'Čet' },
-    { value: 5, label: 'Pet' },
-    { value: 6, label: 'Sub' },
+    { value: 1, label: 'Pon' }, { value: 2, label: 'Uto' }, { value: 3, label: 'Sre' },
+    { value: 4, label: 'Čet' }, { value: 5, label: 'Pet' }, { value: 6, label: 'Sub' },
     { value: 7, label: 'Ned' },
   ];
 
   readonly couponDurationOptions = [
-    { value: 1, label: '1 sat' },
-    { value: 3, label: '3 sata' },
-    { value: 6, label: '6 sati' },
-    { value: 24, label: '24 sata' },
-    { value: 168, label: '7 dana' },
+    { value: 1,   label: '1',  unit: 'sat' },
+    { value: 24,  label: '24', unit: 'sata' },
+    { value: 168, label: '7',  unit: 'dana' },
   ];
 
-  getDurationLabel(value: number | null | undefined): string {
-    return this.couponDurationOptions.find((o) => o.value === value)?.label ?? `${value}h`;
-  }
+  private readonly today = new Date().toISOString().split('T')[0];
+  private readonly plus30 = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
+  readonly form = this.fb.nonNullable.group({
+    imageUrl:         ['', [Validators.required]],
+    title:            ['', [Validators.required, Validators.maxLength(40)]],
+    description:      ['', [Validators.maxLength(200)]],
+    discountType:     ['PERCENT' as DiscountType, [Validators.required]],
+    discountValue:    [0, [Validators.required, Validators.min(1)]],
+    oldPrice:         [null as number | null],
+    newPrice:         [null as number | null],
+    validFrom:        [this.today, [Validators.required]],
+    validUntil:       [this.plus30, [Validators.required]],
+    daysOfWeek:       [[1, 2, 3, 4, 5, 6, 7]],
+    timeStart:        [''],
+    timeEnd:          [''],
+    minPurchase:      [null as number | null],
+    hasCoupons:       [false],
+    totalCoupons:     [null as number | null],
+    unlimitedCoupons: [false],
+    couponDuration:   [24],
+    tags:             [''],
+  });
+
+  private readonly stepFields: string[][] = [
+    ['imageUrl', 'title'],
+    ['discountType', 'discountValue', 'oldPrice', 'newPrice'],
+    ['validFrom', 'validUntil'],
+    [],
+    [],
+  ];
+
+  private readonly pendingImage = signal<PendingImageBlob | null>(null);
+  readonly pendingPreviewUrl = signal<string | null>(null);
+
+  // ── Computed ─────────────────────────────────────────────
+  readonly livePreviewLabel = computed(() => {
+    const type = this.form.controls.discountType.value;
+    const val  = this.form.controls.discountValue.value;
+    const np   = this.form.controls.newPrice.value;
+    switch (type) {
+      case DiscountType.PERCENT:   return val > 0 ? `-${val}%` : '-?%';
+      case DiscountType.FIXED:     return val > 0 ? `-${val} RSD` : '-? RSD';
+      case DiscountType.NEW_PRICE: return np ? `${np} RSD` : 'Nova cena';
+      case DiscountType.BOGO:      return '1+1';
+    }
+  });
+
+  readonly titleLength = computed(() => this.form.controls.title.value.length);
+  readonly descLength  = computed(() => this.form.controls.description.value.length);
+
+  // ── Days helpers ─────────────────────────────────────────
   isDaySelected(day: number): boolean {
     return (this.form.controls.daysOfWeek.value as number[]).includes(day);
   }
@@ -96,28 +126,10 @@ export class CreateDiscount {
     this.form.controls.daysOfWeek.setValue(updated);
   }
 
-  private readonly stepFields: string[][] = [
-    ['imageUrl'],
-    ['title'],
-    ['discountType', 'discountValue', 'oldPrice', 'newPrice'],
-    ['validFrom', 'validUntil'],
-    [],
-    [],
-    [],
-  ];
-
-  private readonly pendingImage = signal<PendingImageBlob | null>(null);
-  readonly pendingPreviewUrl = signal<string | null>(null);
-
-  onPendingImage(data: PendingImageBlob | null): void {
-    this.pendingImage.set(data);
-    if (data) {
-      this.pendingPreviewUrl.set(URL.createObjectURL(data.blob));
-      this.form.controls.imageUrl.setValue('pending');
-    } else {
-      this.pendingPreviewUrl.set(null);
-      this.form.controls.imageUrl.setValue('');
-    }
+  // ── Discount type ─────────────────────────────────────────
+  selectDiscountType(type: DiscountType): void {
+    this.form.controls.discountType.setValue(type);
+    this.onDiscountTypeChange();
   }
 
   onDiscountTypeChange(): void {
@@ -142,28 +154,30 @@ export class CreateDiscount {
     this.form.controls.newPrice.updateValueAndValidity();
   }
 
+  // ── Image ─────────────────────────────────────────────────
+  onPendingImage(data: PendingImageBlob | null): void {
+    this.pendingImage.set(data);
+    if (data) {
+      this.pendingPreviewUrl.set(URL.createObjectURL(data.blob));
+      this.form.controls.imageUrl.setValue('pending');
+    } else {
+      this.pendingPreviewUrl.set(null);
+      this.form.controls.imageUrl.setValue('');
+    }
+  }
+
+  // ── Navigation ────────────────────────────────────────────
   isStepValid(step?: number): boolean {
     const fields = this.stepFields[step ?? this.currentStep()];
     return fields.every((f) => this.form.get(f)?.valid ?? true);
   }
 
-  private findFirstInvalidStep(): number | null {
-    for (let i = 0; i < this.stepFields.length; i++) {
-      if (!this.isStepValid(i)) {
-        this.stepFields[i].forEach((f) => this.form.get(f)?.markAsTouched());
-        return i;
-      }
-    }
-    return null;
-  }
-
   next(): void {
     if (!this.isStepValid()) {
-      const fields = this.stepFields[this.currentStep()];
-      fields.forEach((f) => this.form.get(f)?.markAsTouched());
+      this.stepFields[this.currentStep()].forEach((f) => this.form.get(f)?.markAsTouched());
       return;
     }
-    if (this.currentStep() < this.steps.length - 1) {
+    if (this.currentStep() < STEP_COUNT - 1) {
       this.currentStep.update((s) => s + 1);
     }
   }
@@ -180,6 +194,43 @@ export class CreateDiscount {
     }
   }
 
+  private findFirstInvalidStep(): number | null {
+    for (let i = 0; i < this.stepFields.length; i++) {
+      if (!this.isStepValid(i)) {
+        this.stepFields[i].forEach((f) => this.form.get(f)?.markAsTouched());
+        return i;
+      }
+    }
+    return null;
+  }
+
+  // ── Review helpers ────────────────────────────────────────
+  get reviewDaysLabel(): string {
+    const days = this.form.controls.daysOfWeek.value as number[];
+    if (!days || days.length === 7 || days.length === 0) return 'Svakog dana';
+    const names = ['', 'Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
+    if (days.every((d) => [1,2,3,4,5].includes(d)) && days.length === 5) return 'Pon – Pet';
+    if (days.every((d) => [6,7].includes(d)) && days.length === 2) return 'Vikend';
+    return days.map((d) => names[d]).join(', ');
+  }
+
+  get reviewTimeLabel(): string {
+    const { timeStart, timeEnd } = this.form.value;
+    if (!timeStart || !timeEnd) return 'Ceo dan';
+    return `${timeStart} – ${timeEnd}`;
+  }
+
+  get reviewCouponDurationLabel(): string {
+    const opt = this.couponDurationOptions.find((o) => o.value === this.form.controls.couponDuration.value);
+    return opt ? `${opt.label} ${opt.unit}` : `${this.form.controls.couponDuration.value}h`;
+  }
+
+  get reviewTagsList(): string[] {
+    const raw = this.form.controls.tags.value;
+    return raw ? raw.split(',').map((t) => t.trim()).filter(Boolean) : [];
+  }
+
+  // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
     const invalidStep = this.findFirstInvalidStep();
     if (invalidStep !== null) {
@@ -237,17 +288,16 @@ export class CreateDiscount {
           daysOfWeek,
           timeStart: v.timeStart || undefined,
           timeEnd: v.timeEnd || undefined,
+          minPurchase: v.minPurchase ?? undefined,
         },
         couponSettings: v.hasCoupons
           ? {
               hasCoupons: true,
-              totalCoupons: v.totalCoupons ?? undefined,
+              totalCoupons: v.unlimitedCoupons ? undefined : (v.totalCoupons ?? undefined),
               couponDuration: v.couponDuration,
             }
           : { hasCoupons: false },
-        tags: v.tags
-          ? v.tags.split(',').map((t) => t.trim()).filter(Boolean)
-          : [],
+        tags: v.tags ? v.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
       })
       .pipe(
         switchMap((discount) =>

@@ -3,162 +3,460 @@
     <app-spinner size="lg" />
   </div>
 } @else {
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+  <div class="edit-header">
     <app-page-header title="Izmeni popust" />
-    <a [routerLink]="['/business/discounts', discountId, 'stats']" class="btn-secondary" style="font-size:0.875rem">
+    <a [routerLink]="['/business/discounts', discountId, 'stats']" class="btn-secondary edit-header__stats-btn">
       Statistike
     </a>
   </div>
+
   <section class="wizard">
 
     <!-- Step indicator -->
-    <div class="wizard__steps">
+    <div class="wizard__steps" role="list">
       @for (step of steps; track step; let i = $index) {
-        <button
-          type="button"
-          class="wizard__step"
-          [class.wizard__step--active]="currentStep() === i"
-          [class.wizard__step--done]="currentStep() > i"
-          [class.wizard__step--clickable]="currentStep() > i"
-          [disabled]="i >= currentStep()"
-          (click)="goToStep(i)"
-          [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step"
-        >
-          <span class="wizard__step-num">{{ i + 1 }}</span>
-        </button>
+        <div class="wizard__step-item" role="listitem">
+          <button
+            type="button"
+            class="wizard__step-dot"
+            [class.wizard__step-dot--active]="currentStep() === i"
+            [class.wizard__step-dot--done]="currentStep() > i"
+            [disabled]="i >= currentStep()"
+            (click)="goToStep(i)"
+            [attr.aria-label]="'Korak ' + (i + 1) + ': ' + step + (currentStep() > i ? ' (završeno)' : '')"
+            [attr.aria-current]="currentStep() === i ? 'step' : null"
+          >
+            @if (currentStep() > i) {
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            } @else {
+              <span class="wizard__step-num" aria-hidden="true">{{ i + 1 }}</span>
+            }
+          </button>
+          <span class="wizard__step-label" [class.wizard__step-label--active]="currentStep() === i">{{ step }}</span>
+          @if (i < steps.length - 1) {
+            <div class="wizard__step-line" [class.wizard__step-line--done]="currentStep() > i" aria-hidden="true"></div>
+          }
+        </div>
       }
     </div>
 
     @if (error()) {
-      <div class="wizard__error">{{ error() }}</div>
+      <div class="wizard__error" role="alert">{{ error() }}</div>
     }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="wizard__form">
-      <!-- Step 0: Image -->
+
+      <!-- ── Korak 0: Osnove ─────────────────────────────────── -->
       @if (currentStep() === 0) {
-        <h2>Slika popusta</h2>
-        <div class="form-group">
-          <label for="imageUrl">URL slike</label>
-          <input id="imageUrl" type="url" formControlName="imageUrl" placeholder="https://..." />
-          @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors) {
-            <span class="error-message">URL slike je obavezan</span>
-          }
+        <div class="wizard__form-header">
+          <span class="wizard__form-icon" aria-hidden="true">📝</span>
+          <div>
+            <h2 class="wizard__form-title">Osnove popusta</h2>
+            <p class="wizard__form-subtitle">Uredite naslov, opis i sliku popusta.</p>
+          </div>
         </div>
-      }
 
-      <!-- Step 1: Basic info -->
-      @if (currentStep() === 1) {
-        <h2>Osnovne informacije</h2>
         <div class="form-group">
-          <label for="title">Naslov (max 40 karaktera)</label>
-          <input id="title" type="text" formControlName="title" maxlength="40" />
+          <label for="title">Naslov <span class="required" aria-label="obavezno">*</span></label>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            maxlength="40"
+            placeholder="npr. Gratis kafa uz bilo koji desert"
+            [attr.aria-describedby]="'title-hint title-error'"
+          />
+          <div class="form-group__meta">
+            <span id="title-hint" class="form-hint">Kratko i primamljivo — vidljivo je kupcima na kartici</span>
+            <span class="char-counter" [class.char-counter--warn]="titleLength() >= 32" aria-live="polite">{{ titleLength() }}/40</span>
+          </div>
           @if (form.controls.title.touched && form.controls.title.errors) {
-            <span class="error-message">Naslov je obavezan</span>
+            <span id="title-error" class="error-message" role="alert">Naslov je obavezan</span>
           }
         </div>
+
         <div class="form-group">
-          <label for="description">Opis (max 200 karaktera)</label>
-          <textarea id="description" formControlName="description" rows="3" maxlength="200"></textarea>
+          <label for="description">Opis <span class="form-optional">(opciono)</span></label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="3"
+            maxlength="200"
+            placeholder="Detaljniji opis ponude, uslovi, napomene..."
+            [attr.aria-describedby]="'desc-hint'"
+          ></textarea>
+          <div class="form-group__meta">
+            <span id="desc-hint" class="form-hint">Vidljivo samo na stranici popusta, ne na kartici</span>
+            <span class="char-counter" [class.char-counter--warn]="descLength() >= 180" aria-live="polite">{{ descLength() }}/200</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">URL slike <span class="required" aria-label="obavezno">*</span></label>
+          <input
+            id="imageUrl"
+            type="url"
+            formControlName="imageUrl"
+            placeholder="https://..."
+            aria-describedby="image-url-hint"
+          />
+          <span id="image-url-hint" class="form-hint">Direktan link do slike popusta</span>
+          @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors) {
+            <span class="error-message" role="alert">URL slike je obavezan</span>
+          }
+          @if (form.controls.imageUrl.value) {
+            <img class="image-preview" [src]="form.controls.imageUrl.value" alt="Pregled slike" />
+          }
         </div>
       }
 
-      <!-- Step 2: Discount type -->
-      @if (currentStep() === 2) {
-        <h2>Tip popusta</h2>
-        <div class="form-group">
-          <label for="discountType">Tip</label>
-          <select id="discountType" formControlName="discountType" (change)="onDiscountTypeChange()">
-            @for (type of discountTypes; track type) {
-              <option [value]="type">{{ discountTypeLabels[type] }}</option>
-            }
-          </select>
+      <!-- ── Korak 1: Vrednost ───────────────────────────────── -->
+      @if (currentStep() === 1) {
+        <div class="wizard__form-header">
+          <span class="wizard__form-icon" aria-hidden="true">💰</span>
+          <div>
+            <h2 class="wizard__form-title">Vrednost popusta</h2>
+            <p class="wizard__form-subtitle">Promenite tip i vrednost popusta.</p>
+          </div>
         </div>
-        @if (form.value.discountType !== 'BOGO') {
-          <div class="form-group">
-            @if (form.value.discountType === 'PERCENT') {
-              <label for="discountValue">Procenat popusta (%)</label>
+
+        <div
+          class="type-grid"
+          role="radiogroup"
+          aria-label="Tip popusta"
+          aria-describedby="type-grid-hint"
+        >
+          <span id="type-grid-hint" class="sr-only">Izaberite tip popusta klikom na karticu</span>
+          @for (type of allDiscountTypes; track type) {
+            <button
+              type="button"
+              class="type-card"
+              [class]="'type-card type-card--' + discountTypeInfo[type].cssClass"
+              [class.type-card--selected]="form.controls.discountType.value === type"
+              (click)="selectDiscountType(type)"
+              role="radio"
+              [attr.aria-checked]="form.controls.discountType.value === type"
+              [attr.aria-label]="discountTypeInfo[type].name + ': ' + discountTypeInfo[type].desc"
+            >
+              <span class="type-card__badge">{{ discountTypeInfo[type].badge }}</span>
+              <span class="type-card__name">{{ discountTypeInfo[type].name }}</span>
+              <span class="type-card__desc">{{ discountTypeInfo[type].desc }}</span>
+              @if (form.controls.discountType.value === type) {
+                <span class="type-card__check" aria-hidden="true">✓</span>
+              }
+            </button>
+          }
+        </div>
+
+        @if (form.controls.discountType.value === DiscountType.PERCENT) {
+          <div class="form-group form-group--value">
+            <label for="discountValue">Procenat popusta <span class="required" aria-label="obavezno">*</span></label>
+            <div class="input-suffix-wrap">
               <input id="discountValue" type="number" formControlName="discountValue" min="1" max="100" placeholder="npr. 20" />
-            } @else if (form.value.discountType === 'FIXED') {
-              <label for="discountValue">Iznos popusta (RSD)</label>
-              <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
-            } @else {
-              <label for="discountValue">Nova cena (RSD)</label>
-              <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 990" />
-            }
+              <span class="input-suffix">%</span>
+            </div>
             @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
-              <span class="error-message">Unesite vrednost</span>
+              <span class="error-message" role="alert">Unesite procenat (1–100)</span>
             }
+          </div>
+        }
+
+        @if (form.controls.discountType.value === DiscountType.FIXED) {
+          <div class="form-group form-group--value">
+            <label for="discountValue">Iznos popusta <span class="required" aria-label="obavezno">*</span></label>
+            <div class="input-suffix-wrap">
+              <input id="discountValue" type="number" formControlName="discountValue" min="1" placeholder="npr. 500" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
+              <span class="error-message" role="alert">Unesite iznos popusta</span>
+            }
+          </div>
+        }
+
+        @if (form.controls.discountType.value === DiscountType.NEW_PRICE) {
+          <div class="form-group form-group--value">
+            <label for="oldPrice">Stara cena <span class="required" aria-label="obavezno">*</span></label>
+            <div class="input-suffix-wrap">
+              <input id="oldPrice" type="number" formControlName="oldPrice" min="1" placeholder="npr. 2000" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            @if (form.controls.oldPrice.touched && form.controls.oldPrice.errors) {
+              <span class="error-message" role="alert">Unesite staru cenu</span>
+            }
+          </div>
+          <div class="form-group form-group--value">
+            <label for="newPrice">Nova cena <span class="required" aria-label="obavezno">*</span></label>
+            <div class="input-suffix-wrap">
+              <input id="newPrice" type="number" formControlName="newPrice" min="1" placeholder="npr. 1500" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            @if (form.controls.newPrice.touched && form.controls.newPrice.errors) {
+              <span class="error-message" role="alert">Unesite novu cenu</span>
+            }
+          </div>
+        }
+
+        @if (form.controls.discountType.value !== DiscountType.BOGO) {
+          <div class="live-preview" aria-live="polite">
+            <span class="live-preview__eye" aria-hidden="true">👁</span>
+            <span class="live-preview__label">Kupci će videti:</span>
+            <span class="live-preview__badge" [class]="'live-preview__badge--' + discountTypeInfo[form.controls.discountType.value].cssClass">
+              {{ livePreviewLabel() }}
+            </span>
           </div>
         }
       }
 
-      <!-- Step 3: Validity -->
-      @if (currentStep() === 3) {
-        <h2>Validnost</h2>
-        <div class="form-group">
-          <label for="validFrom">Važi od</label>
-          <input id="validFrom" type="date" formControlName="validFrom" />
+      <!-- ── Korak 2: Raspored ───────────────────────────────── -->
+      @if (currentStep() === 2) {
+        <div class="wizard__form-header">
+          <span class="wizard__form-icon" aria-hidden="true">📅</span>
+          <div>
+            <h2 class="wizard__form-title">Kada važi popust?</h2>
+            <p class="wizard__form-subtitle">Promenite period trajanja ponude.</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="validUntil">Važi do</label>
-          <input id="validUntil" type="date" formControlName="validUntil" />
+
+        <div class="date-row">
+          <div class="form-group">
+            <label for="validFrom">Važi od <span class="required" aria-label="obavezno">*</span></label>
+            <input id="validFrom" type="date" formControlName="validFrom" />
+            @if (form.controls.validFrom.touched && form.controls.validFrom.errors) {
+              <span class="error-message" role="alert">Datum je obavezan</span>
+            }
+          </div>
+          <div class="form-group">
+            <label for="validUntil">Važi do <span class="required" aria-label="obavezno">*</span></label>
+            <input id="validUntil" type="date" formControlName="validUntil" />
+            @if (form.controls.validUntil.touched && form.controls.validUntil.errors) {
+              <span class="error-message" role="alert">Datum je obavezan</span>
+            }
+          </div>
         </div>
-        <div class="form-group">
-          <label for="daysOfWeek">Dani (1=pon, 7=ned, odvojeni zarezom)</label>
-          <input id="daysOfWeek" type="text" formControlName="daysOfWeek" />
+
+        <div class="advanced-toggle">
+          <button
+            type="button"
+            class="advanced-toggle__btn"
+            (click)="showAdvanced.set(!showAdvanced())"
+            [attr.aria-expanded]="showAdvanced()"
+            aria-controls="advanced-panel"
+          >
+            <span class="advanced-toggle__icon" [class.advanced-toggle__icon--open]="showAdvanced()" aria-hidden="true">▶</span>
+            Ograniči na određene dane ili vreme
+            <span class="advanced-toggle__badge form-optional">(opciono)</span>
+          </button>
         </div>
-        <div class="form-group">
-          <label for="timeStart">Vreme od (opciono)</label>
-          <input id="timeStart" type="time" formControlName="timeStart" />
-        </div>
-        <div class="form-group">
-          <label for="timeEnd">Vreme do (opciono)</label>
-          <input id="timeEnd" type="time" formControlName="timeEnd" />
-        </div>
+
+        @if (showAdvanced()) {
+          <div id="advanced-panel" class="advanced-panel">
+            <div class="form-group">
+              <label id="days-label">Dani u nedelji</label>
+              <div class="day-picker" role="group" aria-labelledby="days-label">
+                @for (day of allDays; track day.value) {
+                  <button
+                    type="button"
+                    class="day-picker__btn"
+                    [class.day-picker__btn--active]="isDaySelected(day.value)"
+                    (click)="toggleDay(day.value)"
+                    [attr.aria-pressed]="isDaySelected(day.value)"
+                    [attr.aria-label]="day.label"
+                  >{{ day.label }}</button>
+                }
+              </div>
+              <span class="form-hint">Ostavite sve selektovano ako važi svakog dana</span>
+            </div>
+
+            <div class="time-row">
+              <div class="form-group">
+                <label for="timeStart">Vreme od</label>
+                <input id="timeStart" type="time" formControlName="timeStart" />
+              </div>
+              <div class="form-group">
+                <label for="timeEnd">Vreme do</label>
+                <input id="timeEnd" type="time" formControlName="timeEnd" />
+              </div>
+            </div>
+            <span class="form-hint">Ostavite prazno ako važi tokom celog dana</span>
+
+            <div class="form-group">
+              <label for="minPurchase">Minimalna kupovina</label>
+              <div class="input-suffix-wrap">
+                <input id="minPurchase" type="number" formControlName="minPurchase" min="1" placeholder="npr. 1000" />
+                <span class="input-suffix">RSD</span>
+              </div>
+              <span class="form-hint">Opciono — ostavite prazno ako nema ograničenja</span>
+            </div>
+          </div>
+        }
       }
 
-      <!-- Step 4: Coupons -->
-      @if (currentStep() === 4) {
-        <h2>Kuponi</h2>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" formControlName="hasCoupons" />
-            Omogući kupone
+      <!-- ── Korak 3: Kuponi & Tagovi ───────────────────────── -->
+      @if (currentStep() === 3) {
+        <div class="wizard__form-header">
+          <span class="wizard__form-icon" aria-hidden="true">🎟️</span>
+          <div>
+            <h2 class="wizard__form-title">Kuponi i tagovi</h2>
+            <p class="wizard__form-subtitle">Uredite podešavanja kupona i tagove.</p>
+          </div>
+        </div>
+
+        <div class="callout" role="note" aria-label="Šta su kuponi?">
+          <span class="callout__icon" aria-hidden="true">💡</span>
+          <div class="callout__body">
+            <strong class="callout__title">Šta su kuponi?</strong>
+            <p class="callout__text">Korisnici "rezervišu" vaš popust u aplikaciji i dobijaju jedinstven kod. Kad dođu u lokal, pokažu kod — vi ga skenirate ili ukucate u aplikaciji.</p>
+          </div>
+        </div>
+
+        <div class="form-group toggle-group">
+          <label class="toggle-label" for="hasCoupons">
+            <input
+              id="hasCoupons"
+              type="checkbox"
+              formControlName="hasCoupons"
+              class="toggle-label__input"
+              role="switch"
+              [attr.aria-checked]="form.controls.hasCoupons.value"
+            />
+            <span class="toggle-label__track" aria-hidden="true"></span>
+            <span class="toggle-label__text">Aktiviraj sistem kupona</span>
           </label>
         </div>
-        @if (form.value.hasCoupons) {
-          <div class="form-group">
-            <label for="totalCoupons">Ukupan broj kupona</label>
-            <input id="totalCoupons" type="number" formControlName="totalCoupons" min="1" />
-          </div>
-          <div class="form-group">
-            <label for="couponDuration">Trajanje kupona (minuta)</label>
-            <input id="couponDuration" type="number" formControlName="couponDuration" min="1" />
+
+        @if (form.controls.hasCoupons.value) {
+          <div class="coupon-settings">
+            <div class="form-group">
+              <label id="total-coupons-label">Broj dostupnih kupona</label>
+              <div class="coupon-count-row" role="group" aria-labelledby="total-coupons-label">
+                <input
+                  id="totalCoupons"
+                  type="number"
+                  formControlName="totalCoupons"
+                  min="1"
+                  placeholder="npr. 100"
+                  [disabled]="form.controls.unlimitedCoupons.value"
+                  [attr.aria-disabled]="form.controls.unlimitedCoupons.value"
+                />
+                <button
+                  type="button"
+                  class="btn-toggle"
+                  [class.btn-toggle--active]="form.controls.unlimitedCoupons.value"
+                  (click)="form.controls.unlimitedCoupons.setValue(!form.controls.unlimitedCoupons.value)"
+                  [attr.aria-pressed]="form.controls.unlimitedCoupons.value"
+                >Neograničeno</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label id="duration-label">Kupon važi</label>
+              <div class="duration-btns" role="group" aria-labelledby="duration-label">
+                @for (opt of couponDurationOptions; track opt.value) {
+                  <button
+                    type="button"
+                    class="duration-btn"
+                    [class.duration-btn--active]="form.controls.couponDuration.value === opt.value"
+                    (click)="form.controls.couponDuration.setValue(opt.value)"
+                    [attr.aria-pressed]="form.controls.couponDuration.value === opt.value"
+                  >{{ opt.label }} {{ opt.unit }}</button>
+                }
+              </div>
+              <span class="form-hint">Od trenutka kada korisnik preuzme kupon</span>
+            </div>
           </div>
         }
-      }
 
-      <!-- Step 5: Tags -->
-      @if (currentStep() === 5) {
-        <h2>Tagovi</h2>
+        <hr class="section-divider" aria-hidden="true" />
+
         <div class="form-group">
-          <label for="tags">Tagovi (odvojeni zarezom)</label>
-          <input id="tags" type="text" formControlName="tags" placeholder="npr. pizza, ručak, popust" />
+          <label for="tags">
+            <span class="section-label-icon" aria-hidden="true">🏷️</span>
+            Tagovi <span class="form-optional">(opciono)</span>
+          </label>
+          <input
+            id="tags"
+            type="text"
+            formControlName="tags"
+            placeholder="pizza, ručak, popust"
+            aria-describedby="tags-hint"
+          />
+          <span id="tags-hint" class="form-hint">Odvojite tagove zarezima. Pomažu korisnicima da pronađu vaš popust u pretrazi.</span>
         </div>
       }
 
-      <!-- Step 6: Review -->
-      @if (currentStep() === 6) {
-        <h2>Pregled</h2>
-        <div class="wizard__review">
-          <div class="wizard__review-item"><strong>Naslov:</strong> {{ form.value.title }}</div>
-          <div class="wizard__review-item"><strong>Tip:</strong> {{ discountTypeLabels[form.value.discountType!] }}@if (form.value.discountType !== 'BOGO') { — {{ form.value.discountValue }}@if (form.value.discountType === 'PERCENT') {%} @else { RSD}}</div>
-          <div class="wizard__review-item"><strong>Od:</strong> {{ form.value.validFrom }}</div>
-          <div class="wizard__review-item"><strong>Do:</strong> {{ form.value.validUntil }}</div>
-          @if (form.value.hasCoupons) {
-            <div class="wizard__review-item"><strong>Kuponi:</strong> {{ form.value.totalCoupons }} ({{ form.value.couponDuration }} min)</div>
-          }
+      <!-- ── Korak 4: Pregled ───────────────────────────────── -->
+      @if (currentStep() === 4) {
+        <div class="wizard__form-header">
+          <span class="wizard__form-icon" aria-hidden="true">✅</span>
+          <div>
+            <h2 class="wizard__form-title">Pregled i potvrda</h2>
+            <p class="wizard__form-subtitle">Proverite izmene pre snimanja.</p>
+          </div>
         </div>
+
+        <div class="preview-card" aria-label="Vizuelni prikaz popusta">
+          @if (form.controls.imageUrl.value) {
+            <img class="preview-card__img" [src]="form.controls.imageUrl.value" alt="Slika popusta" />
+          }
+          <div class="preview-card__body">
+            <div class="preview-card__top">
+              <span class="preview-card__badge" [class]="'preview-card__badge--' + discountTypeInfo[form.controls.discountType.value].cssClass">
+                {{ livePreviewLabel() }}
+              </span>
+            </div>
+            <p class="preview-card__title">{{ form.controls.title.value || 'Naslov popusta' }}</p>
+            @if (form.controls.hasCoupons.value) {
+              <div class="preview-card__coupons">
+                <span>{{ form.controls.unlimitedCoupons.value ? '∞' : (form.controls.totalCoupons.value ?? '?') }} kupona</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <ul class="review-list" aria-label="Detalji popusta">
+          <li class="review-list__item">
+            <span class="review-list__icon" aria-hidden="true">✓</span>
+            <strong>Naslov:</strong> {{ form.controls.title.value }}
+          </li>
+          @if (form.controls.description.value) {
+            <li class="review-list__item">
+              <span class="review-list__icon" aria-hidden="true">✓</span>
+              <strong>Opis:</strong> {{ form.controls.description.value }}
+            </li>
+          }
+          <li class="review-list__item">
+            <span class="review-list__icon" aria-hidden="true">✓</span>
+            <strong>Tip:</strong> {{ discountTypeInfo[form.controls.discountType.value].name }}
+            @if (form.controls.discountType.value !== DiscountType.BOGO) {
+              — {{ livePreviewLabel() }}
+            }
+          </li>
+          <li class="review-list__item">
+            <span class="review-list__icon" aria-hidden="true">✓</span>
+            <strong>Važi:</strong> {{ form.controls.validFrom.value }} – {{ form.controls.validUntil.value }}
+          </li>
+          <li class="review-list__item">
+            <span class="review-list__icon" aria-hidden="true">✓</span>
+            <strong>Raspored:</strong> {{ reviewDaysLabel }} · {{ reviewTimeLabel }}
+          </li>
+          @if (form.controls.hasCoupons.value) {
+            <li class="review-list__item">
+              <span class="review-list__icon" aria-hidden="true">✓</span>
+              <strong>Kuponi:</strong>
+              {{ form.controls.unlimitedCoupons.value ? 'Neograničeno' : (form.controls.totalCoupons.value ?? '?') }}
+              · trajanje {{ reviewCouponDurationLabel }}
+            </li>
+          }
+          @if (reviewTagsList.length > 0) {
+            <li class="review-list__item">
+              <span class="review-list__icon" aria-hidden="true">✓</span>
+              <strong>Tagovi:</strong> {{ reviewTagsList.join(', ') }}
+            </li>
+          }
+        </ul>
       }
 
       <!-- Navigation -->
@@ -181,13 +479,18 @@
       </div>
 
       <!-- Delete button on review step -->
-      @if (currentStep() === 6) {
-        <div style="margin-top:1rem;text-align:center">
+      @if (currentStep() === steps.length - 1) {
+        <div class="delete-section">
           <button type="button" class="btn-danger" (click)="onDelete()" [disabled]="deleting()">
-            Obriši popust
+            @if (deleting()) {
+              <app-spinner size="sm" />
+            } @else {
+              Obriši popust
+            }
           </button>
         </div>
       }
+
     </form>
   </section>
 }

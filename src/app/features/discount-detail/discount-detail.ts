@@ -3,24 +3,29 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { DiscountService } from '../../core/services/discount.service';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
-import { Discount, ClaimCouponResponse } from '../../core/models';
+import { Discount, DiscountType, ClaimCouponResponse } from '../../core/models';
 import { DiscountLabelPipe } from '../../shared/pipes/discount-label.pipe';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { MapView } from '../../shared/components/map-view/map-view';
 
+const DAY_NAMES = ['', 'Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
+const WEEKDAYS = [1, 2, 3, 4, 5];
+const WEEKEND = [6, 7];
+
 @Component({
   selector: 'app-discount-detail',
-  imports: [DatePipe, DiscountLabelPipe, Spinner, BackButton, ConfirmDialog, MapView, RouterLink],
+  imports: [DatePipe, DecimalPipe, DiscountLabelPipe, Spinner, BackButton, ConfirmDialog, MapView, RouterLink],
   templateUrl: './discount-detail.html',
   styleUrl: './discount-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +47,104 @@ export class DiscountDetail implements OnInit {
   readonly claimedCoupon = signal<ClaimCouponResponse['coupon'] | null>(null);
 
   readonly isAuthenticated = this.authService.isAuthenticated;
+
+  // ── Urgency ────────────────────────────────────────────────
+  readonly urgencyLevel = computed<'hot' | 'warm' | 'new' | null>(() => {
+    const d = this.discount();
+    if (!d) return null;
+    const now = new Date();
+    const until = new Date(d.validUntil);
+    const diffDays = (until.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (diffDays <= 1 || (d.availableCoupons !== null && d.availableCoupons <= 3)) return 'hot';
+    if (diffDays <= 3) return 'warm';
+    const hoursSinceCreated = (now.getTime() - new Date(d.createdAt).getTime()) / (1000 * 60 * 60);
+    if (hoursSinceCreated <= 48) return 'new';
+    return null;
+  });
+
+  readonly urgencyLabel = computed(() => {
+    const level = this.urgencyLevel();
+    const d = this.discount();
+    if (!d) return '';
+    if (level === 'hot') {
+      if (d.availableCoupons !== null && d.availableCoupons <= 3) return `Ostalo ${d.availableCoupons} kupona`;
+      return 'Ističe danas';
+    }
+    if (level === 'warm') {
+      const diffDays = Math.ceil(
+        (new Date(d.validUntil).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+      );
+      return `Ističe za ${diffDays} ${diffDays === 1 ? 'dan' : 'dana'}`;
+    }
+    if (level === 'new') return 'Novo';
+    return '';
+  });
+
+  readonly daysUntilExpiry = computed(() => {
+    const d = this.discount();
+    if (!d) return null;
+    return Math.ceil(
+      (new Date(d.validUntil).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+    );
+  });
+
+  // ── Coupon progress ────────────────────────────────────────
+  readonly couponFillPercent = computed<number | null>(() => {
+    const d = this.discount();
+    if (!d || !d.hasCoupons || d.totalCoupons === null || d.availableCoupons === null) return null;
+    return Math.round((d.availableCoupons / d.totalCoupons) * 100);
+  });
+
+  readonly isCouponCritical = computed(() => {
+    const fill = this.couponFillPercent();
+    return fill !== null && fill <= 20;
+  });
+
+  // ── Discount type CSS class ────────────────────────────────
+  readonly discountTypeClass = computed(() => {
+    const d = this.discount();
+    if (!d) return 'percent';
+    switch (d.discountType) {
+      case DiscountType.PERCENT:   return 'percent';
+      case DiscountType.FIXED:     return 'fixed';
+      case DiscountType.NEW_PRICE: return 'new-price';
+      case DiscountType.BOGO:      return 'bogo';
+      default:                     return 'percent';
+    }
+  });
+
+  // ── Schedule labels ────────────────────────────────────────
+  readonly daysLabel = computed(() => {
+    const d = this.discount();
+    if (!d || !d.daysOfWeek || d.daysOfWeek.length === 0) return 'Svakog dana';
+    const days = [...d.daysOfWeek].sort((a, b) => a - b);
+    if (days.length === 7) return 'Svakog dana';
+    if (WEEKDAYS.every(day => days.includes(day)) && days.length === 5) return 'Pon – Pet';
+    if (WEEKEND.every(day => days.includes(day)) && days.length === 2) return 'Vikend';
+    return days.map(n => DAY_NAMES[n] ?? '').filter(Boolean).join(', ');
+  });
+
+  readonly timeLabel = computed(() => {
+    const d = this.discount();
+    if (!d || !d.timeStart || !d.timeEnd) return 'Ceo dan';
+    return `${d.timeStart} – ${d.timeEnd}`;
+  });
+
+  // ── Conditions list ────────────────────────────────────────
+  readonly conditions = computed<string[]>(() => {
+    const d = this.discount();
+    if (!d) return [];
+    const list: string[] = [];
+    if (d.minPurchase) list.push(`Minimalna kupovina: ${d.minPurchase.toLocaleString('sr-RS')} RSD`);
+    list.push(this.daysLabel());
+    if (d.timeStart && d.timeEnd) list.push(`Dostupno: ${this.timeLabel()}`);
+    if (d.couponDuration) {
+      const h = d.couponDuration;
+      list.push(`Kupon važi: ${h === 1 ? '1 sat' : h === 168 ? '7 dana' : h + ' sati'} od preuzimanja`);
+    }
+    return list;
+  });
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

@@ -2,65 +2,95 @@
 
 .wizard {
   padding: $spacing-md;
-  max-width: 500px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
-.wizard__top {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-}
-
-.wizard__title {
-  font-family: $font-heading;
-  font-size: 1.25rem;
-}
-
+// ── Step indicator ──────────────────────────────────────────
 .wizard__steps {
   display: flex;
+  align-items: flex-start;
   justify-content: center;
-  gap: $spacing-xs;
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  gap: 0;
 }
 
-.wizard__step {
-  width: 28px;
-  height: 28px;
+.wizard__step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 96px;
+}
+
+.wizard__step-dot {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: $color-border;
-  border: none;
+  border: 2px solid $color-border;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: default;
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  position: relative;
+  z-index: 1;
 
-  &--active { background: $color-primary; }
-  &--done { background: $color-primary-light; }
+  &--active {
+    background: $color-primary;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+  }
 
-  &--clickable {
+  &--done {
+    background: $color-primary;
+    border-color: $color-primary;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.15);
-      background: $color-primary;
+      transform: scale(1.1);
+      background: darken($color-primary, 8%);
     }
-  }
-
-  &:disabled:not(&--active):not(&--done) {
-    opacity: 0.6;
   }
 }
 
 .wizard__step-num {
-  font-size: 0.688rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #fff;
 }
 
+.wizard__step-label {
+  font-size: 0.688rem;
+  color: $color-text-secondary;
+  margin-top: 4px;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.2s;
+
+  &--active {
+    color: $color-primary;
+    font-weight: 600;
+  }
+}
+
+.wizard__step-line {
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 18px);
+  right: calc(-50% + 18px);
+  height: 2px;
+  background: $color-border;
+  transition: background 0.3s;
+  z-index: 0;
+
+  &--done { background: $color-primary; }
+}
+
+// ── Error ───────────────────────────────────────────────────
 .wizard__error {
   background-color: rgba($color-error, 0.1);
   color: $color-error;
@@ -71,46 +101,287 @@
   text-align: center;
 }
 
+// ── Form card ───────────────────────────────────────────────
 .wizard__form {
   background: $color-surface;
   border-radius: $radius-md;
   padding: $spacing-lg;
   box-shadow: $shadow-sm;
-
-  h2 {
-    font-family: $font-heading;
-    font-size: 1.125rem;
-    margin-bottom: $spacing-lg;
-  }
 }
 
-.wizard__review {
+.wizard__form-header {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: $spacing-md;
+  margin-bottom: $spacing-lg;
 }
 
-.wizard__review-item {
-  font-size: 0.938rem;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-divider;
+.wizard__form-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
 
-  strong {
-    color: $color-text-secondary;
-    font-weight: 500;
-    margin-right: $spacing-sm;
+.wizard__form-title {
+  font-family: $font-heading;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: $color-text;
+}
+
+.wizard__form-subtitle {
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+// ── Form helpers ─────────────────────────────────────────────
+.form-group {
+  margin-bottom: $spacing-md;
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-text;
+    margin-bottom: 6px;
   }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'],
+  input[type='time'],
+  textarea {
+    width: 100%;
+    padding: 10px $spacing-sm;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: 0.938rem;
+    font-family: $font-body;
+    color: $color-text;
+    background: $color-background;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea { resize: vertical; }
 }
 
-.wizard__nav {
+.form-group__meta {
   display: flex;
   justify-content: space-between;
-  gap: $spacing-md;
-  margin-top: $spacing-xl;
-
-  button { flex: 1; padding: $spacing-md; }
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: 4px;
 }
 
+.form-hint {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  line-height: 1.4;
+}
+
+.form-optional {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  font-weight: 400;
+}
+
+.required {
+  color: $color-error;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &--warn { color: $color-secondary; font-weight: 600; }
+}
+
+.input-suffix-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  input { flex: 1; border-radius: $radius-sm 0 0 $radius-sm; }
+}
+
+.input-suffix {
+  background: $color-border;
+  border: 1.5px solid $color-border;
+  border-left: none;
+  border-radius: 0 $radius-sm $radius-sm 0;
+  padding: 10px $spacing-sm;
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+// ── Type card selector ──────────────────────────────────────
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.type-card {
+  border: 2px solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-sm;
+  background: $color-background;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &:hover:not(&--selected) {
+    border-color: rgba($color-primary, 0.5);
+    background: rgba($color-primary, 0.03);
+  }
+
+  &--selected {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.06);
+    box-shadow: 0 0 0 1px $color-primary;
+  }
+
+  &__badge {
+    font-size: 1.125rem;
+    font-weight: 800;
+    font-family: $font-heading;
+    color: $color-text;
+    line-height: 1;
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-text;
+  }
+
+  &__desc {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    line-height: 1.3;
+  }
+
+  &__check {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-primary;
+    color: #fff;
+    font-size: 0.688rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  // Per-type badge color hints
+  &--percent   .type-card__badge { color: $color-secondary; }
+  &--fixed     .type-card__badge { color: $color-primary; }
+  &--new-price .type-card__badge { color: $color-primary; }
+  &--bogo      .type-card__badge { color: $color-secondary; }
+}
+
+// Value input spacing
+.form-group--value {
+  margin-top: $spacing-sm;
+}
+
+// ── Live preview ────────────────────────────────────────────
+.live-preview {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-primary, 0.06);
+  border-radius: $radius-sm;
+  border-left: 3px solid $color-primary;
+  margin-top: $spacing-sm;
+
+  &__eye  { font-size: 1rem; }
+  &__label { font-size: 0.813rem; color: $color-text-secondary; }
+
+  &__badge {
+    font-weight: 800;
+    font-family: $font-heading;
+    font-size: 1rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+
+    &--percent, &--bogo { background: $color-secondary; color: #fff; }
+    &--fixed, &--new-price { background: $color-primary; color: #fff; }
+  }
+}
+
+// ── Date row ────────────────────────────────────────────────
+.date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+// ── Advanced toggle ─────────────────────────────────────────
+.advanced-toggle {
+  margin: $spacing-md 0 0;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-text;
+    padding: $spacing-sm 0;
+
+    &:hover { color: $color-primary; }
+    &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; border-radius: 2px; }
+  }
+
+  &__icon {
+    font-size: 0.625rem;
+    transition: transform 0.2s;
+    &--open { transform: rotate(90deg); }
+  }
+
+  &__badge { margin-left: 2px; }
+}
+
+.advanced-panel {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.03);
+  border-radius: $radius-sm;
+  border: 1px solid rgba($color-primary, 0.15);
+}
+
+// ── Day picker ──────────────────────────────────────────────
 .day-picker {
   display: flex;
   gap: $spacing-xs;
@@ -119,7 +390,7 @@
   &__btn {
     padding: 6px 10px;
     border-radius: $radius-sm;
-    border: 1px solid $color-border;
+    border: 1.5px solid $color-border;
     background: $color-background;
     color: $color-text-secondary;
     font-size: 0.813rem;
@@ -138,4 +409,312 @@
       color: $color-primary;
     }
   }
+}
+
+.time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+// ── Callout ─────────────────────────────────────────────────
+.callout {
+  display: flex;
+  gap: $spacing-sm;
+  background: rgba($color-secondary, 0.08);
+  border-left: 3px solid $color-secondary;
+  border-radius: $radius-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  &__icon { font-size: 1.125rem; flex-shrink: 0; }
+
+  &__body { flex: 1; }
+
+  &__title {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-text;
+    margin-bottom: 4px;
+  }
+
+  &__text {
+    font-size: 0.813rem;
+    color: $color-text-secondary;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ── Toggle switch ────────────────────────────────────────────
+.toggle-group { margin-bottom: $spacing-md; }
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__track {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: $color-border;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__input:checked + &__track {
+    background: $color-primary;
+    &::after { transform: translateX(20px); }
+  }
+
+  &__input:focus-visible + &__track {
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.3);
+  }
+
+  &__text {
+    font-size: 0.938rem;
+    font-weight: 600;
+    color: $color-text;
+  }
+}
+
+// ── Coupon settings ──────────────────────────────────────────
+.coupon-settings {
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.04);
+  border-radius: $radius-sm;
+  border: 1px solid rgba($color-primary, 0.15);
+  margin-bottom: $spacing-md;
+}
+
+.coupon-count-row {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+
+  input { flex: 1; }
+}
+
+.btn-toggle {
+  padding: 10px $spacing-sm;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  background: $color-background;
+  color: $color-text-secondary;
+  font-size: 0.813rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &--active {
+    background: $color-primary;
+    border-color: $color-primary;
+    color: #fff;
+  }
+
+  &:hover:not(&--active) {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+.duration-btns {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.duration-btn {
+  flex: 1;
+  padding: $spacing-sm;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  background: $color-background;
+  color: $color-text-secondary;
+  font-size: 0.813rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+
+  &--active {
+    background: $color-primary;
+    border-color: $color-primary;
+    color: #fff;
+  }
+
+  &:hover:not(&--active) {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+// ── Section divider ──────────────────────────────────────────
+.section-divider {
+  border: none;
+  border-top: 1px solid $color-divider;
+  margin: $spacing-lg 0 $spacing-md;
+}
+
+.section-label-icon {
+  margin-right: 4px;
+}
+
+// ── Preview card ─────────────────────────────────────────────
+.preview-card {
+  border-radius: $radius-md;
+  overflow: hidden;
+  border: 1px solid $color-border;
+  margin-bottom: $spacing-lg;
+  background: $color-surface;
+
+  &__img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__body {
+    padding: $spacing-md;
+  }
+
+  &__top {
+    margin-bottom: $spacing-sm;
+  }
+
+  &__badge {
+    display: inline-block;
+    font-weight: 800;
+    font-family: $font-heading;
+    font-size: 0.938rem;
+    padding: 3px 12px;
+    border-radius: 20px;
+
+    &--percent, &--bogo { background: $color-secondary; color: #fff; }
+    &--fixed, &--new-price { background: $color-primary; color: #fff; }
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-text;
+    margin: 0 0 $spacing-sm;
+  }
+
+  &__coupons {
+    font-size: 0.813rem;
+    color: $color-text-secondary;
+  }
+}
+
+// ── Review list ──────────────────────────────────────────────
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    font-size: 0.938rem;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $color-divider;
+
+    strong {
+      color: $color-text-secondary;
+      font-weight: 500;
+      margin-right: 2px;
+      white-space: nowrap;
+    }
+  }
+
+  &__icon {
+    color: $color-primary;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    margin-top: 1px;
+  }
+}
+
+// ── Navigation ───────────────────────────────────────────────
+.wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+
+  button { flex: 1; padding: $spacing-md; }
+}
+
+// ── Edit-specific ────────────────────────────────────────────
+.edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+
+  &__stats-btn {
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+}
+
+.image-preview {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  margin-top: $spacing-sm;
+  border: 1px solid $color-border;
+}
+
+.delete-section {
+  margin-top: $spacing-md;
+  text-align: center;
+}
+
+// ── Screen reader only ───────────────────────────────────────
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

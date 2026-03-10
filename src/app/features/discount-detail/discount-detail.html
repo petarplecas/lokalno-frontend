@@ -4,22 +4,65 @@
   </div>
 } @else if (discount(); as d) {
   <div class="detail">
-    <!-- Hero image -->
+
+    <!-- ═══ HERO ═══════════════════════════════════════════════ -->
     <div class="detail__hero">
-      <app-back-button />
-      <img [src]="d.imageUrl" [alt]="d.title" class="detail__image" />
-      <span class="detail__badge">
-        {{ d.discountType | discountLabel:d.discountValue:d.newPrice }}
-      </span>
+      <img [src]="d.imageUrl" [alt]="d.title" class="detail__hero-img" />
+      <div class="detail__hero-overlay" aria-hidden="true"></div>
+
+      <!-- Back button -->
+      <app-back-button class="detail__back" />
+
+      <!-- Type badge — top left -->
+      <span
+        class="detail__type-badge"
+        [class]="'detail__type-badge--' + discountTypeClass()"
+        aria-hidden="true"
+      >{{ d.discountType | discountLabel:d.discountValue:d.newPrice }}</span>
+
+      <!-- Save button — top right -->
+      <button
+        class="detail__save-btn"
+        [class.detail__save-btn--saved]="isSaved()"
+        (click)="toggleSave()"
+        [attr.aria-label]="isSaved() ? 'Ukloni iz sačuvanih' : 'Sačuvaj popust'"
+        [attr.aria-pressed]="isSaved()"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          @if (isSaved()) {
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="currentColor" />
+          } @else {
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          }
+        </svg>
+      </button>
+
+      <!-- Hero panel — discount value + title + urgency -->
+      <div class="detail__hero-panel">
+        <div class="detail__hero-value" aria-label="Vrednost popusta">
+          {{ d.discountType | discountLabel:d.discountValue:d.newPrice }}
+        </div>
+        <h1 class="detail__hero-title">{{ d.title }}</h1>
+        @if (urgencyLevel()) {
+          <span
+            class="detail__urgency-badge"
+            [class]="'detail__urgency-badge--' + urgencyLevel()"
+            role="status"
+          >{{ urgencyLabel() }}</span>
+        }
+      </div>
     </div>
 
-    <!-- Business info -->
+    <!-- ═══ BUSINESS STRIP ═══════════════════════════════════ -->
     <div class="detail__business">
       <a
         class="detail__business-link"
         [routerLink]="['/businesses', d.business.id]"
         aria-label="Pogledaj profil biznisa {{ d.business.name }}"
       >
+        <div class="detail__business-logo" aria-hidden="true">
+          {{ d.business.name.charAt(0) }}
+        </div>
         <div class="detail__business-info">
           <strong>{{ d.business.name }}</strong>
           <span class="detail__business-category">{{ d.business.category }}</span>
@@ -29,10 +72,11 @@
         </svg>
       </a>
       <button
-        class="detail__action-btn"
-        [class.detail__action-btn--active]="isFavorite()"
+        class="detail__fav-btn"
+        [class.detail__fav-btn--active]="isFavorite()"
         (click)="toggleFavorite()"
         [attr.aria-label]="isFavorite() ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'"
+        [attr.aria-pressed]="isFavorite()"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           @if (isFavorite()) {
@@ -44,63 +88,121 @@
       </button>
     </div>
 
-    <!-- Title & description -->
-    <div class="detail__content">
-      <div class="detail__title-row">
-        <h1 class="detail__title">{{ d.title }}</h1>
-        <button
-          class="detail__action-btn"
-          [class.detail__action-btn--active]="isSaved()"
-          (click)="toggleSave()"
-          [attr.aria-label]="isSaved() ? 'Ukloni iz sačuvanih' : 'Sačuvaj popust'"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            @if (isSaved()) {
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="currentColor" />
-            } @else {
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            }
-          </svg>
-        </button>
+    <!-- ═══ QUICK STATS ══════════════════════════════════════ -->
+    <div class="detail__stats" aria-label="Ključne informacije">
+      <!-- Validity -->
+      <div class="detail__stat">
+        <svg class="detail__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+        <span class="detail__stat-value">{{ d.validUntil | date:'dd.MM.yyyy' }}</span>
+        @if (daysUntilExpiry(); as days) {
+          <span class="detail__stat-sub" [class.detail__stat-sub--urgent]="days <= 3">
+            @if (days <= 0) { Isteklo } @else { još {{ days }} {{ days === 1 ? 'dan' : 'dana' }} }
+          </span>
+        }
       </div>
-      @if (d.description) {
-        <p class="detail__description">{{ d.description }}</p>
+
+      <!-- Schedule -->
+      <div class="detail__stat">
+        <svg class="detail__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        <span class="detail__stat-value">{{ timeLabel() }}</span>
+        <span class="detail__stat-sub">{{ daysLabel() }}</span>
+      </div>
+
+      <!-- Coupons -->
+      @if (d.hasCoupons && d.availableCoupons !== null && d.totalCoupons !== null) {
+        <div class="detail__stat">
+          <svg class="detail__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20 12v10H4V12" />
+            <path d="M22 7H2v5h20V7z" />
+            <line x1="12" y1="22" x2="12" y2="7" />
+            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+          </svg>
+          <div class="detail__coupon-track" role="progressbar" [attr.aria-valuenow]="couponFillPercent()" aria-valuemin="0" aria-valuemax="100">
+            <div
+              class="detail__coupon-fill"
+              [class.detail__coupon-fill--critical]="isCouponCritical()"
+              [style.width.%]="couponFillPercent()"
+            ></div>
+          </div>
+          <span class="detail__stat-sub" [class.detail__stat-sub--urgent]="isCouponCritical()">
+            {{ d.availableCoupons }}/{{ d.totalCoupons }} kupona
+          </span>
+        </div>
       }
     </div>
 
-    <!-- Details section -->
-    <div class="detail__info">
-      <h2 class="detail__section-title">Detalji</h2>
-      <div class="detail__info-grid">
-        <div class="detail__info-item">
-          <span class="detail__info-label">Tip</span>
-          <span class="detail__info-value">{{ d.discountType | discountLabel:d.discountValue:d.newPrice }}</span>
-        </div>
-        <div class="detail__info-item">
-          <span class="detail__info-label">Važi od</span>
-          <span class="detail__info-value">{{ d.validFrom | date:'dd.MM.yyyy' }}</span>
-        </div>
-        <div class="detail__info-item">
-          <span class="detail__info-label">Važi do</span>
-          <span class="detail__info-value">{{ d.validUntil | date:'dd.MM.yyyy' }}</span>
-        </div>
-        @if (d.hasCoupons) {
-          <div class="detail__info-item">
-            <span class="detail__info-label">Kuponi</span>
-            <span class="detail__info-value">{{ d.availableCoupons }}/{{ d.totalCoupons }} dostupno</span>
-          </div>
-        }
-        @if (d.couponDuration) {
-          <div class="detail__info-item">
-            <span class="detail__info-label">Trajanje kupona</span>
-            <span class="detail__info-value">{{ d.couponDuration === 1 ? '1 sat' : d.couponDuration === 168 ? '7 dana' : d.couponDuration + ' sati' }}</span>
-          </div>
+    <!-- ═══ PRICE COMPARISON ═════════════════════════════════ -->
+    @if (d.oldPrice && d.newPrice) {
+      <div class="detail__price-section">
+        <span class="detail__price-new">{{ d.newPrice | number:'1.0-0' }} RSD</span>
+        <span class="detail__price-old">{{ d.oldPrice | number:'1.0-0' }} RSD</span>
+        @if (d.discountType === 'PERCENT' && d.discountValue) {
+          <span class="detail__price-savings">Uštedite {{ d.discountValue }}%</span>
         }
       </div>
+    }
+
+    <!-- ═══ DESCRIPTION ══════════════════════════════════════ -->
+    @if (d.description) {
+      <div class="detail__section">
+        <p class="detail__description">{{ d.description }}</p>
+      </div>
+    }
+
+    <!-- ═══ CONDITIONS ══════════════════════════════════════ -->
+    @if (conditions().length) {
+      <div class="detail__section">
+        <h2 class="detail__section-title">Uslovi korišćenja</h2>
+        <ul class="detail__conditions" aria-label="Uslovi korišćenja popusta">
+          @for (cond of conditions(); track cond) {
+            <li class="detail__condition">
+              <svg class="detail__condition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              {{ cond }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <!-- ═══ SOCIAL PROOF ═════════════════════════════════════ -->
+    <div class="detail__social">
+      <span class="detail__social-item" aria-label="{{ d.saves }} korisnika sačuvalo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+        </svg>
+        {{ d.saves }} sačuvano
+      </span>
+      <span class="detail__social-item" aria-label="{{ d.views }} prikaza">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+        {{ d.views }} prikaza
+      </span>
     </div>
 
-    <!-- Location -->
-    <div class="detail__info">
+    <!-- ═══ TAGS ══════════════════════════════════════════════ -->
+    @if (d.tags && d.tags.length) {
+      <div class="detail__tags" aria-label="Oznake">
+        @for (tag of d.tags; track tag) {
+          <span class="detail__tag">#{{ tag }}</span>
+        }
+      </div>
+    }
+
+    <!-- ═══ LOCATION ═════════════════════════════════════════ -->
+    <div class="detail__section">
       <h2 class="detail__section-title">Lokacija</h2>
       <p class="detail__address">{{ d.business.address }}</p>
       @if (d.business.latitude && d.business.longitude) {
@@ -113,36 +215,65 @@
       }
     </div>
 
-    <!-- Claimed coupon display -->
+    <!-- ═══ CLAIMED COUPON ════════════════════════════════════ -->
     @if (claimedCoupon(); as coupon) {
       <div class="detail__claimed" role="alert">
-        <h3>Vaš kupon</h3>
+        <div class="detail__claimed-label">Vaš kupon</div>
         <div class="detail__coupon-code">{{ coupon.code }}</div>
         <p class="detail__coupon-expiry">Ističe: {{ coupon.expiresAt | date:'dd.MM.yyyy HH:mm' }}</p>
-        <button class="btn-secondary" (click)="dismissCoupon()">U redu</button>
+        <button class="btn-secondary detail__coupon-dismiss" (click)="dismissCoupon()">U redu</button>
       </div>
     }
 
-    <!-- Sticky CTA -->
+    <!-- ═══ STICKY CTA ════════════════════════════════════════ -->
     @if (d.hasCoupons && !claimedCoupon()) {
-      <div class="detail__cta">
-        <button
-          class="btn-primary detail__cta-btn"
-          [disabled]="claimLoading() || d.availableCoupons === 0"
-          (click)="openClaimDialog()"
-        >
-          @if (claimLoading()) {
-            <app-spinner size="sm" />
-          } @else if (d.availableCoupons === 0) {
-            Nema dostupnih kupona
-          } @else {
-            Pokupite kupon
-          }
-        </button>
+      <div class="detail__cta" role="region" aria-label="Preuzmi kupon">
+        @if (couponFillPercent() !== null) {
+          <div class="detail__cta-progress">
+            <div class="detail__cta-track" aria-hidden="true">
+              <div
+                class="detail__cta-fill"
+                [class.detail__cta-fill--critical]="isCouponCritical()"
+                [style.width.%]="couponFillPercent()"
+              ></div>
+            </div>
+            <span class="detail__cta-count">{{ d.availableCoupons }} kupona ostalo</span>
+          </div>
+        }
+        <div class="detail__cta-actions">
+          <button
+            class="btn-primary detail__cta-btn"
+            [disabled]="claimLoading() || d.availableCoupons === 0"
+            (click)="openClaimDialog()"
+          >
+            @if (claimLoading()) {
+              <app-spinner size="sm" />
+            } @else if (d.availableCoupons === 0) {
+              Nema dostupnih kupona
+            } @else {
+              Preuzmi kupon
+            }
+          </button>
+          <button
+            class="detail__cta-save"
+            [class.detail__cta-save--saved]="isSaved()"
+            (click)="toggleSave()"
+            [attr.aria-label]="isSaved() ? 'Ukloni iz sačuvanih' : 'Sačuvaj za kasnije'"
+            [attr.aria-pressed]="isSaved()"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              @if (isSaved()) {
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="currentColor" />
+              } @else {
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              }
+            </svg>
+          </button>
+        </div>
       </div>
     }
 
-    <!-- Claim confirm dialog -->
+    <!-- ═══ CLAIM CONFIRM DIALOG ══════════════════════════════ -->
     @if (showClaimDialog()) {
       <app-confirm-dialog
         title="Preuzmi kupon"

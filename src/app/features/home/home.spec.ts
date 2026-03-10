@@ -1,10 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { Home } from './home';
 import { DiscountService } from '../../core/services/discount.service';
+import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 import {
   Discount,
   DiscountType,
@@ -13,11 +16,9 @@ import {
 } from '../../core/models';
 
 // Mock IntersectionObserver for jsdom
-const mockObserve = jest.fn();
-const mockDisconnect = jest.fn();
 (globalThis as any).IntersectionObserver = jest.fn().mockImplementation(() => ({
-  observe: mockObserve,
-  disconnect: mockDisconnect,
+  observe: jest.fn(),
+  disconnect: jest.fn(),
   unobserve: jest.fn(),
 }));
 
@@ -31,7 +32,7 @@ const mockDiscount: Discount = {
   oldPrice: null,
   newPrice: null,
   validFrom: '2024-01-01',
-  validUntil: '2024-12-31',
+  validUntil: '2099-12-31',
   daysOfWeek: [1, 2, 3, 4, 5],
   timeStart: null,
   timeEnd: null,
@@ -45,8 +46,8 @@ const mockDiscount: Discount = {
   status: DiscountStatus.ACTIVE,
   views: 150,
   saves: 10,
-  createdAt: '2024-01-01',
-  updatedAt: '2024-01-01',
+  createdAt: '2020-01-01',
+  updatedAt: '2020-01-01',
   business: {
     id: 'b1',
     name: 'Test Biznis',
@@ -70,12 +71,18 @@ const mockEmptyResponse: PaginatedResponse<Discount> = {
 };
 
 describe('Home', () => {
-  const mockDiscountService = {
-    getDiscounts: jest.fn(),
+  const mockDiscountService = { getDiscounts: jest.fn() };
+  const mockUserService = {
+    saveDiscount: jest.fn().mockReturnValue(of({ message: 'ok' })),
+    removeSavedDiscount: jest.fn().mockReturnValue(of({ message: 'ok' })),
   };
+  const mockAuthService = { isAuthenticated: jest.fn(() => false) };
+  const mockToastService = { success: jest.fn(), error: jest.fn() };
+  const mockRouter = { navigate: jest.fn() };
 
   beforeEach(async () => {
     mockDiscountService.getDiscounts.mockReturnValue(of(mockResponse));
+    mockAuthService.isAuthenticated.mockReturnValue(false);
 
     await TestBed.configureTestingModule({
       imports: [Home],
@@ -84,13 +91,21 @@ describe('Home', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: DiscountService, useValue: mockDiscountService },
+        { provide: UserService, useValue: mockUserService },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: ToastService, useValue: mockToastService },
+        { provide: Router, useValue: mockRouter },
       ],
     }).compileComponents();
   });
 
   afterEach(() => {
     mockDiscountService.getDiscounts.mockReset();
-    TestBed.resetTestingModule();
+    mockUserService.saveDiscount.mockReset();
+    mockUserService.removeSavedDiscount.mockReset();
+    mockToastService.success.mockReset();
+    mockToastService.error.mockReset();
+    mockRouter.navigate.mockReset();
   });
 
   it('should create', () => {
@@ -106,19 +121,27 @@ describe('Home', () => {
     );
   });
 
-  it('should render discount cards', () => {
+  it('should render discount cards (featured + grid = 2 for 1 discount)', () => {
     const fixture = TestBed.createComponent(Home);
     fixture.detectChanges();
     const cards = fixture.nativeElement.querySelectorAll('app-discount-card');
-    expect(cards.length).toBe(1);
+    // 1 discount rendered twice: once in featured scroll, once in main grid
+    expect(cards.length).toBe(2);
   });
 
-  it('should render category pills', () => {
+  it('should render featured section', () => {
+    const fixture = TestBed.createComponent(Home);
+    fixture.detectChanges();
+    const featured = fixture.nativeElement.querySelector('.home__featured');
+    expect(featured).toBeTruthy();
+  });
+
+  it('should render category pills with emoji labels', () => {
     const fixture = TestBed.createComponent(Home);
     fixture.detectChanges();
     const pills = fixture.nativeElement.querySelectorAll('.home__pill');
     expect(pills.length).toBe(7);
-    expect(pills[0].textContent.trim()).toBe('Sve');
+    expect(pills[0].textContent.trim()).toContain('Sve');
   });
 
   it('should change active category on pill click', () => {
@@ -170,9 +193,8 @@ describe('Home', () => {
 
   it('should manage loading state', () => {
     const fixture = TestBed.createComponent(Home);
-    fixture.detectChanges(); // ngOnInit runs, data loads
+    fixture.detectChanges();
 
-    // Manually set loading to true to test template binding
     fixture.componentInstance.loading.set(true);
     fixture.componentInstance.discounts.set([]);
     fixture.detectChanges();
@@ -232,5 +254,61 @@ describe('Home', () => {
       expect.objectContaining({ page: 2 }),
     );
     expect(fixture.componentInstance.discounts().length).toBe(2);
+  });
+
+  describe('save toggle', () => {
+    it('should redirect to login when user is not authenticated', () => {
+      mockAuthService.isAuthenticated.mockReturnValue(false);
+      const fixture = TestBed.createComponent(Home);
+      fixture.detectChanges();
+
+      fixture.componentInstance.onSaveToggled({ discount: mockDiscount, save: true });
+
+      expect(mockUserService.saveDiscount).not.toHaveBeenCalled();
+    });
+
+    it('should call saveDiscount and update set when authenticated', () => {
+      mockAuthService.isAuthenticated.mockReturnValue(true);
+      mockUserService.saveDiscount.mockReturnValue(of({ message: 'ok' }));
+      const fixture = TestBed.createComponent(Home);
+      fixture.detectChanges();
+
+      fixture.componentInstance.onSaveToggled({ discount: mockDiscount, save: true });
+
+      expect(mockUserService.saveDiscount).toHaveBeenCalledWith('1');
+      expect(fixture.componentInstance.isDiscountSaved('1')).toBe(true);
+    });
+
+    it('should call removeSavedDiscount when unsaving', () => {
+      mockAuthService.isAuthenticated.mockReturnValue(true);
+      mockUserService.removeSavedDiscount.mockReturnValue(of({ message: 'ok' }));
+      const fixture = TestBed.createComponent(Home);
+      fixture.detectChanges();
+
+      fixture.componentInstance.savedDiscountIds.update((s) => new Set([...s, '1']));
+      fixture.componentInstance.onSaveToggled({ discount: mockDiscount, save: false });
+
+      expect(mockUserService.removeSavedDiscount).toHaveBeenCalledWith('1');
+      expect(fixture.componentInstance.isDiscountSaved('1')).toBe(false);
+    });
+
+    it('should compute featuredDiscounts as first 3 from discounts', () => {
+      const multiDiscount: PaginatedResponse<Discount> = {
+        data: [
+          { ...mockDiscount, id: '1' },
+          { ...mockDiscount, id: '2' },
+          { ...mockDiscount, id: '3' },
+          { ...mockDiscount, id: '4' },
+        ],
+        meta: { total: 4, page: 1, limit: 20, totalPages: 1 },
+      };
+      mockDiscountService.getDiscounts.mockReturnValue(of(multiDiscount));
+      const fixture = TestBed.createComponent(Home);
+      fixture.detectChanges();
+
+      const featured = fixture.componentInstance.featuredDiscounts();
+      expect(featured).toHaveLength(3);
+      expect(featured.map((d) => d.id)).toEqual(['1', '2', '3']);
+    });
   });
 });

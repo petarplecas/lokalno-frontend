@@ -3,7 +3,7 @@ module.exports = {
   preset: 'jest-preset-angular',
   testEnvironment: 'jest-preset-angular/environments/jest-jsdom-env',
   setupFilesAfterEnv: [
-    'jest-preset-angular/setup-env/zoneless/index.js',
+    '<rootDir>/setup-jest.ts',
   ],
   transform: {
     '^.+\\.(ts|js|mjs|html|svg)$': [
@@ -28,4 +28,12 @@ module.exports = {
     '!src/app/**/*.d.ts',
   ],
   coverageReporters: ['text', 'lcov', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 75,
+      lines: 75,
+      statements: 75,
+    },
+  },
 };

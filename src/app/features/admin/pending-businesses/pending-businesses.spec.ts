@@ -59,7 +59,6 @@ describe('PendingBusinesses', () => {
   afterEach(() => {
     mockAdminService.getPendingBusinesses.mockReset();
     mockAdminService.getAllBusinesses.mockReset();
-    TestBed.resetTestingModule();
   });
 
   it('should create', () => {
@@ -73,14 +72,14 @@ describe('PendingBusinesses', () => {
     expect(mockAdminService.getPendingBusinesses).toHaveBeenCalledWith(1);
   });
 
-  it('should render 6 tabs', () => {
+  it('should render 5 tabs', () => {
     const fixture = TestBed.createComponent(PendingBusinesses);
     fixture.detectChanges();
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    expect(tabs.length).toBe(6);
+    expect(tabs.length).toBe(5);
     expect(tabs[0].textContent.trim()).toBe('Na čekanju');
     expect(tabs[2].textContent.trim()).toBe('Istekli trial');
-    expect(tabs[5].textContent.trim()).toBe('Svi');
+    expect(tabs[4].textContent.trim()).toBe('Suspendovani');
   });
 
   it('should switch to Approved tab and call getAllBusinesses', () => {
@@ -111,17 +110,18 @@ describe('PendingBusinesses', () => {
     expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, BusinessStatus.TRIAL_EXPIRED);
   });
 
-  it('should switch to All tab with no status filter', () => {
+  it('should switch to Suspendovani tab', () => {
     const fixture = TestBed.createComponent(PendingBusinesses);
     fixture.detectChanges();
     mockAdminService.getAllBusinesses.mockClear();
     mockAdminService.getAllBusinesses.mockReturnValue(of(emptyResponse));
 
     const tabs = fixture.nativeElement.querySelectorAll('.admin-businesses__tab');
-    tabs[5].click(); // Svi tab is now index 5
+    tabs[4].click(); // Suspendovani tab is index 4
     fixture.detectChanges();
 
-    expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, undefined);
+    expect(fixture.componentInstance.activeTab()).toBe(4);
+    expect(mockAdminService.getAllBusinesses).toHaveBeenCalledWith(1, 20, BusinessStatus.SUSPENDED);
   });
 
   it('should render business cards', () => {

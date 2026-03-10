@@ -6,43 +6,46 @@ import { DiscountService } from '../../../core/services/discount.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { Discount, DiscountType, DiscountStatus } from '../../../core/models';
 
-const mockDiscount: Discount = {
-  id: 'disc-1',
-  title: 'Test Popust',
-  description: 'Opis',
-  imageUrl: 'https://example.com/img.jpg',
-  discountType: DiscountType.PERCENT,
-  discountValue: 20,
-  oldPrice: null,
-  newPrice: null,
-  validFrom: '2025-01-01T00:00:00.000Z',
-  validUntil: '2025-12-31T00:00:00.000Z',
-  daysOfWeek: [1, 2, 3, 4, 5],
-  timeStart: null,
-  timeEnd: null,
-  minPurchase: null,
-  hasCoupons: true,
-  totalCoupons: 50,
-  availableCoupons: 30,
-  couponDuration: 24,
-  templateStyle: null,
-  tags: ['hrana', 'restoran'],
-  status: DiscountStatus.ACTIVE,
-  views: 100,
-  saves: 10,
-  createdAt: '2025-01-01',
-  updatedAt: '2025-01-01',
-  business: {
-    id: 'biz-1',
-    name: 'Test Biznis',
-    logoUrl: null,
-    category: 'RESTORANI',
-    subCategory: 'Picerija',
-    address: 'Beograd',
-    latitude: 44.8,
-    longitude: 20.4,
-  },
-};
+function makeDiscount(overrides: Partial<Discount> = {}): Discount {
+  return {
+    id: 'disc-1',
+    title: 'Test Popust',
+    description: 'Opis',
+    imageUrl: 'https://example.com/img.jpg',
+    discountType: DiscountType.PERCENT,
+    discountValue: 20,
+    oldPrice: null,
+    newPrice: null,
+    validFrom: '2025-01-01T00:00:00.000Z',
+    validUntil: '2025-12-31T00:00:00.000Z',
+    daysOfWeek: [1, 2, 3, 4, 5],
+    timeStart: null,
+    timeEnd: null,
+    minPurchase: null,
+    hasCoupons: true,
+    totalCoupons: 50,
+    availableCoupons: 30,
+    couponDuration: 24,
+    templateStyle: null,
+    tags: ['hrana', 'restoran'],
+    status: DiscountStatus.ACTIVE,
+    views: 100,
+    saves: 10,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
+    business: {
+      id: 'biz-1',
+      name: 'Test Biznis',
+      logoUrl: null,
+      category: 'RESTORANI',
+      subCategory: 'Picerija',
+      address: 'Beograd',
+      latitude: 44.8,
+      longitude: 20.4,
+    },
+    ...overrides,
+  };
+}
 
 describe('EditDiscount', () => {
   const mockDiscountService = {
@@ -57,7 +60,7 @@ describe('EditDiscount', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    mockDiscountService.getDiscount.mockReturnValue(of(mockDiscount));
+    mockDiscountService.getDiscount.mockReturnValue(of(makeDiscount()));
 
     await TestBed.configureTestingModule({
       imports: [EditDiscount],
@@ -75,7 +78,8 @@ describe('EditDiscount', () => {
 
   afterEach(() => TestBed.resetTestingModule());
 
-  function createComponent() {
+  function createComponent(discount = makeDiscount()) {
+    mockDiscountService.getDiscount.mockReturnValue(of(discount));
     const router = TestBed.inject(Router);
     jest.spyOn(router, 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(EditDiscount);
@@ -111,9 +115,9 @@ describe('EditDiscount', () => {
       expect(component.form.controls.validUntil.value).toBe('2025-12-31');
     });
 
-    it('should join daysOfWeek as comma-separated string', () => {
+    it('should populate daysOfWeek as array', () => {
       const { component } = createComponent();
-      expect(component.form.controls.daysOfWeek.value).toBe('1,2,3,4,5');
+      expect(component.form.controls.daysOfWeek.value).toEqual([1, 2, 3, 4, 5]);
     });
 
     it('should join tags as comma-separated string', () => {
@@ -128,9 +132,117 @@ describe('EditDiscount', () => {
 
     it('should set error signal on load failure', () => {
       mockDiscountService.getDiscount.mockReturnValue(throwError(() => new Error('not found')));
-      const { component } = createComponent();
+      const fixture = TestBed.createComponent(EditDiscount);
+      fixture.detectChanges();
+      const component = fixture.componentInstance;
       expect(component.error()).toBe('Popust nije pronađen');
       expect(component.loading()).toBe(false);
+    });
+
+    it('should set showAdvanced=true when daysOfWeek has fewer than 7 days', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [1, 2, 3, 4, 5] }));
+      expect(component.showAdvanced()).toBe(true);
+    });
+
+    it('should set showAdvanced=false when daysOfWeek has all 7 days', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [1, 2, 3, 4, 5, 6, 7] }));
+      expect(component.showAdvanced()).toBe(false);
+    });
+
+    it('should set showAdvanced=true when timeStart is set', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [1,2,3,4,5,6,7], timeStart: '09:00' }));
+      expect(component.showAdvanced()).toBe(true);
+    });
+
+    it('should detect unlimitedCoupons=true when hasCoupons=true and totalCoupons=null', () => {
+      const { component } = createComponent(makeDiscount({ hasCoupons: true, totalCoupons: null }));
+      expect(component.form.controls.unlimitedCoupons.value).toBe(true);
+    });
+
+    it('should set unlimitedCoupons=false when totalCoupons is set', () => {
+      const { component } = createComponent(makeDiscount({ hasCoupons: true, totalCoupons: 50 }));
+      expect(component.form.controls.unlimitedCoupons.value).toBe(false);
+    });
+
+    it('should populate minPurchase from discount data', () => {
+      const { component } = createComponent(makeDiscount({ minPurchase: 1000 }));
+      expect(component.form.controls.minPurchase.value).toBe(1000);
+    });
+
+    it('should set minPurchase=null when not provided', () => {
+      const { component } = createComponent(makeDiscount({ minPurchase: null }));
+      expect(component.form.controls.minPurchase.value).toBeNull();
+    });
+  });
+
+  describe('livePreviewLabel', () => {
+    it('PERCENT with value → -20%', () => {
+      const { component } = createComponent();
+      // default discount is PERCENT with value 20
+      expect(component.livePreviewLabel()).toBe('-20%');
+    });
+
+    it('PERCENT with value 0 → -?%', () => {
+      const { component } = createComponent();
+      component.form.controls.discountValue.setValue(0);
+      expect(component.livePreviewLabel()).toBe('-?%');
+    });
+
+    it('FIXED → -500 RSD', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.FIXED);
+      component.form.controls.discountValue.setValue(500);
+      expect(component.livePreviewLabel()).toBe('-500 RSD');
+    });
+
+    it('BOGO → 1+1', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.BOGO);
+      expect(component.livePreviewLabel()).toBe('1+1');
+    });
+
+    it('NEW_PRICE with newPrice → 1500 RSD', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.NEW_PRICE);
+      component.form.controls.newPrice.setValue(1500);
+      expect(component.livePreviewLabel()).toBe('1500 RSD');
+    });
+
+    it('NEW_PRICE without newPrice → Nova cena', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.NEW_PRICE);
+      component.form.controls.newPrice.setValue(null);
+      expect(component.livePreviewLabel()).toBe('Nova cena');
+    });
+  });
+
+  describe('titleLength and descLength', () => {
+    it('should reflect title length', () => {
+      const { component } = createComponent();
+      // title is populated from discount: 'Test Popust' = 11 chars
+      expect(component.titleLength()).toBe(11);
+    });
+
+    it('should update when title changes', () => {
+      const { component } = createComponent();
+      component.form.controls.title.setValue('Kafa');
+      expect(component.titleLength()).toBe(4);
+    });
+
+    it('should reflect description length', () => {
+      const { component } = createComponent();
+      // description is 'Opis' = 4 chars
+      expect(component.descLength()).toBe(4);
+    });
+  });
+
+  describe('selectDiscountType', () => {
+    it('should set discountType and trigger onDiscountTypeChange effects', () => {
+      const { component } = createComponent();
+      component.selectDiscountType(DiscountType.BOGO);
+      expect(component.form.controls.discountType.value).toBe(DiscountType.BOGO);
+      // BOGO clears validators → discountValue should be 1
+      expect(component.form.controls.discountValue.value).toBe(1);
     });
   });
 
@@ -145,10 +257,8 @@ describe('EditDiscount', () => {
 
     it('PERCENT: should restore required+min(1) validators', () => {
       const { component } = createComponent();
-      // First BOGO (clears validators)
       component.form.controls.discountType.setValue(DiscountType.BOGO);
       component.onDiscountTypeChange();
-      // Then PERCENT (should restore validators)
       component.form.controls.discountType.setValue(DiscountType.PERCENT);
       component.onDiscountTypeChange();
 
@@ -157,6 +267,106 @@ describe('EditDiscount', () => {
 
       component.form.controls.discountValue.setValue(10);
       expect(component.form.controls.discountValue.valid).toBe(true);
+    });
+
+    it('NEW_PRICE: should set oldPrice and newPrice as required', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.NEW_PRICE);
+      component.onDiscountTypeChange();
+
+      component.form.controls.oldPrice.setValue(null);
+      component.form.controls.newPrice.setValue(null);
+      expect(component.form.controls.oldPrice.valid).toBe(false);
+      expect(component.form.controls.newPrice.valid).toBe(false);
+    });
+
+    it('NEW_PRICE: valid when oldPrice and newPrice are set', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.NEW_PRICE);
+      component.onDiscountTypeChange();
+      component.form.controls.oldPrice.setValue(2000);
+      component.form.controls.newPrice.setValue(1500);
+      expect(component.form.controls.oldPrice.valid).toBe(true);
+      expect(component.form.controls.newPrice.valid).toBe(true);
+    });
+
+    it('FIXED: should set discountValue validators', () => {
+      const { component } = createComponent();
+      component.form.controls.discountType.setValue(DiscountType.FIXED);
+      component.onDiscountTypeChange();
+
+      component.form.controls.discountValue.setValue(0);
+      expect(component.form.controls.discountValue.valid).toBe(false);
+
+      component.form.controls.discountValue.setValue(500);
+      expect(component.form.controls.discountValue.valid).toBe(true);
+    });
+  });
+
+  describe('reviewDaysLabel', () => {
+    it('returns "Svakog dana" for all 7 days', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [1,2,3,4,5,6,7] }));
+      expect(component.reviewDaysLabel).toBe('Svakog dana');
+    });
+
+    it('returns "Pon – Pet" for weekdays only', () => {
+      const { component } = createComponent();
+      // default is [1,2,3,4,5]
+      expect(component.reviewDaysLabel).toBe('Pon – Pet');
+    });
+
+    it('returns "Vikend" for Sat+Sun', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [6, 7] }));
+      expect(component.reviewDaysLabel).toBe('Vikend');
+    });
+
+    it('returns named days for partial selection', () => {
+      const { component } = createComponent(makeDiscount({ daysOfWeek: [1, 3, 5] }));
+      expect(component.reviewDaysLabel).toBe('Pon, Sre, Pet');
+    });
+  });
+
+  describe('reviewTimeLabel', () => {
+    it('returns "Ceo dan" when no times set', () => {
+      const { component } = createComponent(makeDiscount({ timeStart: null, timeEnd: null }));
+      expect(component.reviewTimeLabel).toBe('Ceo dan');
+    });
+
+    it('returns formatted range when both times are set', () => {
+      const { component } = createComponent(makeDiscount({ timeStart: '09:00', timeEnd: '17:00' }));
+      expect(component.reviewTimeLabel).toBe('09:00 – 17:00');
+    });
+  });
+
+  describe('reviewCouponDurationLabel', () => {
+    it('returns "1 sat" for couponDuration=1', () => {
+      const { component } = createComponent();
+      component.form.controls.couponDuration.setValue(1);
+      expect(component.reviewCouponDurationLabel).toBe('1 sat');
+    });
+
+    it('returns "24 sata" for couponDuration=24 (default)', () => {
+      const { component } = createComponent();
+      component.form.controls.couponDuration.setValue(24);
+      expect(component.reviewCouponDurationLabel).toBe('24 sata');
+    });
+
+    it('returns "7 dana" for couponDuration=168', () => {
+      const { component } = createComponent();
+      component.form.controls.couponDuration.setValue(168);
+      expect(component.reviewCouponDurationLabel).toBe('7 dana');
+    });
+  });
+
+  describe('reviewTagsList', () => {
+    it('returns empty array when tags are empty', () => {
+      const { component } = createComponent(makeDiscount({ tags: [] }));
+      expect(component.reviewTagsList).toEqual([]);
+    });
+
+    it('returns trimmed tags array from joined string', () => {
+      const { component } = createComponent(makeDiscount({ tags: ['hrana', 'restoran'] }));
+      expect(component.reviewTagsList).toEqual(['hrana', 'restoran']);
     });
   });
 
@@ -168,7 +378,7 @@ describe('EditDiscount', () => {
 
     it('next() should advance when step is valid', () => {
       const { component } = createComponent();
-      // Step 0 (imageUrl) is already populated from populateForm
+      // Step 0 (imageUrl + title) is already populated from populateForm
       component.next();
       expect(component.currentStep()).toBe(1);
     });
@@ -209,7 +419,7 @@ describe('EditDiscount', () => {
 
   describe('onSubmit', () => {
     it('should call updateDiscount with correct payload', () => {
-      mockDiscountService.updateDiscount.mockReturnValue(of(mockDiscount));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
 
       const { component } = createComponent();
       component.onSubmit();
@@ -225,8 +435,8 @@ describe('EditDiscount', () => {
       );
     });
 
-    it('should parse daysOfWeek from comma string in payload', () => {
-      mockDiscountService.updateDiscount.mockReturnValue(of(mockDiscount));
+    it('should send daysOfWeek as array in payload', () => {
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
 
       const { component } = createComponent();
       component.onSubmit();
@@ -242,7 +452,7 @@ describe('EditDiscount', () => {
     });
 
     it('BOGO: should send discountValue=1 in payload', () => {
-      mockDiscountService.updateDiscount.mockReturnValue(of(mockDiscount));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
 
       const { component } = createComponent();
       component.form.controls.discountType.setValue(DiscountType.BOGO);
@@ -255,8 +465,37 @@ describe('EditDiscount', () => {
       );
     });
 
+    it('should include minPurchase when set', () => {
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
+
+      const { component } = createComponent(makeDiscount({ minPurchase: 500 }));
+      component.onSubmit();
+
+      expect(mockDiscountService.updateDiscount).toHaveBeenCalledWith(
+        'disc-1',
+        expect.objectContaining({
+          validity: expect.objectContaining({ minPurchase: 500 }),
+        }),
+      );
+    });
+
+    it('unlimitedCoupons=true should send totalCoupons=undefined', () => {
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
+
+      const { component } = createComponent(makeDiscount({ hasCoupons: true, totalCoupons: null }));
+      // unlimitedCoupons is auto-detected as true
+      component.onSubmit();
+
+      expect(mockDiscountService.updateDiscount).toHaveBeenCalledWith(
+        'disc-1',
+        expect.objectContaining({
+          couponSettings: expect.objectContaining({ hasCoupons: true, totalCoupons: undefined }),
+        }),
+      );
+    });
+
     it('should show success toast and navigate on success', () => {
-      mockDiscountService.updateDiscount.mockReturnValue(of(mockDiscount));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
 
       const { component } = createComponent();
       component.onSubmit();
@@ -281,7 +520,7 @@ describe('EditDiscount', () => {
       component.form.controls.imageUrl.setValue(''); // invalidate step 0
       component.onSubmit();
       expect(component.currentStep()).toBe(0);
-      expect(component.error()).toContain('Slika');
+      expect(component.error()).toContain('Osnove');
     });
   });
 

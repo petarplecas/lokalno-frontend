@@ -89,13 +89,18 @@ Logout → POST /auth/logout → Clear signal → Navigate to /auth/login
 
 ## Testing
 
-- Use Angular Testing Library
-- Each server call needs to be mocked
-- Isolate tests: Ensure each test runs independently. Use beforeEach and afterEach hooks wisely.
-- Prioritize testing public APIs/user behavior: test how users interact with the DOM (button clicks, input changes) rather than calling private methods
-- Mock services and API calls: Avoid real network requests. Use mocks for async operations with predictable test data.
-- Structure tests logically: Place `*.spec.ts` files alongside the code they test. Use nested describe blocks.
-- Aim for quality over 90% coverage: Focus on critical business logic, not simple visual code
+See [TESTING.md](TESTING.md) for detailed patterns, examples, and rules.
+
+**Quick rules:**
+- Unit tests (`*.spec.ts`) pored svakog fajla
+- `HttpTestingController` za HTTP mocking — nikad pravi zahtevi
+- Testirati DOM ponašanje i signal/computed logiku, ne privatne metode
+- Helper factory funkcije za test data (ne inline objekte)
+- Cilj: >75% coverage na business logici
+
+```bash
+npm test -- --ci --coverage
+```
 
 ## Brand & Styling
 
