@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'styles/variables' as *;
 
 .wizard {
@@ -52,7 +53,7 @@
 
     &:hover {
       transform: scale(1.1);
-      background: darken($color-primary, 8%);
+      background: color.adjust($color-primary, $lightness: -8%);
     }
   }
 }
@@ -520,37 +521,8 @@
   input { flex: 1; }
 }
 
-.btn-toggle {
-  padding: 10px $spacing-sm;
-  border: 1.5px solid $color-border;
-  border-radius: $radius-sm;
-  background: $color-background;
-  color: $color-text-secondary;
-  font-size: 0.813rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s;
-
-  &--active {
-    background: $color-primary;
-    border-color: $color-primary;
-    color: #fff;
-  }
-
-  &:hover:not(&--active) {
-    border-color: $color-primary;
-    color: $color-primary;
-  }
-}
-
-.duration-btns {
-  display: flex;
-  gap: $spacing-sm;
-}
-
-.duration-btn {
-  flex: 1;
+// Shared base for toggle-style buttons
+%btn-selector-base {
   padding: $spacing-sm;
   border: 1.5px solid $color-border;
   border-radius: $radius-sm;
@@ -559,7 +531,6 @@
   font-size: 0.813rem;
   font-weight: 600;
   cursor: pointer;
-  text-align: center;
   transition: all 0.15s;
 
   &--active {
@@ -572,6 +543,23 @@
     border-color: $color-primary;
     color: $color-primary;
   }
+}
+
+.btn-toggle {
+  @extend %btn-selector-base;
+  padding: 10px $spacing-sm;
+  white-space: nowrap;
+}
+
+.duration-btns {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.duration-btn {
+  @extend %btn-selector-base;
+  flex: 1;
+  text-align: center;
 }
 
 // ── Section divider ──────────────────────────────────────────

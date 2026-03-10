@@ -15,14 +15,13 @@ import { DiscountType, Discount } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
-import { DiscountLabelPipe } from '../../../shared/pipes/discount-label.pipe';
 
 // Steps: 0=Osnove, 1=Vrednost, 2=Raspored, 3=Kuponi, 4=Pregled
 const STEP_COUNT = 5;
 
 @Component({
   selector: 'app-edit-discount',
-  imports: [ReactiveFormsModule, RouterLink, Spinner, PageHeader, ConfirmDialog, DiscountLabelPipe],
+  imports: [ReactiveFormsModule, RouterLink, Spinner, PageHeader, ConfirmDialog],
   templateUrl: './edit-discount.html',
   styleUrl: '../create-discount/create-discount.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
