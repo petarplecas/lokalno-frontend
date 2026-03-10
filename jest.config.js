@@ -2,9 +2,6 @@
 module.exports = {
   preset: 'jest-preset-angular',
   testEnvironment: 'jest-preset-angular/environments/jest-jsdom-env',
-  setupFilesAfterEnv: [
-    '<rootDir>/setup-jest.ts',
-  ],
   transform: {
     '^.+\\.(ts|js|mjs|html|svg)$': [
       'jest-preset-angular',
@@ -14,6 +11,10 @@ module.exports = {
       },
     ],
   },
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/e2e/',
+  ],
   transformIgnorePatterns: [
     'node_modules/(?!(.*\\.mjs$))',
   ],

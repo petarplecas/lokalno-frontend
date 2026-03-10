@@ -6,6 +6,7 @@ import {
   computed,
   OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { DiscountService } from '../../../core/services/discount.service';
@@ -109,8 +110,10 @@ export class EditDiscount implements OnInit {
     }
   });
 
-  readonly titleLength = computed(() => this.form.controls.title.value.length);
-  readonly descLength  = computed(() => this.form.controls.description.value.length);
+  private readonly titleValue = toSignal(this.form.controls.title.valueChanges, { initialValue: this.form.controls.title.value });
+  private readonly descValue  = toSignal(this.form.controls.description.valueChanges, { initialValue: this.form.controls.description.value });
+  readonly titleLength = computed(() => this.titleValue().length);
+  readonly descLength  = computed(() => this.descValue().length);
 
   ngOnInit(): void {
     this.discountId = this.route.snapshot.params['id'];
