@@ -2,7 +2,7 @@
 # LOKALNO Frontend - Continuous Integration
 # ============================================
 # Runs on: push to main/develop, pull requests
-# Steps: type check, unit tests, production build
+# Steps: lint + type check, unit tests, production build
 # ============================================
 
 name: CI
@@ -18,10 +18,10 @@ env:
 
 jobs:
   # ============================================
-  # TypeScript Type Check
+  # Lint & Type Check
   # ============================================
-  type-check:
-    name: TypeScript Check
+  lint:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +44,9 @@ jobs:
           sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.example.ts > src/environments/environment.ts
           sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts
 
+      - name: Run ESLint
+        run: npm run lint
+
       - name: Run TypeScript check
         run: npx tsc --noEmit
 
@@ -53,7 +56,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: type-check
+    needs: lint
 
     steps:
       - name: Checkout code
