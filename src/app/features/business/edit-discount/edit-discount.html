@@ -94,21 +94,13 @@
         </div>
 
         <div class="form-group">
-          <label for="imageUrl">URL slike <span class="required" aria-label="obavezno">*</span></label>
-          <input
-            id="imageUrl"
-            type="url"
-            formControlName="imageUrl"
-            placeholder="https://..."
-            aria-describedby="image-url-hint"
+          <span class="form-label">Slika ili vizuelni template</span>
+          <app-image-upload
+            folder="discounts"
+            [currentUrl]="form.controls.imageUrl.value"
+            (pendingBlob)="onPendingImage($event)"
+            (templateSelected)="onTemplateSelected($event)"
           />
-          <span id="image-url-hint" class="form-hint">Direktan link do slike popusta</span>
-          @if (form.controls.imageUrl.touched && form.controls.imageUrl.errors) {
-            <span class="error-message" role="alert">URL slike je obavezan</span>
-          }
-          @if (form.controls.imageUrl.value) {
-            <img class="image-preview" [src]="form.controls.imageUrl.value" alt="Pregled slike" />
-          }
         </div>
       }
 
@@ -161,6 +153,18 @@
               <span class="error-message" role="alert">Unesite procenat (1–100)</span>
             }
           </div>
+          <div class="form-group">
+            <label for="oldPricePercent">Originalna cena <span class="form-optional">(opciono)</span></label>
+            <div class="input-suffix-wrap">
+              <input id="oldPricePercent" type="number" formControlName="oldPrice" min="1" placeholder="npr. 1200" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            <p class="form-hint">Ako unesete originalnu cenu, kupac će videti i koliko je pre koštalo.
+              @if (computedNewPrice()) {
+                Nova cena: <strong>{{ computedNewPrice() }} RSD</strong>
+              }
+            </p>
+          </div>
         }
 
         @if (form.controls.discountType.value === DiscountType.FIXED) {
@@ -172,6 +176,19 @@
             </div>
             @if (form.controls.discountValue.touched && form.controls.discountValue.errors) {
               <span class="error-message" role="alert">Unesite iznos popusta</span>
+            }
+          </div>
+          <div class="form-group">
+            <label for="oldPriceFixed">Originalna cena <span class="required" aria-label="obavezno">*</span></label>
+            <div class="input-suffix-wrap">
+              <input id="oldPriceFixed" type="number" formControlName="oldPrice" min="1" placeholder="npr. 1200" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            @if (form.controls.oldPrice.touched && form.controls.oldPrice.errors) {
+              <span class="error-message" role="alert">Originalna cena je obavezna</span>
+            }
+            @if (computedNewPrice()) {
+              <p class="form-hint">Nova cena: <strong>{{ computedNewPrice() }} RSD</strong></p>
             }
           </div>
         }
@@ -196,6 +213,17 @@
             @if (form.controls.newPrice.touched && form.controls.newPrice.errors) {
               <span class="error-message" role="alert">Unesite novu cenu</span>
             }
+          </div>
+        }
+
+        @if (form.controls.discountType.value === DiscountType.BOGO) {
+          <div class="form-group form-group--value">
+            <label for="oldPriceBogo">Cena artikla <span class="form-optional">(opciono)</span></label>
+            <div class="input-suffix-wrap">
+              <input id="oldPriceBogo" type="number" formControlName="oldPrice" min="1" placeholder="npr. 800" />
+              <span class="input-suffix">RSD</span>
+            </div>
+            <p class="form-hint">Kupac će videti koliko košta jedan artikal uz 1+1 ponudu.</p>
           </div>
         }
 
@@ -254,7 +282,7 @@
         @if (showAdvanced()) {
           <div id="advanced-panel" class="advanced-panel">
             <div class="form-group">
-              <label id="days-label">Dani u nedelji</label>
+              <span id="days-label" class="form-label">Dani u nedelji</span>
               <div class="day-picker" role="group" aria-labelledby="days-label">
                 @for (day of allDays; track day.value) {
                   <button
@@ -330,7 +358,7 @@
         @if (form.controls.hasCoupons.value) {
           <div class="coupon-settings">
             <div class="form-group">
-              <label id="total-coupons-label">Broj dostupnih kupona</label>
+              <label for="totalCoupons" id="total-coupons-label">Broj dostupnih kupona</label>
               <div class="coupon-count-row" role="group" aria-labelledby="total-coupons-label">
                 <input
                   id="totalCoupons"
@@ -352,7 +380,7 @@
             </div>
 
             <div class="form-group">
-              <label id="duration-label">Kupon važi</label>
+              <span id="duration-label" class="form-label">Kupon važi</span>
               <div class="duration-btns" role="group" aria-labelledby="duration-label">
                 @for (opt of couponDurationOptions; track opt.value) {
                   <button

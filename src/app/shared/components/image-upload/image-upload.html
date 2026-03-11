@@ -1,3 +1,49 @@
+<!-- Tab switcher (samo za discounts folder) -->
+@if (folder() === 'discounts' && !cropMode()) {
+  <div class="upload-tabs" role="tablist">
+    <button
+      type="button"
+      class="upload-tabs__tab"
+      [class.upload-tabs__tab--active]="activeTab() === 'upload'"
+      (click)="switchTab('upload')"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'upload'"
+    >
+      Uploaduj sliku
+    </button>
+    <button
+      type="button"
+      class="upload-tabs__tab"
+      [class.upload-tabs__tab--active]="activeTab() === 'template'"
+      (click)="switchTab('template')"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'template'"
+    >
+      Odaberi template
+    </button>
+  </div>
+}
+
+<!-- Template grid -->
+@if (activeTab() === 'template' && !cropMode()) {
+  <div class="template-grid" role="listbox" aria-label="Vizuelni template-i">
+    @for (id of templateIds; track id) {
+      <button
+        type="button"
+        class="template-grid__item"
+        [class.template-grid__item--selected]="selectedTemplate() === id"
+        (click)="selectTemplate(id)"
+        role="option"
+        [attr.aria-selected]="selectedTemplate() === id"
+      >
+        <app-discount-template-visual [templateId]="id" />
+      </button>
+    }
+  </div>
+}
+
+@if (activeTab() === 'upload') {
+
 @if (cropMode()) {
   <!-- Crop editor -->
   <div class="cropzone__editor">
@@ -98,3 +144,5 @@
 @if (error()) {
   <p class="dropzone__error">{{ error() }}</p>
 }
+
+} <!-- end @if (activeTab() === 'upload') -->

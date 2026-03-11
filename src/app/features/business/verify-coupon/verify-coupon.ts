@@ -8,7 +8,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { CouponService } from '../../../core/services/coupon.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { CouponDetail } from '../../../core/models';
+import { CouponDetail, CouponStatus } from '../../../core/models';
 import { Spinner } from '../../../shared/components/spinner/spinner';
 import { DiscountLabelPipe } from '../../../shared/pipes/discount-label.pipe';
 
@@ -61,7 +61,7 @@ export class VerifyCoupon {
       next: () => {
         this.using.set(false);
         this.toastService.success('Kupon je iskorišćen!');
-        this.coupon.set({ ...c, status: 'USED' as any, usedAt: new Date().toISOString() });
+        this.coupon.set({ ...c, status: CouponStatus.USED, usedAt: new Date().toISOString() });
       },
       error: (err) => {
         this.using.set(false);

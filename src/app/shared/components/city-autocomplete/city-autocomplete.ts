@@ -35,6 +35,7 @@ export class CityAutocomplete implements AfterViewInit, OnDestroy {
     });
   }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnDestroy(): void {
     // Geocoder doesn't have an explicit destroy method, container cleanup happens automatically
   }

@@ -1,0 +1,12 @@
+<div
+  class="dtv"
+  [class]="'dtv--' + config().pattern"
+  [style.background-color]="config().bgColor"
+  aria-hidden="true"
+>
+  <div class="dtv__pattern"></div>
+  <div class="dtv__content">
+    <span class="dtv__icon">{{ config().icon }}</span>
+    <span class="dtv__label" [style.color]="config().accentColor">{{ config().label }}</span>
+  </div>
+</div>

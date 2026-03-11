@@ -115,7 +115,7 @@ export class MapPicker implements AfterViewInit, OnDestroy {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${environment.mapboxToken}&language=sr`;
     fetch(url)
       .then((r) => r.json())
-      .then((data: { features?: Array<{ place_name: string }> }) => {
+      .then((data: { features?: { place_name: string }[] }) => {
         const address = data.features?.[0]?.place_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         this.zone.run(() => {
           this.selectedAddress.set(address);

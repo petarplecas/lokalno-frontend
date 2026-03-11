@@ -110,7 +110,7 @@
 
 .cropzone {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   position: relative;
   cursor: grab;
@@ -172,4 +172,70 @@
   padding: 6px 14px;
   font-size: 0.813rem;
   white-space: nowrap;
+}
+
+// ─── Tab switcher ─────────────────────────────────────────────
+
+.upload-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid $color-border;
+  margin-bottom: $spacing-sm;
+
+  &__tab {
+    flex: 1;
+    padding: $spacing-sm;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+
+    &--active {
+      color: $color-primary;
+      border-bottom-color: $color-primary;
+    }
+
+    &:hover:not(&--active) {
+      color: $color-text;
+    }
+  }
+}
+
+// ─── Template grid ────────────────────────────────────────────
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-xs;
+
+  &__item {
+    aspect-ratio: 3 / 4;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.15s, transform 0.15s;
+
+    app-discount-template-visual {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    &--selected {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 1px $color-primary;
+    }
+
+    &:hover:not(&--selected) {
+      border-color: rgba($color-primary, 0.5);
+      transform: scale(1.03);
+    }
+  }
 }

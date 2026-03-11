@@ -3,10 +3,11 @@ import { DecimalPipe } from '@angular/common';
 import { Discount, DiscountType } from '../../../core/models';
 import { DiscountLabelPipe } from '../../pipes/discount-label.pipe';
 import { DistancePipe } from '../../pipes/distance.pipe';
+import { DiscountTemplateVisual } from '../discount-template-visual/discount-template-visual';
 
 @Component({
   selector: 'app-discount-card',
-  imports: [DiscountLabelPipe, DistancePipe, DecimalPipe],
+  imports: [DiscountLabelPipe, DistancePipe, DecimalPipe, DiscountTemplateVisual],
   templateUrl: './discount-card.html',
   styleUrl: './discount-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

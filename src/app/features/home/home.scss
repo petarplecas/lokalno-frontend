@@ -281,6 +281,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
+
+  app-discount-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 }
 
 // Guest conversion banner — inline in grid, spans both columns

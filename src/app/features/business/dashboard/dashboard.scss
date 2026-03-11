@@ -121,10 +121,58 @@
   border-radius: $radius-full;
 }
 
-.dash__cta {
-  display: block;
-  width: 100%;
-  padding: $spacing-md;
+.dash__expiry-alert {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-warning, 0.1);
+  color: $color-warning;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: $spacing-md;
+}
+
+.dash__discounts {
+  margin-top: $spacing-lg;
+}
+
+.dash__discounts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.dash__discounts-title {
+  font-family: $font-heading;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.dash__discounts-new {
+  font-size: 0.813rem;
+  padding: $spacing-xs $spacing-md;
+  white-space: nowrap;
+}
+
+.dash__discounts-loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-lg;
+}
+
+.dash__discounts-empty {
   text-align: center;
-  font-size: 1rem;
+  color: $color-text-secondary;
+  font-size: 0.875rem;
+  padding: $spacing-lg 0;
+}
+
+.dash__discounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
 }

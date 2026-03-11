@@ -96,4 +96,32 @@ describe('UploadService', () => {
       expect(errorResult).toBeTruthy();
     });
   });
+
+  describe('deleteFile', () => {
+    it('should DELETE to /upload/file with fileUrl in body', () => {
+      const fileUrl = 'https://bucket.s3.amazonaws.com/discounts/uuid-img.webp';
+
+      service.deleteFile(fileUrl).subscribe();
+
+      const req = httpMock.expectOne(`${uploadUrl}/file`);
+      expect(req.request.method).toBe('DELETE');
+      expect(req.request.body).toEqual({ fileUrl });
+
+      req.flush(null);
+    });
+
+    it('should return void Observable on success', () => {
+      const fileUrl = 'https://bucket.s3.amazonaws.com/discounts/img.webp';
+      let completed = false;
+
+      service.deleteFile(fileUrl).subscribe({
+        complete: () => (completed = true),
+      });
+
+      const req = httpMock.expectOne(`${uploadUrl}/file`);
+      req.flush(null);
+
+      expect(completed).toBe(true);
+    });
+  });
 });

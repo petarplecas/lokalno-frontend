@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { EditDiscount } from './edit-discount';
 import { DiscountService } from '../../../core/services/discount.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { UploadService } from '../../../core/services/upload.service';
 import { Discount, DiscountType, DiscountStatus } from '../../../core/models';
 
 function makeDiscount(overrides: Partial<Discount> = {}): Discount {
@@ -57,6 +58,11 @@ describe('EditDiscount', () => {
     success: jest.fn(),
     error: jest.fn(),
   };
+  const mockUploadService = {
+    getPresignedUrl: jest.fn(),
+    uploadToS3: jest.fn(),
+    deleteFile: jest.fn(),
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -72,6 +78,7 @@ describe('EditDiscount', () => {
         },
         { provide: DiscountService, useValue: mockDiscountService },
         { provide: ToastService, useValue: mockToastService },
+        { provide: UploadService, useValue: mockUploadService },
       ],
     }).compileComponents();
   });
@@ -172,6 +179,29 @@ describe('EditDiscount', () => {
     it('should set minPurchase=null when not provided', () => {
       const { component } = createComponent(makeDiscount({ minPurchase: null }));
       expect(component.form.controls.minPurchase.value).toBeNull();
+    });
+  });
+
+  describe('populateForm — image tracking', () => {
+    it('should populate templateStyle from discount', () => {
+      const { component } = createComponent(makeDiscount({ templateStyle: 'template-1', imageUrl: null }));
+      expect(component.form.controls.templateStyle.value).toBe('template-1');
+    });
+
+    it('should set templateStyle=null when discount has no template', () => {
+      const { component } = createComponent(makeDiscount({ templateStyle: null }));
+      expect(component.form.controls.templateStyle.value).toBeNull();
+    });
+
+    it('should store originalImageUrl from loaded discount (accessible via onConfirmDelete)', () => {
+      // We verify this indirectly: onConfirmDelete uses originalImageUrl for S3 cleanup
+      mockDiscountService.deleteDiscount.mockReturnValue(of({ message: 'deleted' }));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+
+      const { component } = createComponent(makeDiscount({ imageUrl: 'https://example.com/img.jpg' }));
+      component.onConfirmDelete();
+
+      expect(mockUploadService.deleteFile).toHaveBeenCalledWith('https://example.com/img.jpg');
     });
   });
 
@@ -370,6 +400,60 @@ describe('EditDiscount', () => {
     });
   });
 
+  describe('onPendingImage', () => {
+    it('should set imageUrl="pending" and clear templateStyle when blob provided', () => {
+      const { component } = createComponent(makeDiscount({ templateStyle: 'tmpl-1' }));
+      const blob = new Blob(['img'], { type: 'image/webp' });
+      component.onPendingImage({ blob, filename: 'test.webp', contentType: 'image/webp' });
+      expect(component.form.controls.imageUrl.value).toBe('pending');
+      expect(component.form.controls.templateStyle.value).toBeNull();
+    });
+
+    it('should clear imageUrl when null is passed', () => {
+      const { component } = createComponent();
+      component.onPendingImage(null);
+      expect(component.form.controls.imageUrl.value).toBe('');
+    });
+  });
+
+  describe('onTemplateSelected', () => {
+    it('should set templateStyle and clear imageUrl when templateId provided', () => {
+      const { component } = createComponent();
+      component.onTemplateSelected('template-blue');
+      expect(component.form.controls.templateStyle.value).toBe('template-blue');
+      expect(component.form.controls.imageUrl.value).toBe('');
+    });
+
+    it('should not clear imageUrl when null templateId passed', () => {
+      const { component } = createComponent();
+      // imageUrl was set from discount
+      component.onTemplateSelected(null);
+      expect(component.form.controls.templateStyle.value).toBeNull();
+      // imageUrl should remain unchanged (not cleared when no template selected)
+      expect(component.form.controls.imageUrl.value).toBe('https://example.com/img.jpg');
+    });
+  });
+
+  describe('isStepValid — step 0 with image/template', () => {
+    it('should be valid when imageUrl is set', () => {
+      const { component } = createComponent(makeDiscount({ imageUrl: 'https://example.com/img.jpg', templateStyle: null }));
+      expect(component.isStepValid(0)).toBe(true);
+    });
+
+    it('should be valid when templateStyle is set and imageUrl is empty', () => {
+      const { component } = createComponent(makeDiscount({ imageUrl: null, templateStyle: 'template-1' }));
+      expect(component.isStepValid(0)).toBe(true);
+    });
+
+    it('should be invalid when both imageUrl and templateStyle are empty/null', () => {
+      const { component } = createComponent(makeDiscount({ imageUrl: null, templateStyle: null }));
+      // Force clear both
+      component.form.controls.imageUrl.setValue('');
+      component.form.controls.templateStyle.setValue(null);
+      expect(component.isStepValid(0)).toBe(false);
+    });
+  });
+
   describe('Step navigation', () => {
     it('should start on step 0', () => {
       const { component } = createComponent();
@@ -378,14 +462,15 @@ describe('EditDiscount', () => {
 
     it('next() should advance when step is valid', () => {
       const { component } = createComponent();
-      // Step 0 (imageUrl + title) is already populated from populateForm
+      // Step 0 (title + imageUrl) is already populated from populateForm
       component.next();
       expect(component.currentStep()).toBe(1);
     });
 
-    it('next() should not advance when step is invalid', () => {
-      const { component } = createComponent();
+    it('next() should not advance when step is invalid — both image and template missing', () => {
+      const { component } = createComponent(makeDiscount({ imageUrl: null, templateStyle: null }));
       component.form.controls.imageUrl.setValue('');
+      component.form.controls.templateStyle.setValue(null);
       component.next();
       expect(component.currentStep()).toBe(0);
     });
@@ -515,12 +600,86 @@ describe('EditDiscount', () => {
       expect(component.error()).toBe('Ažuriranje nije uspelo');
     });
 
-    it('should navigate to invalid step if form is incomplete', () => {
-      const { component } = createComponent();
-      component.form.controls.imageUrl.setValue(''); // invalidate step 0
+    it('should navigate to invalid step if form is incomplete — both image and template missing', () => {
+      const { component } = createComponent(makeDiscount({ imageUrl: null, templateStyle: null }));
+      component.form.controls.imageUrl.setValue('');
+      component.form.controls.templateStyle.setValue(null);
       component.onSubmit();
       expect(component.currentStep()).toBe(0);
       expect(component.error()).toContain('Osnove');
+    });
+  });
+
+  describe('onSubmit — with pending image', () => {
+    it('should call getPresignedUrl + uploadToS3 then saveDiscount when pendingImage is set', () => {
+      mockUploadService.getPresignedUrl.mockReturnValue(
+        of({ uploadUrl: 'https://s3.signed/upload', fileUrl: 'https://s3.bucket/new-img.webp' }),
+      );
+      mockUploadService.uploadToS3.mockReturnValue(of(null));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
+
+      const { component } = createComponent();
+      const blob = new Blob(['img'], { type: 'image/webp' });
+      component.onPendingImage({ blob, filename: 'new.webp', contentType: 'image/webp' });
+      component.onSubmit();
+
+      expect(mockUploadService.getPresignedUrl).toHaveBeenCalledWith('discounts', 'image/webp', 'new.webp');
+      expect(mockUploadService.uploadToS3).toHaveBeenCalledWith(
+        'https://s3.signed/upload',
+        blob,
+        'image/webp',
+      );
+      expect(mockDiscountService.updateDiscount).toHaveBeenCalledWith(
+        'disc-1',
+        expect.objectContaining({ imageUrl: 'https://s3.bucket/new-img.webp' }),
+      );
+    });
+
+    it('should call deleteFile(originalImageUrl) fire-and-forget after successful upload', () => {
+      mockUploadService.getPresignedUrl.mockReturnValue(
+        of({ uploadUrl: 'https://s3/upload', fileUrl: 'https://s3/new.webp' }),
+      );
+      mockUploadService.uploadToS3.mockReturnValue(of(null));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
+
+      const { component } = createComponent(makeDiscount({ imageUrl: 'https://example.com/old-img.jpg' }));
+      const blob = new Blob(['img'], { type: 'image/webp' });
+      component.onPendingImage({ blob, filename: 'new.webp', contentType: 'image/webp' });
+      component.onSubmit();
+
+      expect(mockUploadService.deleteFile).toHaveBeenCalledWith('https://example.com/old-img.jpg');
+    });
+
+    it('should NOT call deleteFile if originalImageUrl is null', () => {
+      mockUploadService.getPresignedUrl.mockReturnValue(
+        of({ uploadUrl: 'https://s3/upload', fileUrl: 'https://s3/new.webp' }),
+      );
+      mockUploadService.uploadToS3.mockReturnValue(of(null));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+      mockDiscountService.updateDiscount.mockReturnValue(of(makeDiscount()));
+
+      const { component } = createComponent(makeDiscount({ imageUrl: null }));
+      const blob = new Blob(['img'], { type: 'image/webp' });
+      component.onPendingImage({ blob, filename: 'new.webp', contentType: 'image/webp' });
+      component.onSubmit();
+
+      expect(mockUploadService.deleteFile).not.toHaveBeenCalled();
+    });
+
+    it('should set error and saving=false on upload failure', () => {
+      mockUploadService.getPresignedUrl.mockReturnValue(
+        throwError(() => new Error('Upload failed')),
+      );
+
+      const { component } = createComponent();
+      const blob = new Blob(['img'], { type: 'image/webp' });
+      component.onPendingImage({ blob, filename: 'new.webp', contentType: 'image/webp' });
+      component.onSubmit();
+
+      expect(component.saving()).toBe(false);
+      expect(component.error()).toContain('Upload slike nije uspeo');
     });
   });
 
@@ -540,6 +699,7 @@ describe('EditDiscount', () => {
 
     it('onConfirmDelete should call deleteDiscount and navigate on success', () => {
       mockDiscountService.deleteDiscount.mockReturnValue(of({ message: 'deleted' }));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
 
       const { component } = createComponent();
       component.onConfirmDelete();
@@ -559,6 +719,37 @@ describe('EditDiscount', () => {
       expect(component.deleting()).toBe(false);
       expect(component.showDeleteDialog()).toBe(false);
       expect(component.error()).toBe('Brisanje nije uspelo');
+    });
+  });
+
+  describe('onConfirmDelete — S3 cleanup', () => {
+    it('should call deleteFile(originalImageUrl) after successful delete', () => {
+      mockDiscountService.deleteDiscount.mockReturnValue(of({ message: 'deleted' }));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+
+      const { component } = createComponent(makeDiscount({ imageUrl: 'https://example.com/img.jpg' }));
+      component.onConfirmDelete();
+
+      expect(mockUploadService.deleteFile).toHaveBeenCalledWith('https://example.com/img.jpg');
+    });
+
+    it('should NOT call deleteFile if originalImageUrl is null', () => {
+      mockDiscountService.deleteDiscount.mockReturnValue(of({ message: 'deleted' }));
+      mockUploadService.deleteFile.mockReturnValue(of(null));
+
+      const { component } = createComponent(makeDiscount({ imageUrl: null }));
+      component.onConfirmDelete();
+
+      expect(mockUploadService.deleteFile).not.toHaveBeenCalled();
+    });
+
+    it('should navigate on success even without image', () => {
+      mockDiscountService.deleteDiscount.mockReturnValue(of({ message: 'deleted' }));
+
+      const { component, router } = createComponent(makeDiscount({ imageUrl: null }));
+      component.onConfirmDelete();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/business/dashboard']);
     });
   });
 });

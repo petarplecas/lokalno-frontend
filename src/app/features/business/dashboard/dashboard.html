@@ -65,11 +65,35 @@
       </div>
     }
 
-    <!-- CTA -->
-    @if (biz.status === 'APPROVED') {
-      <a routerLink="/business/discounts/create" class="btn-primary dash__cta">
-        Kreiraj novi popust
-      </a>
+    <!-- Expiry alert -->
+    @if (expiringDiscounts().length > 0) {
+      <div class="dash__expiry-alert" role="alert">
+        ⚠️ {{ expiringDiscounts().length }} popust(a) ističe za manje od 3 dana.
+      </div>
     }
+
+    <!-- Moji popusti -->
+    <div class="dash__discounts">
+      <div class="dash__discounts-header">
+        <h2 class="dash__discounts-title">Moji popusti</h2>
+        @if (biz.status === 'APPROVED') {
+          <a routerLink="/business/discounts/create" class="btn-primary dash__discounts-new">+ Novi popust</a>
+        }
+      </div>
+
+      @if (loadingDiscounts()) {
+        <div class="dash__discounts-loading">
+          <app-spinner size="sm" />
+        </div>
+      } @else if (discounts().length === 0) {
+        <p class="dash__discounts-empty">Nemate kreiranih popusta.</p>
+      } @else {
+        <div class="dash__discounts-list">
+          @for (d of discounts(); track d.id) {
+            <app-discount-list-item [discount]="d" (deleted)="onDiscountDeleted($event)" />
+          }
+        </div>
+      }
+    </div>
   </section>
 }

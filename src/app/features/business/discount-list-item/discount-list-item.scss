@@ -1,0 +1,187 @@
+@use 'styles/variables' as *;
+
+.dli {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  align-items: flex-start;
+
+  &__thumb {
+    flex-shrink: 0;
+    width: 56px;
+    aspect-ratio: 3 / 4;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    background: $color-background;
+
+    img,
+    app-discount-template-visual {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  &__status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 20px;
+
+    &--active      { background: #dcfce7; color: #166534; }
+    &--expired     { background: #f3f4f6; color: #6b7280; }
+    &--deactivated { background: #fff7ed; color: #9a3412; }
+    &--draft       { background: #eff6ff; color: #1d4ed8; }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $color-primary;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+  }
+
+  &__dates {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+
+  &__meta {
+    display: flex;
+    gap: $spacing-sm;
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+  }
+
+  &__views,
+  &__saves {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  &__coupon-bar {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-top: 2px;
+  }
+
+  &__coupon-track {
+    flex: 1;
+    height: 4px;
+    background: $color-border;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__coupon-fill {
+    height: 100%;
+    background: $color-primary;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  &__coupon-text {
+    font-size: 0.7rem;
+    color: $color-text-secondary;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+
+    &--icon {
+      padding: 5px 7px;
+    }
+  }
+
+  &__more {
+    position: relative;
+  }
+
+  &__dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    min-width: 120px;
+    overflow: hidden;
+  }
+
+  &__dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    font-size: 0.813rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: $color-text;
+    transition: background 0.15s;
+
+    &:hover { background: $color-background; }
+
+    &--danger {
+      color: $color-error;
+      &:hover { background: #fef2f2; }
+    }
+  }
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+  }
+}

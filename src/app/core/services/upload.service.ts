@@ -30,4 +30,8 @@ export class UploadService {
       headers: { 'Content-Type': contentType },
     });
   }
+
+  deleteFile(fileUrl: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/file`, { body: { fileUrl } });
+  }
 }

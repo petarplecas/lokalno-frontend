@@ -10,6 +10,7 @@ import {
   computed,
 } from '@angular/core';
 import { Spinner } from '../spinner/spinner';
+import { DiscountTemplateVisual, DISCOUNT_TEMPLATES } from '../discount-template-visual/discount-template-visual';
 
 export interface PendingImageBlob {
   blob: Blob;
@@ -17,12 +18,12 @@ export interface PendingImageBlob {
   filename: string;
 }
 
-const CROP_W = 800;
-const CROP_H = 450; // 16:9
+const CROP_W = 600;
+const CROP_H = 800; // 3:4
 
 @Component({
   selector: 'app-image-upload',
-  imports: [Spinner],
+  imports: [Spinner, DiscountTemplateVisual],
   templateUrl: './image-upload.html',
   styleUrl: './image-upload.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +32,11 @@ export class ImageUpload {
   readonly folder = input<'discounts' | 'logos'>('discounts');
   readonly currentUrl = input<string | null | undefined>(null);
   readonly pendingBlob = output<PendingImageBlob | null>();
+  readonly templateSelected = output<string | null>();
+
+  readonly activeTab = signal<'upload' | 'template'>('upload');
+  readonly selectedTemplate = signal<string | null>(null);
+  readonly templateIds = Object.keys(DISCOUNT_TEMPLATES);
 
   readonly fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
@@ -66,6 +72,19 @@ export class ImageUpload {
   private dragStartImgX = 0;
   private dragStartImgY = 0;
   private minScale = 1;
+
+  selectTemplate(id: string): void {
+    this.selectedTemplate.set(id);
+    this.templateSelected.emit(id);
+  }
+
+  switchTab(tab: 'upload' | 'template'): void {
+    this.activeTab.set(tab);
+    if (tab === 'upload') {
+      this.selectedTemplate.set(null);
+      this.templateSelected.emit(null);
+    }
+  }
 
   constructor() {
     effect(() => {

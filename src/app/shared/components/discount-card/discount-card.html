@@ -8,7 +8,11 @@
 >
   <!-- ── IMAGE AREA ─────────────────────────────────────── -->
   <div class="discount-card__image">
-    <img [src]="discount().imageUrl" [alt]="discount().title" loading="lazy" />
+    @if (discount().imageUrl) {
+      <img [src]="discount().imageUrl" [alt]="discount().title" loading="lazy" />
+    } @else {
+      <app-discount-template-visual [templateId]="discount().templateStyle" />
+    }
 
     <!-- Gradient overlay for text legibility on any image -->
     <div class="discount-card__overlay" aria-hidden="true"></div>
@@ -55,7 +59,7 @@
     @if (discount().oldPrice && discount().newPrice) {
       <div class="discount-card__price-row">
         <span class="discount-card__new-price">{{ discount().newPrice | number:'1.0-0' }} RSD</span>
-        <span class="discount-card__old-price">{{ discount().oldPrice | number:'1.0-0' }}</span>
+        <span class="discount-card__old-price">{{ discount().oldPrice | number:'1.0-0' }} RSD</span>
       </div>
     }
 
@@ -91,7 +95,7 @@
         </svg>
         {{ discount().saves }}
       </span>
-      @if (discount().distanceMeters != null) {
+      @if (discount().distanceMeters !== null) {
         <span class="discount-card__distance">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="11" height="11">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
