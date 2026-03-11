@@ -4,7 +4,7 @@
 
 # Staging (develop branch)
 [context.develop]
-  command = "sed \"s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/\" src/environments/environment.staging.ts > tmp_staging.ts && mv tmp_staging.ts src/environments/environment.staging.ts && npm run build -- --configuration=staging"
+  command = "sed \"s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/\" src/environments/environment.example.ts > src/environments/environment.ts && sed \"s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/\" src/environments/environment.staging.ts > tmp_staging.ts && mv tmp_staging.ts src/environments/environment.staging.ts && npm run build -- --configuration=staging"
 
 # SPA routing — sve rute idu na index.html
 [[redirects]]
