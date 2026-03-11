@@ -4,7 +4,6 @@ import {
   input,
   output,
   AfterViewInit,
-  OnDestroy,
   ElementRef,
   viewChild,
   inject,
@@ -19,7 +18,7 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './city-autocomplete.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CityAutocomplete implements AfterViewInit, OnDestroy {
+export class CityAutocomplete implements AfterViewInit {
   private readonly zone = inject(NgZone);
 
   readonly initialValue = input<string>('');
@@ -33,11 +32,6 @@ export class CityAutocomplete implements AfterViewInit, OnDestroy {
     this.zone.runOutsideAngular(() => {
       this.initGeocoder();
     });
-  }
-
-  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-  ngOnDestroy(): void {
-    // Geocoder doesn't have an explicit destroy method, container cleanup happens automatically
   }
 
   private initGeocoder(): void {

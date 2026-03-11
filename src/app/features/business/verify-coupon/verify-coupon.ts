@@ -63,7 +63,7 @@ export class VerifyCoupon {
         this.toastService.success('Kupon je iskorišćen!');
         this.coupon.set({ ...c, status: CouponStatus.USED, usedAt: new Date().toISOString() });
       },
-      error: (err) => {
+      error: (err: { error?: { message?: string } }) => {
         this.using.set(false);
         this.toastService.error(err.error?.message || 'Korišćenje kupona nije uspelo');
       },
