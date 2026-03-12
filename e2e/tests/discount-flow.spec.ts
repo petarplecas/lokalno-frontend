@@ -12,9 +12,7 @@ test.describe('Discount flow', () => {
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {
-    await page.goto('/home');
-
-    // Either discount cards are visible, or an empty state is shown
+    // register() već navigira na /home — ne pozivati goto() (gubi token)
     const hasCards = await page.locator('article.discount-card').count();
     const hasEmptyState = await page.locator('app-empty-state').count();
 
@@ -22,19 +20,15 @@ test.describe('Discount flow', () => {
   });
 
   test('should open discount detail on card click', async ({ page }) => {
-    await page.goto('/home');
-
     const firstCard = page.locator('article.discount-card').first();
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
 
     await expect(page).toHaveURL(/\/discounts\/.+/);
-    await expect(page.locator('h1.detail__title')).toBeVisible();
+    await expect(page.locator('h1.detail__hero-title')).toBeVisible();
   });
 
   test('should save a discount from detail page', async ({ page }) => {
-    await page.goto('/home');
-
     const firstCard = page.locator('article.discount-card').first();
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
@@ -48,8 +42,6 @@ test.describe('Discount flow', () => {
   });
 
   test('should unsave a previously saved discount', async ({ page }) => {
-    await page.goto('/home');
-
     const firstCard = page.locator('article.discount-card').first();
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
@@ -68,7 +60,6 @@ test.describe('Discount flow', () => {
   });
 
   test('should filter discounts by category', async ({ page }) => {
-    await page.goto('/home');
 
     const pills = page.locator('button.home__pill');
     const pillCount = await pills.count();
