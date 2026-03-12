@@ -18,12 +18,17 @@ export async function register(page: Page, data: RegisterData): Promise<void> {
   await page.waitForURL('**/home');
 }
 
-export async function login(page: Page, email: string, password: string): Promise<void> {
+export async function login(
+  page: Page,
+  email: string,
+  password: string,
+  expectedUrlPattern = '**/home',
+): Promise<void> {
   await page.goto('/auth/login');
   await page.fill('#email', email);
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForURL('**/home');
+  await page.waitForURL(expectedUrlPattern);
 }
 
 export async function logout(page: Page): Promise<void> {
