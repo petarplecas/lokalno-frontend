@@ -4,7 +4,7 @@ import { login, ADMIN_USER } from '../fixtures/auth.fixture';
 test.describe('Admin flow', () => {
   test.beforeEach(async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, '**/admin/**');
-    await page.goto('/admin/businesses');
+    // Ne pozivati goto() — hard navigacija gubi access token iz memorije
     await page.waitForSelector('.admin-businesses__tabs', { timeout: 10000 });
   });
 
