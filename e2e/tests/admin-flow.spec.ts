@@ -5,6 +5,7 @@ test.describe('Admin flow', () => {
   test.beforeEach(async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, '**/admin/**');
     await page.goto('/admin/businesses');
+    await page.waitForSelector('.admin-businesses__tabs', { timeout: 10000 });
   });
 
   test('should land on pending businesses tab by default', async ({ page }) => {

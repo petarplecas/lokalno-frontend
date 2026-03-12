@@ -15,7 +15,7 @@ export async function register(page: Page, data: RegisterData): Promise<void> {
   await page.fill('#password', data.password);
   await page.fill('#confirmPassword', data.password);
   await page.click('button[type="submit"]');
-  await page.waitForURL('**/home');
+  await page.waitForURL('**/home', { timeout: 20000 });
 }
 
 export async function login(
@@ -33,6 +33,8 @@ export async function login(
 
 export async function logout(page: Page): Promise<void> {
   await page.goto('/profile');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('button.profile__logout', { timeout: 10000 });
   await page.click('button.profile__logout');
   await page.waitForURL('**/auth/login');
 }
