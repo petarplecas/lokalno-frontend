@@ -13,6 +13,8 @@ test.describe('Discount flow', () => {
 
   test('should display home page with discount feed or empty state', async ({ page }) => {
     // register() već navigira na /home — ne pozivati goto() (gubi token)
+    // Sačekati da se discount API call završi pre brojanja
+    await page.waitForLoadState('networkidle');
     const hasCards = await page.locator('article.discount-card').count();
     const hasEmptyState = await page.locator('app-empty-state').count();
 
@@ -34,11 +36,11 @@ test.describe('Discount flow', () => {
     await firstCard.click();
     await expect(page).toHaveURL(/\/discounts\/.+/);
 
-    const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]');
+    const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]').first();
     await saveBtn.waitFor({ state: 'visible' });
     await saveBtn.click();
 
-    await expect(page.locator('button[aria-label="Ukloni iz sačuvanih"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="Ukloni iz sačuvanih"]').first()).toBeVisible();
   });
 
   test('should unsave a previously saved discount', async ({ page }) => {
@@ -47,16 +49,16 @@ test.describe('Discount flow', () => {
     await firstCard.click();
 
     // Save
-    const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]');
+    const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]').first();
     await saveBtn.waitFor({ state: 'visible' });
     await saveBtn.click();
 
     // Unsave
-    const unsaveBtn = page.locator('button[aria-label="Ukloni iz sačuvanih"]');
+    const unsaveBtn = page.locator('button[aria-label="Ukloni iz sačuvanih"]').first();
     await unsaveBtn.waitFor({ state: 'visible' });
     await unsaveBtn.click();
 
-    await expect(page.locator('button[aria-label="Sačuvaj popust"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="Sačuvaj popust"]').first()).toBeVisible();
   });
 
   test('should filter discounts by category', async ({ page }) => {
