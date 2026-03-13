@@ -7,7 +7,11 @@ import {
   TEST_PASSWORD,
 } from '../fixtures/auth.fixture';
 
-test.describe('Auth flow', () => {
+// Tests that exercise the auth flows themselves must start with NO session.
+// Clear the shared storageState so the browser has no cookies.
+test.describe('Auth flow — unauthenticated', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('should register a new user and redirect to home', async ({ page }) => {
     await register(page, {
       firstName: 'Test',
@@ -60,21 +64,21 @@ test.describe('Auth flow', () => {
     await expect(emailError).toBeVisible();
   });
 
+  test('should redirect unauthenticated user from protected route', async ({ page }) => {
+    await page.goto('/profile');
+    await expect(page).toHaveURL(/\/auth\/login/);
+  });
+});
+
+// Tests that need an already-authenticated session reuse the shared storageState from config.
+test.describe('Auth flow — authenticated', () => {
   test('should logout and redirect to login', async ({ page }) => {
-    await register(page, {
-      firstName: 'Test',
-      lastName: 'Logout',
-      email: testEmail('logout'),
-      password: TEST_PASSWORD,
-    });
+    // storageState cookie → APP_INITIALIZER silently refreshes → user is logged in
+    await page.goto('/home');
+    await page.waitForLoadState('networkidle');
 
     await logout(page);
 
-    await expect(page).toHaveURL(/\/auth\/login/);
-  });
-
-  test('should redirect unauthenticated user from protected route', async ({ page }) => {
-    await page.goto('/profile');
     await expect(page).toHaveURL(/\/auth\/login/);
   });
 });

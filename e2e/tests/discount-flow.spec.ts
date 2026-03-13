@@ -1,20 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { register, testEmail, TEST_PASSWORD } from '../fixtures/auth.fixture';
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
-    await register(page, {
-      firstName: 'Test',
-      lastName: 'Popust',
-      email: testEmail('discount'),
-      password: TEST_PASSWORD,
-    });
+    // storageState (set in playwright.config.ts) loads the shared user's HttpOnly cookie.
+    // APP_INITIALIZER silently refreshes the access token on navigation — no register() needed.
+    await page.goto('/home');
+    await page.waitForLoadState('networkidle');
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {
-    // register() već navigira na /home — ne pozivati goto() (gubi token)
-    // Sačekati da se discount API call završi pre brojanja
-    await page.waitForLoadState('networkidle');
     const hasCards = await page.locator('article.discount-card').count();
     const hasEmptyState = await page.locator('app-empty-state').count();
 
@@ -62,7 +56,6 @@ test.describe('Discount flow', () => {
   });
 
   test('should filter discounts by category', async ({ page }) => {
-
     const pills = page.locator('button.home__pill');
     const pillCount = await pills.count();
 

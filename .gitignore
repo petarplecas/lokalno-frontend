@@ -24,6 +24,9 @@ yarn-error.log
 .vscode/
 .history/*
 
+# Playwright auth state (contains cookies — must not be committed)
+e2e/.auth/
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
