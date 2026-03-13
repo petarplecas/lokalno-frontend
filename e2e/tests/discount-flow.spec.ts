@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { login, TEST_PASSWORD } from '../fixtures/auth.fixture';
+import { loginDirect, TEST_PASSWORD } from '../fixtures/auth.fixture';
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Fresh login per test — storageState is incompatible with token rotation:
-    // presenting the same cookie across multiple test contexts revokes the token family.
-    // login() POSTs credentials → backend issues a fresh token family → waitForURL('/home').
+    // loginDirect() bypasses the login page UI entirely — sends API request directly.
+    // This avoids APP_INITIALIZER firing POST /auth/refresh on page.goto('/auth/login'),
+    // which would waste a throttle slot even when no cookie is present (returns 401 but still counted).
     const email = process.env['E2E_SHARED_USER_EMAIL']!;
-    await login(page, email, TEST_PASSWORD);
+    await loginDirect(page, email, TEST_PASSWORD);
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {

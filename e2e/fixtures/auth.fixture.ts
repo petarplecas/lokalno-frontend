@@ -1,5 +1,7 @@
 import { Page } from '@playwright/test';
 
+const API_BASE_URL = process.env['E2E_API_URL'] ?? 'http://localhost:3000';
+
 export interface RegisterData {
   firstName: string;
   lastName: string;
@@ -42,6 +44,25 @@ export async function login(
   if (expectedUrlPattern.includes('home')) {
     await waitForHomeReady(page);
   }
+}
+
+export async function loginDirect(
+  page: Page,
+  email: string,
+  password: string,
+): Promise<void> {
+  // Direktan API poziv — bez page.goto('/auth/login'), bez APP_INITIALIZER, bez uzaludnog refresh slota.
+  // Playwright automatski čuva Set-Cookie (refreshToken, Path=/auth) u browser kontekstu.
+  const res = await page.request.post(`${API_BASE_URL}/auth/login`, {
+    data: { email, password },
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok()) {
+    throw new Error(`loginDirect failed: ${res.status()} ${await res.text()}`);
+  }
+  // goto('/home') pokreće APP_INITIALIZER → POST /auth/refresh (uspešan, cookie je setovan)
+  await page.goto('/home');
+  await waitForHomeReady(page);
 }
 
 export async function logout(page: Page): Promise<void> {
