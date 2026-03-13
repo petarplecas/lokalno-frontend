@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   retries: 0,
   timeout: 30000,
-  workers: process.env['CI'] ? 2 : undefined,
+  workers: 1,
   reporter: [['html'], ['line']],
   use: {
     baseURL: process.env['E2E_BASE_URL'] ?? 'http://localhost:4200',
@@ -15,6 +15,12 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+      // Admin is a desktop-only feature; skip on mobile to avoid
+      // concurrent login issues with token family revocation
+      testIgnore: '**/admin-flow.spec.ts',
+    },
   ],
 });
