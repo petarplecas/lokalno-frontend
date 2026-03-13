@@ -457,6 +457,8 @@
   align-items: center;
   gap: $spacing-sm;
   cursor: pointer;
+  flex-wrap: nowrap;
+  position: relative;
 
   &__input {
     position: absolute;

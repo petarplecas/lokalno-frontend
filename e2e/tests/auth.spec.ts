@@ -8,7 +8,6 @@ import {
 } from '../fixtures/auth.fixture';
 
 // All auth tests start unauthenticated — clear the shared storageState.
-// Logout test uses register() to guarantee access token is in memory (no race with APP_INITIALIZER).
 test.describe('Auth flow', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -65,13 +64,12 @@ test.describe('Auth flow', () => {
   });
 
   test('should logout and redirect to login', async ({ page }) => {
-    // Register first — access token is in memory immediately after, no APP_INITIALIZER race.
-    await register(page, {
-      firstName: 'Test',
-      lastName: 'Logout',
-      email: testEmail('logout'),
-      password: TEST_PASSWORD,
-    });
+    // Use the shared user (created in global-setup) instead of registering a new one.
+    // This avoids hitting the backend throttle limit (10 auth requests/60s) that is
+    // reached when chromium + Mobile Chrome both register multiple users in rapid succession.
+    // login() puts the access token in memory — same guarantee as register().
+    const email = process.env['E2E_SHARED_USER_EMAIL']!;
+    await login(page, email, TEST_PASSWORD);
     await logout(page);
     await expect(page).toHaveURL(/\/auth\/login/);
   });

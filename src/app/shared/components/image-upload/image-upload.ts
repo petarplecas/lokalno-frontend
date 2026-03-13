@@ -8,6 +8,7 @@ import {
   viewChild,
   effect,
   computed,
+  OnInit,
 } from '@angular/core';
 import { Spinner } from '../spinner/spinner';
 import { DiscountTemplateVisual, DISCOUNT_TEMPLATES } from '../discount-template-visual/discount-template-visual';
@@ -28,7 +29,7 @@ const CROP_H = 800; // 3:4
   styleUrl: './image-upload.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImageUpload {
+export class ImageUpload implements OnInit {
   readonly folder = input<'discounts' | 'logos'>('discounts');
   readonly currentUrl = input<string | null | undefined>(null);
   readonly pendingBlob = output<PendingImageBlob | null>();
@@ -96,11 +97,12 @@ export class ImageUpload {
         this.preview.set(url);
       }
     });
+  }
 
-    const initTab = this.initialTab();
-    const initTemplate = this.selectedTemplateId();
-    if (initTab === 'template') this.activeTab.set('template');
-    if (initTemplate) this.selectedTemplate.set(initTemplate);
+  ngOnInit(): void {
+    this.activeTab.set(this.initialTab());
+    const tmpl = this.selectedTemplateId();
+    if (tmpl) this.selectedTemplate.set(tmpl);
   }
 
   onDragOver(event: DragEvent): void {

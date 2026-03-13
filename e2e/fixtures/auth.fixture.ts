@@ -7,6 +7,15 @@ export interface RegisterData {
   password: string;
 }
 
+// Wait for home page async discount fetch to settle.
+// article.discount-card appears when discounts load; app-empty-state appears when empty or error.
+// Both are only rendered when the loading() signal is false.
+async function waitForHomeReady(page: Page): Promise<void> {
+  await page.waitForSelector('article.discount-card, app-empty-state', {
+    timeout: 30000,
+  });
+}
+
 export async function register(page: Page, data: RegisterData): Promise<void> {
   await page.goto('/auth/register');
   await page.fill('#firstName', data.firstName);
@@ -16,6 +25,7 @@ export async function register(page: Page, data: RegisterData): Promise<void> {
   await page.fill('#confirmPassword', data.password);
   await page.click('button[type="submit"]');
   await page.waitForURL('**/home', { timeout: 30000 });
+  await waitForHomeReady(page);
 }
 
 export async function login(
@@ -29,6 +39,9 @@ export async function login(
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
   await page.waitForURL(expectedUrlPattern, { timeout: 30000 });
+  if (expectedUrlPattern.includes('home')) {
+    await waitForHomeReady(page);
+  }
 }
 
 export async function logout(page: Page): Promise<void> {

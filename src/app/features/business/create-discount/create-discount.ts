@@ -222,11 +222,26 @@ export class CreateDiscount implements OnInit {
   next(): void {
     if (!this.isStepValid()) {
       this.stepFields[this.currentStep()].forEach((f) => this.form.get(f)?.markAsTouched());
+      this.error.set(this.getStepError());
       return;
     }
+    this.error.set(null);
     if (this.currentStep() < STEP_COUNT - 1) {
       this.currentStep.update((s) => s + 1);
     }
+  }
+
+  private getStepError(): string {
+    const s = this.currentStep();
+    if (s === 0) {
+      const hasImage = !!this.form.controls.imageUrl.value;
+      const hasTemplate = !!this.form.controls.templateStyle.value;
+      if (!hasImage && !hasTemplate) return 'Dodajte sliku ili odaberite template.';
+      return 'Unesite naslov popusta.';
+    }
+    if (s === 1) return 'Popunite vrednost popusta.';
+    if (s === 2) return 'Proverite datume važenja.';
+    return 'Popunite obavezna polja.';
   }
 
   prev(): void {

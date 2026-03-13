@@ -500,7 +500,7 @@
         <button type="button" class="btn-secondary" (click)="prev()">Nazad</button>
       }
       @if (currentStep() < steps.length - 1) {
-        <button type="button" class="btn-primary" (click)="next()">Dalje</button>
+        <button type="button" class="btn-primary" (click)="next()" [disabled]="!isStepValid()">Dalje</button>
       }
       @if (currentStep() === steps.length - 1) {
         <button type="submit" class="btn-primary" [disabled]="loading()">
