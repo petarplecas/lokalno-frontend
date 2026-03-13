@@ -31,28 +31,50 @@ test.describe('Discount flow', () => {
     await expect(page).toHaveURL(/\/discounts\/.+/, { timeout: 10000 });
 
     const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]').first();
-    await saveBtn.waitFor({ state: 'visible' });
-    await saveBtn.click();
+    const unsaveBtn = page.locator('button[aria-label="Ukloni iz sačuvanih"]').first();
 
-    await expect(page.locator('button[aria-label="Ukloni iz sačuvanih"]').first()).toBeVisible();
+    // Wait for save state to load from server (either button must appear)
+    await page.waitForSelector(
+      'button[aria-label="Sačuvaj popust"], button[aria-label="Ukloni iz sačuvanih"]',
+      { timeout: 10000 },
+    );
+
+    // Normalize: if shared user already saved this, unsave first so we can test the save action
+    if (await unsaveBtn.isVisible()) {
+      await unsaveBtn.click();
+      await saveBtn.waitFor({ state: 'visible', timeout: 10000 });
+    }
+
+    await saveBtn.click();
+    await expect(unsaveBtn).toBeVisible({ timeout: 10000 });
   });
 
   test('should unsave a previously saved discount', async ({ page }) => {
     const firstCard = page.locator('article.discount-card').first();
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
+    await expect(page).toHaveURL(/\/discounts\/.+/, { timeout: 10000 });
 
-    // Save
     const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]').first();
-    await saveBtn.waitFor({ state: 'visible' });
-    await saveBtn.click();
-
-    // Unsave
     const unsaveBtn = page.locator('button[aria-label="Ukloni iz sačuvanih"]').first();
-    await unsaveBtn.waitFor({ state: 'visible' });
-    await unsaveBtn.click();
 
-    await expect(page.locator('button[aria-label="Sačuvaj popust"]').first()).toBeVisible();
+    // Wait for save state to load from server
+    await page.waitForSelector(
+      'button[aria-label="Sačuvaj popust"], button[aria-label="Ukloni iz sačuvanih"]',
+      { timeout: 10000 },
+    );
+
+    // Normalize: ensure we start from unsaved state regardless of DB state
+    if (await unsaveBtn.isVisible()) {
+      await unsaveBtn.click();
+      await saveBtn.waitFor({ state: 'visible', timeout: 10000 });
+    }
+
+    // Save, then unsave
+    await saveBtn.click();
+    await unsaveBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await unsaveBtn.click();
+    await expect(saveBtn).toBeVisible({ timeout: 10000 });
   });
 
   test('should filter discounts by category', async ({ page }) => {

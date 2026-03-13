@@ -73,12 +73,10 @@ test.describe('Auth flow — unauthenticated', () => {
 // Tests that need an already-authenticated session reuse the shared storageState from config.
 test.describe('Auth flow — authenticated', () => {
   test('should logout and redirect to login', async ({ page }) => {
-    // storageState cookie → APP_INITIALIZER silently refreshes → user is logged in
     await page.goto('/home');
-    await page.waitForLoadState('networkidle');
-
+    // Wait for bottom nav link — proves APP_INITIALIZER completed and user is authenticated
+    await page.waitForSelector('a[href="/profile"]', { timeout: 30000 });
     await logout(page);
-
     await expect(page).toHaveURL(/\/auth\/login/);
   });
 });

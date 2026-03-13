@@ -34,7 +34,8 @@ export async function login(
 export async function logout(page: Page): Promise<void> {
   // Ne koristiti goto('/profile') — hard nav gubi access token iz memorije.
   // Kliknuti na profile link u navigaciji (SPA navigacija, token ostaje).
-  // bottom-nav ima <a routerLink="/profile"> → Angular renderuje href="/profile"
+  // Čekati da bottom-nav bude rendrovan (APP_INITIALIZER mora biti završen i user autentifikovan).
+  await page.waitForSelector('a[href="/profile"]', { timeout: 30000 });
   await page.click('a[href="/profile"]');
   await page.waitForSelector('button.profile__logout', { timeout: 10000 });
   await page.click('button.profile__logout');
