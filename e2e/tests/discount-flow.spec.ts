@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { login, TEST_PASSWORD } from '../fixtures/auth.fixture';
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
-    // storageState loads the shared user's HttpOnly cookie.
-    // APP_INITIALIZER calls /auth/refresh + /auth/me asynchronously after Angular boots.
-    // Wait for discount feed or empty state — proves APP_INITIALIZER completed AND user is authenticated
-    // (discount API requires auth; empty state or cards only appear after the full boot cycle).
-    await page.goto('/home');
-    await page.waitForSelector('article.discount-card, app-empty-state', { timeout: 30000 });
+    // Fresh login per test — storageState is incompatible with token rotation:
+    // presenting the same cookie across multiple test contexts revokes the token family.
+    // login() POSTs credentials → backend issues a fresh token family → waitForURL('/home').
+    const email = process.env['E2E_SHARED_USER_EMAIL']!;
+    await login(page, email, TEST_PASSWORD);
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {

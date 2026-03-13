@@ -10,8 +10,7 @@ export default defineConfig({
   reporter: [['html'], ['line']],
   use: {
     baseURL: process.env['E2E_BASE_URL'] ?? 'http://localhost:4200',
-    storageState: 'e2e/.auth/user.json',
-    trace: 'on-first-retry',
+trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
   },
