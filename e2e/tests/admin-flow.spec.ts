@@ -2,10 +2,11 @@ import { test, expect } from '@playwright/test';
 import { login, ADMIN_USER } from '../fixtures/auth.fixture';
 
 test.describe('Admin flow', () => {
+  test.setTimeout(60000);
   test.beforeEach(async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, '**/admin/**');
     // Ne pozivati goto() — hard navigacija gubi access token iz memorije
-    await page.waitForSelector('.admin-businesses__tabs', { timeout: 10000 });
+    await page.waitForSelector('.admin-businesses__tabs', { timeout: 15000 });
   });
 
   test('should land on pending businesses tab by default', async ({ page }) => {

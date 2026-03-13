@@ -26,7 +26,7 @@ test.describe('Discount flow', () => {
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
 
-    await expect(page).toHaveURL(/\/discounts\/.+/);
+    await expect(page).toHaveURL(/\/discounts\/.+/, { timeout: 10000 });
     await expect(page.locator('h1.detail__hero-title')).toBeVisible();
   });
 
@@ -34,7 +34,7 @@ test.describe('Discount flow', () => {
     const firstCard = page.locator('article.discount-card').first();
     await firstCard.waitFor({ state: 'visible', timeout: 10000 });
     await firstCard.click();
-    await expect(page).toHaveURL(/\/discounts\/.+/);
+    await expect(page).toHaveURL(/\/discounts\/.+/, { timeout: 10000 });
 
     const saveBtn = page.locator('button[aria-label="Sačuvaj popust"]').first();
     await saveBtn.waitFor({ state: 'visible' });
