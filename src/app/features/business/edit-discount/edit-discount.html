@@ -98,6 +98,8 @@
           <app-image-upload
             folder="discounts"
             [currentUrl]="form.controls.imageUrl.value"
+            [selectedTemplateId]="form.controls.templateStyle.value"
+            [initialTab]="form.controls.templateStyle.value ? 'template' : 'upload'"
             (pendingBlob)="onPendingImage($event)"
             (templateSelected)="onTemplateSelected($event)"
           />

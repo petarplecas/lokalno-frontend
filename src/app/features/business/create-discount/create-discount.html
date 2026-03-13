@@ -88,6 +88,8 @@
         <app-image-upload
           folder="discounts"
           [currentUrl]="pendingPreviewUrl()"
+          [selectedTemplateId]="form.controls.templateStyle.value"
+          [initialTab]="form.controls.templateStyle.value ? 'template' : 'upload'"
           (pendingBlob)="onPendingImage($event)"
           (templateSelected)="onTemplateSelected($event)"
           aria-labelledby="image-label"

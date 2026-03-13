@@ -380,7 +380,7 @@ export class EditDiscount implements OnInit {
       .updateDiscount(this.discountId, {
         title: v.title,
         description: v.description || undefined,
-        imageUrl: v.imageUrl || undefined,
+        imageUrl: v.templateStyle ? undefined : (v.imageUrl || undefined),
         templateStyle: v.templateStyle ?? undefined,
         discountType: v.discountType,
         discountValue: v.discountType === DiscountType.BOGO ? 1 : (v.discountType === DiscountType.NEW_PRICE ? 0 : (v.discountValue ?? 0)),

@@ -34,6 +34,9 @@ export class ImageUpload {
   readonly pendingBlob = output<PendingImageBlob | null>();
   readonly templateSelected = output<string | null>();
 
+  readonly selectedTemplateId = input<string | null>(null);
+  readonly initialTab = input<'upload' | 'template'>('upload');
+
   readonly activeTab = signal<'upload' | 'template'>('upload');
   readonly selectedTemplate = signal<string | null>(null);
   readonly templateIds = Object.keys(DISCOUNT_TEMPLATES);
@@ -93,6 +96,11 @@ export class ImageUpload {
         this.preview.set(url);
       }
     });
+
+    const initTab = this.initialTab();
+    const initTemplate = this.selectedTemplateId();
+    if (initTab === 'template') this.activeTab.set('template');
+    if (initTemplate) this.selectedTemplate.set(initTemplate);
   }
 
   onDragOver(event: DragEvent): void {

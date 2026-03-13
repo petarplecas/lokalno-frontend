@@ -324,7 +324,7 @@ export class CreateDiscount implements OnInit {
       .createDiscount({
         title: v.title,
         description: v.description || undefined,
-        imageUrl: v.imageUrl,
+        imageUrl: v.templateStyle ? undefined : v.imageUrl,
         discountType: v.discountType,
         discountValue: v.discountType === DiscountType.BOGO ? 1 : (v.discountType === DiscountType.NEW_PRICE ? 0 : (v.discountValue ?? 0)),
         oldPrice: v.oldPrice ?? undefined,
