@@ -2,10 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
-    // storageState (set in playwright.config.ts) loads the shared user's HttpOnly cookie.
-    // APP_INITIALIZER silently refreshes the access token on navigation — no register() needed.
+    // storageState loads the shared user's HttpOnly cookie.
+    // APP_INITIALIZER calls /auth/refresh + /auth/me asynchronously after Angular boots.
+    // Wait for discount feed or empty state — proves APP_INITIALIZER completed AND user is authenticated
+    // (discount API requires auth; empty state or cards only appear after the full boot cycle).
     await page.goto('/home');
-    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('article.discount-card, app-empty-state', { timeout: 30000 });
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {

@@ -7,9 +7,9 @@ import {
   TEST_PASSWORD,
 } from '../fixtures/auth.fixture';
 
-// Tests that exercise the auth flows themselves must start with NO session.
-// Clear the shared storageState so the browser has no cookies.
-test.describe('Auth flow — unauthenticated', () => {
+// All auth tests start unauthenticated — clear the shared storageState.
+// Logout test uses register() to guarantee access token is in memory (no race with APP_INITIALIZER).
+test.describe('Auth flow', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test('should register a new user and redirect to home', async ({ page }) => {
@@ -64,19 +64,20 @@ test.describe('Auth flow — unauthenticated', () => {
     await expect(emailError).toBeVisible();
   });
 
-  test('should redirect unauthenticated user from protected route', async ({ page }) => {
-    await page.goto('/profile');
+  test('should logout and redirect to login', async ({ page }) => {
+    // Register first — access token is in memory immediately after, no APP_INITIALIZER race.
+    await register(page, {
+      firstName: 'Test',
+      lastName: 'Logout',
+      email: testEmail('logout'),
+      password: TEST_PASSWORD,
+    });
+    await logout(page);
     await expect(page).toHaveURL(/\/auth\/login/);
   });
-});
 
-// Tests that need an already-authenticated session reuse the shared storageState from config.
-test.describe('Auth flow — authenticated', () => {
-  test('should logout and redirect to login', async ({ page }) => {
-    await page.goto('/home');
-    // Wait for bottom nav link — proves APP_INITIALIZER completed and user is authenticated
-    await page.waitForSelector('a[href="/profile"]', { timeout: 30000 });
-    await logout(page);
+  test('should redirect unauthenticated user from protected route', async ({ page }) => {
+    await page.goto('/profile');
     await expect(page).toHaveURL(/\/auth\/login/);
   });
 });

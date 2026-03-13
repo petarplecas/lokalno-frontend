@@ -34,9 +34,10 @@ export async function login(
 export async function logout(page: Page): Promise<void> {
   // Ne koristiti goto('/profile') — hard nav gubi access token iz memorije.
   // Kliknuti na profile link u navigaciji (SPA navigacija, token ostaje).
-  // Čekati da bottom-nav bude rendrovan (APP_INITIALIZER mora biti završen i user autentifikovan).
-  await page.waitForSelector('a[href="/profile"]', { timeout: 30000 });
+  // bottom-nav je uvek rendrovan (nema auth check), pa čekamo URL promenu na /profile
+  // — to dokazuje da je authGuard propustio (APP_INITIALIZER završen, user autentifikovan).
   await page.click('a[href="/profile"]');
+  await page.waitForURL('**/profile', { timeout: 15000 });
   await page.waitForSelector('button.profile__logout', { timeout: 10000 });
   await page.click('button.profile__logout');
   await page.waitForURL('**/auth/login');
