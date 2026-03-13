@@ -92,7 +92,7 @@ export interface DiscountFilters {
 export interface CreateDiscountRequest {
   title: string;
   description?: string;
-  imageUrl: string;
+  imageUrl?: string;
   discountType: DiscountType;
   discountValue: number;
   oldPrice?: number;

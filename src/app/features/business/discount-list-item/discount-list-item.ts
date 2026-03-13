@@ -1,13 +1,13 @@
 import { Component, ChangeDetectionStrategy, input, output, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Discount, DiscountType, DiscountStatus } from '../../../core/models';
 import { DiscountLabelPipe } from '../../../shared/pipes/discount-label.pipe';
 import { DiscountTemplateVisual } from '../../../shared/components/discount-template-visual/discount-template-visual';
 
 @Component({
   selector: 'app-discount-list-item',
-  imports: [RouterLink, DecimalPipe, DatePipe, DiscountLabelPipe, DiscountTemplateVisual],
+  imports: [RouterLink, DatePipe, DiscountLabelPipe, DiscountTemplateVisual],
   templateUrl: './discount-list-item.html',
   styleUrl: './discount-list-item.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
