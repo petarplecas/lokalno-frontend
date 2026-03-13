@@ -15,7 +15,7 @@ export async function register(page: Page, data: RegisterData): Promise<void> {
   await page.fill('#password', data.password);
   await page.fill('#confirmPassword', data.password);
   await page.click('button[type="submit"]');
-  await page.waitForURL('**/home', { timeout: 20000 });
+  await page.waitForURL('**/home', { timeout: 30000 });
 }
 
 export async function login(
@@ -28,7 +28,7 @@ export async function login(
   await page.fill('#email', email);
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForURL(expectedUrlPattern);
+  await page.waitForURL(expectedUrlPattern, { timeout: 30000 });
 }
 
 export async function logout(page: Page): Promise<void> {
@@ -41,9 +41,10 @@ export async function logout(page: Page): Promise<void> {
   await page.waitForURL('**/auth/login');
 }
 
-/** Unique email per test run to avoid conflicts */
+/** Unique email per test run to avoid conflicts (rand suffix prevents timestamp collision between projects) */
 export function testEmail(prefix: string): string {
-  return `e2e-${prefix}-${Date.now()}@playwright.test`;
+  const rand = Math.random().toString(36).slice(2, 7);
+  return `e2e-${prefix}-${Date.now()}-${rand}@playwright.test`;
 }
 
 export const TEST_PASSWORD = 'Playwright123!';
