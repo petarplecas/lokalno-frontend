@@ -6,7 +6,7 @@ test.describe('Admin flow', () => {
   test.beforeEach(async ({ page }) => {
     await login(page, ADMIN_USER.email, ADMIN_USER.password, '**/admin/**');
     // Ne pozivati goto() — hard navigacija gubi access token iz memorije
-    await page.waitForSelector('.admin-businesses__tabs', { timeout: 15000 });
+    await page.locator('.admin-businesses__tabs').waitFor({ state: 'visible', timeout: 15000 });
   });
 
   test('should land on pending businesses tab by default', async ({ page }) => {

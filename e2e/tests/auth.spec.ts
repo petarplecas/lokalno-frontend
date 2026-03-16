@@ -4,6 +4,7 @@ import {
   login,
   logout,
   testEmail,
+  getSharedUserEmail,
   TEST_PASSWORD,
 } from '../fixtures/auth.fixture';
 
@@ -68,7 +69,7 @@ test.describe('Auth flow', () => {
     // This avoids hitting the backend throttle limit (10 auth requests/60s) that is
     // reached when chromium + Mobile Chrome both register multiple users in rapid succession.
     // login() puts the access token in memory — same guarantee as register().
-    const email = process.env['E2E_SHARED_USER_EMAIL']!;
+    const email = getSharedUserEmail();
     await login(page, email, TEST_PASSWORD);
     await logout(page);
     await expect(page).toHaveURL(/\/auth\/login/);
