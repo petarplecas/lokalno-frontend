@@ -24,16 +24,9 @@ test.describe('Auth flow', () => {
   });
 
   test('should login with valid credentials', async ({ page }) => {
-    const email = testEmail('login');
-
-    // Register first, then login
-    await register(page, {
-      firstName: 'Test',
-      lastName: 'Login',
-      email,
-      password: TEST_PASSWORD,
-    });
-    await logout(page);
+    // Use shared user — no need to register a fresh user just to test login.
+    // Shared user is guaranteed to exist (created in global-setup via API).
+    const email = getSharedUserEmail();
     await login(page, email, TEST_PASSWORD);
 
     await expect(page).toHaveURL(/\/home/);
