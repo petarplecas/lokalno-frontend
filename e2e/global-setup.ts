@@ -1,7 +1,13 @@
 import { chromium, FullConfig } from '@playwright/test';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { register, TEST_PASSWORD } from './fixtures/auth.fixture';
 
 const SHARED_USER_EMAIL = `e2e-shared-${Date.now()}@playwright.test`;
+
+// Path where shared state is written so worker processes can read it.
+// process.env mutations in global-setup are NOT visible to test workers.
+export const E2E_STATE_FILE = join(__dirname, '.e2e-state.json');
 
 async function globalSetup(_config: FullConfig): Promise<void> {
   const browser = await chromium.launch();
@@ -19,10 +25,9 @@ async function globalSetup(_config: FullConfig): Promise<void> {
 
   await browser.close();
 
-  // Expose credentials for discount-flow tests (no storageState —
-  // incompatible with token rotation: same cookie presented by multiple
-  // test contexts revokes the entire token family after the first use).
-  process.env['E2E_SHARED_USER_EMAIL'] = SHARED_USER_EMAIL;
+  // Write shared credentials to a file — the only reliable way to pass
+  // data from global-setup to test workers (process.env is not shared).
+  writeFileSync(E2E_STATE_FILE, JSON.stringify({ sharedUserEmail: SHARED_USER_EMAIL }));
 }
 
 export default globalSetup;

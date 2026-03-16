@@ -1,6 +1,14 @@
+import { readFileSync } from 'fs';
 import { Page } from '@playwright/test';
+import { E2E_STATE_FILE } from '../global-setup';
 
 const API_BASE_URL = process.env['E2E_API_URL'] ?? 'http://localhost:3000';
+
+/** Email of the shared user registered in global-setup, readable by all workers. */
+export function getSharedUserEmail(): string {
+  const state = JSON.parse(readFileSync(E2E_STATE_FILE, 'utf-8')) as { sharedUserEmail: string };
+  return state.sharedUserEmail;
+}
 
 export interface RegisterData {
   firstName: string;

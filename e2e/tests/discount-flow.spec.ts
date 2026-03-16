@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { loginDirect, TEST_PASSWORD } from '../fixtures/auth.fixture';
+import { getSharedUserEmail, loginDirect, TEST_PASSWORD } from '../fixtures/auth.fixture';
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
     // loginDirect() bypasses the login page UI entirely — sends API request directly.
     // This avoids APP_INITIALIZER firing POST /auth/refresh on page.goto('/auth/login'),
     // which would waste a throttle slot even when no cookie is present (returns 401 but still counted).
-    const email = process.env['E2E_SHARED_USER_EMAIL']!;
-    await loginDirect(page, email, TEST_PASSWORD);
+    // getSharedUserEmail() reads from .e2e-state.json — process.env mutations from global-setup
+    // are not visible in worker processes.
+    await loginDirect(page, getSharedUserEmail(), TEST_PASSWORD);
   });
 
   test('should display home page with discount feed or empty state', async ({ page }) => {
