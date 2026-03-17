@@ -68,16 +68,32 @@ export async function loginDirect(
   password: string,
   redirectPath = '/home',
 ): Promise<void> {
-  // Direktan API poziv — bez page.goto('/auth/login'), bez APP_INITIALIZER, bez uzaludnog refresh slota.
-  // Playwright automatski čuva Set-Cookie (refreshToken, Path=/auth) u browser kontekstu.
-  const res = await page.context().request.post(`${API_BASE_URL}/auth/login`, {
-    data: { email, password },
-    headers: { 'Content-Type': 'application/json' },
-  });
-  if (!res.ok()) {
-    throw new Error(`loginDirect failed: ${res.status()} ${await res.text()}`);
+  // Mora biti page.goto() pre fetch-a da bi browser imao origin za cookie (SameSite policy).
+  // Ne čekamo UI — samo uspostavljamo browser origin.
+  await page.goto('/auth/login');
+
+  // fetch() unutar page.evaluate() se izvršava u browser kontekstu →
+  // browser automatski prima i čuva Set-Cookie: refreshToken (HttpOnly) iz response-a.
+  // page.context().request.post() je Playwright API context — odvojen od browser cookie jar-a,
+  // pa Set-Cookie ne bi bio dostupan APP_INITIALIZER-u pri sledećem page.goto().
+  const result = await page.evaluate(
+    async ({ apiUrl, email: e, password: p }) => {
+      const res = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // KRITIČNO: browser prima i čuva HttpOnly cookie
+        body: JSON.stringify({ email: e, password: p }),
+      });
+      return { ok: res.ok, status: res.status, body: await res.text() };
+    },
+    { apiUrl: API_BASE_URL, email, password },
+  );
+
+  if (!result.ok) {
+    throw new Error(`loginDirect failed: ${result.status} ${result.body}`);
   }
-  // goto() pokreće APP_INITIALIZER → POST /auth/refresh (uspešan, cookie je setovan)
+
+  // goto() pokreće APP_INITIALIZER → POST /auth/refresh (uspešan, cookie je u browser jar-u)
   await page.goto(redirectPath);
   if (redirectPath === '/home') {
     await waitForHomeReady(page);
