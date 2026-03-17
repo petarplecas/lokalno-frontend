@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 import { Page } from '@playwright/test';
 import { E2E_STATE_FILE } from '../global-setup';
 
-const API_BASE_URL = process.env['E2E_API_URL'] ?? 'http://localhost:3000';
 
 /** Email of the shared user registered in global-setup, readable by all workers. */
 export function getSharedUserEmail(): string {
@@ -68,60 +67,15 @@ export async function loginDirect(
   password: string,
   redirectPath = '/home',
 ): Promise<void> {
-  // Playwright API context nema CORS ograničenja (nije browser) — može direktno pozvati API.
-  // Set-Cookie iz response-a nije automatski u browser cookie jar-u, pa ga ručno injektujemo.
-  const res = await page.context().request.post(`${API_BASE_URL}/auth/login`, {
-    data: { email, password },
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  if (!res.ok()) {
-    throw new Error(`loginDirect failed: ${res.status()} ${await res.text()}`);
-  }
-
-  // Izvuci Set-Cookie header i injektuj ga u browser cookie jar.
-  // Playwright API context cookie jar je odvojen od browser cookie jar-a —
-  // browser ne vidi cookies dobijene kroz request.post() automatski.
-  // addCookies() ih eksplicitno dodaje u browser cookie jar pa APP_INITIALIZER može
-  // da pošalje refreshToken cookie pri POST /auth/refresh.
-  const apiUrl = new URL(API_BASE_URL);
-  const cookies = res.headers()['set-cookie'];
-  if (cookies) {
-    // set-cookie može biti multi-value (newline separated u Playwright)
-    for (const raw of cookies.split('\n').filter(Boolean)) {
-      const parts = raw.split(';').map((s) => s.trim());
-      const [nameValue] = parts;
-      const [name, ...valueParts] = nameValue.split('=');
-      const value = valueParts.join('=');
-
-      const attrs: Record<string, string | boolean> = {};
-      for (const part of parts.slice(1)) {
-        const [k, v] = part.split('=').map((s) => s.trim());
-        attrs[k.toLowerCase()] = v ?? true;
-      }
-
-      await page.context().addCookies([{
-        name: name.trim(),
-        value,
-        domain: apiUrl.hostname,
-        path: typeof attrs['path'] === 'string' ? attrs['path'] : '/',
-        httpOnly: 'httponly' in attrs,
-        secure: 'secure' in attrs,
-        sameSite: (() => {
-          const ss = typeof attrs['samesite'] === 'string' ? attrs['samesite'].toLowerCase() : '';
-          if (ss === 'strict') return 'Strict';
-          if (ss === 'none') return 'None';
-          return 'Lax';
-        })(),
-      }]);
-    }
-  }
-
-  // goto() pokreće APP_INITIALIZER → POST /auth/refresh.
-  // Browser sada ima refreshToken cookie u svom jar-u → refresh uspeva → admin stranica se učitava.
-  await page.goto(redirectPath);
-  if (redirectPath === '/home') {
-    await waitForHomeReady(page);
+  // Cookie arhitektura: refreshToken je HttpOnly, path='/auth', sameSite='strict' na stagingu.
+  // Direktno injektovanje u browser cookie jar ne funkcioniše jer cross-site SameSite:Strict
+  // blokira cookie kad browser šalje /auth/refresh sa frontend domaina na API domen.
+  //
+  // Rešenje: UI login — browser sam dobija cookie u istom same-site flow-u.
+  // Nakon login-a idemo na redirectPath ako je drugačiji od /home.
+  await login(page, email, password, '**/home');
+  if (redirectPath !== '/home') {
+    await page.goto(redirectPath);
   }
 }
 
