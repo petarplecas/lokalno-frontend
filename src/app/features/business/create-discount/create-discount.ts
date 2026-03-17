@@ -333,7 +333,7 @@ export class CreateDiscount implements OnInit {
 
   private createDiscount(): void {
     const v = this.form.getRawValue();
-    const daysOfWeek = (v.daysOfWeek as unknown as number[]).filter((d) => !isNaN(d));
+    const daysOfWeek = (v.daysOfWeek as unknown as number[]).filter((d) => !isNaN(d)).map((d) => d - 1);
 
     this.discountService
       .createDiscount({

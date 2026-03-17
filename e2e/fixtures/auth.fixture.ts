@@ -48,7 +48,15 @@ export async function login(
   await page.fill('#email', email);
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForURL(expectedUrlPattern, { timeout: 30000 });
+  // Race: fail immediately if auth-error appears instead of waiting 30s for URL that never changes.
+  await Promise.race([
+    page.waitForURL(expectedUrlPattern, { timeout: 30000 }),
+    page.locator('.auth-error[role="alert"]').waitFor({ state: 'visible', timeout: 30000 })
+      .then(async () => {
+        const msg = await page.locator('.auth-error[role="alert"]').textContent();
+        throw new Error(`Login failed — backend returned: ${msg?.trim()}`);
+      }),
+  ]);
   if (expectedUrlPattern.includes('home')) {
     await waitForHomeReady(page);
   }
@@ -58,6 +66,7 @@ export async function loginDirect(
   page: Page,
   email: string,
   password: string,
+  redirectPath = '/home',
 ): Promise<void> {
   // Direktan API poziv — bez page.goto('/auth/login'), bez APP_INITIALIZER, bez uzaludnog refresh slota.
   // Playwright automatski čuva Set-Cookie (refreshToken, Path=/auth) u browser kontekstu.
@@ -68,9 +77,11 @@ export async function loginDirect(
   if (!res.ok()) {
     throw new Error(`loginDirect failed: ${res.status()} ${await res.text()}`);
   }
-  // goto('/home') pokreće APP_INITIALIZER → POST /auth/refresh (uspešan, cookie je setovan)
-  await page.goto('/home');
-  await waitForHomeReady(page);
+  // goto() pokreće APP_INITIALIZER → POST /auth/refresh (uspešan, cookie je setovan)
+  await page.goto(redirectPath);
+  if (redirectPath === '/home') {
+    await waitForHomeReady(page);
+  }
 }
 
 export async function logout(page: Page): Promise<void> {

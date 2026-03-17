@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { login, ADMIN_USER } from '../fixtures/auth.fixture';
+import { loginDirect, ADMIN_USER } from '../fixtures/auth.fixture';
 
 test.describe('Admin flow', () => {
   test.setTimeout(60000);
   test.beforeEach(async ({ page }) => {
-    await login(page, ADMIN_USER.email, ADMIN_USER.password, '**/admin/**');
-    // Ne pozivati goto() — hard navigacija gubi access token iz memorije
+    // loginDirect bypasses login UI — no throttle slot wasted, no 30s timeout on wrong creds.
+    // Navigates directly to /admin/businesses so APP_INITIALIZER restores session via cookie.
+    await loginDirect(page, ADMIN_USER.email, ADMIN_USER.password, '/admin/businesses');
     await page.locator('.admin-businesses__tabs').waitFor({ state: 'visible', timeout: 15000 });
   });
 
