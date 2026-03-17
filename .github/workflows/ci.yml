@@ -167,6 +167,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /app/lokalno-backend
+            git fetch origin develop
+            git checkout origin/develop -- prisma/seed-e2e.ts
             E2E_ADMIN_PASSWORD="${{ secrets.E2E_ADMIN_PASSWORD }}" npm run seed:e2e
 
       - name: Run Playwright tests
