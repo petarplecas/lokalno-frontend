@@ -68,14 +68,31 @@ export async function loginDirect(
   redirectPath = '/home',
 ): Promise<void> {
   // Cookie arhitektura: refreshToken je HttpOnly, path='/auth', sameSite='strict' na stagingu.
-  // Direktno injektovanje u browser cookie jar ne funkcioniše jer cross-site SameSite:Strict
-  // blokira cookie kad browser šalje /auth/refresh sa frontend domaina na API domen.
+  // Direktno injektovanje u browser cookie jar ne funkcioniše zbog SameSite:Strict + cross-site.
+  // Koristimo UI login — browser dobija cookie u same-site flow-u.
   //
-  // Rešenje: UI login — browser sam dobija cookie u istom same-site flow-u.
-  // Nakon login-a idemo na redirectPath ako je drugačiji od /home.
-  await login(page, email, password, '**/home');
+  // Nakon login-a Angular router može da preusmeri na različite URL-ove zavisno od role:
+  // - regular user → /home
+  // - admin → /admin/businesses (ili direktno na redirectPath ako je admin ruta)
+  // Čekamo bilo koji URL koji nije /auth/login (znači login je prošao).
+  await page.goto('/auth/login');
+  await page.fill('#email', email);
+  await page.fill('#password', password);
+  await page.click('button[type="submit"]');
+
+  await Promise.race([
+    page.waitForURL((url) => !url.pathname.includes('/auth/login'), { timeout: 30000 }),
+    page.locator('.auth-error[role="alert"]').waitFor({ state: 'visible', timeout: 30000 })
+      .then(async () => {
+        const msg = await page.locator('.auth-error[role="alert"]').textContent();
+        throw new Error(`loginDirect failed — backend returned: ${msg?.trim()}`);
+      }),
+  ]);
+
   if (redirectPath !== '/home') {
     await page.goto(redirectPath);
+  } else {
+    await waitForHomeReady(page);
   }
 }
 
