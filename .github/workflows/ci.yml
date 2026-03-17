@@ -159,6 +159,16 @@ jobs:
           sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.example.ts > src/environments/environment.ts
           sed "s/YOUR_MAPBOX_TOKEN/${MAPBOX_TOKEN}/" src/environments/environment.prod.example.ts > src/environments/environment.prod.ts
 
+      - name: Seed E2E test data on staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /app/lokalno-backend
+            E2E_ADMIN_PASSWORD="${{ secrets.E2E_ADMIN_PASSWORD }}" npm run seed:e2e
+
       - name: Run Playwright tests
         run: npx playwright test
         env:
