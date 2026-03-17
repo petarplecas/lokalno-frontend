@@ -70,7 +70,7 @@ export async function loginDirect(
 ): Promise<void> {
   // Direktan API poziv — bez page.goto('/auth/login'), bez APP_INITIALIZER, bez uzaludnog refresh slota.
   // Playwright automatski čuva Set-Cookie (refreshToken, Path=/auth) u browser kontekstu.
-  const res = await page.request.post(`${API_BASE_URL}/auth/login`, {
+  const res = await page.context().request.post(`${API_BASE_URL}/auth/login`, {
     data: { email, password },
     headers: { 'Content-Type': 'application/json' },
   });
