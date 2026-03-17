@@ -67,14 +67,11 @@ export async function loginDirect(
   password: string,
   redirectPath = '/home',
 ): Promise<void> {
-  // Cookie arhitektura: refreshToken je HttpOnly, path='/auth', sameSite='strict' na stagingu.
-  // Direktno injektovanje u browser cookie jar ne funkcioniše zbog SameSite:Strict + cross-site.
-  // Koristimo UI login — browser dobija cookie u same-site flow-u.
-  //
-  // Nakon login-a Angular router može da preusmeri na različite URL-ove zavisno od role:
-  // - regular user → /home
-  // - admin → /admin/businesses (ili direktno na redirectPath ako je admin ruta)
-  // Čekamo bilo koji URL koji nije /auth/login (znači login je prošao).
+  // UI login — browser receives refreshToken cookie in same-site flow (SameSite:Strict safe).
+  // After login, Angular router redirects based on role:
+  //   regular user → /home, admin → /admin/businesses, business → /business/dashboard
+  // We wait for any URL that is not /auth/login, then skip goto() if already at redirectPath
+  // to avoid an extra full-page-reload + APP_INITIALIZER cycle.
   await page.goto('/auth/login');
   await page.fill('#email', email);
   await page.fill('#password', password);
@@ -89,9 +86,14 @@ export async function loginDirect(
       }),
   ]);
 
-  if (redirectPath !== '/home') {
+  const currentPath = new URL(page.url()).pathname;
+  if (currentPath !== redirectPath) {
+    // Angular router landed elsewhere (e.g. admin → /admin/businesses but caller wants /home).
+    // Navigate only if not already at the target — avoids an extra full-page-reload + APP_INITIALIZER cycle.
     await page.goto(redirectPath);
-  } else {
+  }
+
+  if (redirectPath === '/home') {
     await waitForHomeReady(page);
   }
 }

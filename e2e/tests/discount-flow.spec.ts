@@ -3,9 +3,8 @@ import { getSharedUserEmail, loginDirect, TEST_PASSWORD } from '../fixtures/auth
 
 test.describe('Discount flow', () => {
   test.beforeEach(async ({ page }) => {
-    // loginDirect() bypasses the login page UI entirely — sends API request directly.
-    // This avoids APP_INITIALIZER firing POST /auth/refresh on page.goto('/auth/login'),
-    // which would waste a throttle slot even when no cookie is present (returns 401 but still counted).
+    // loginDirect() uses UI login so the browser receives the HttpOnly refreshToken cookie
+    // in a same-site flow (required for SameSite:Strict staging cookie).
     // getSharedUserEmail() reads from .e2e-state.json — process.env mutations from global-setup
     // are not visible in worker processes.
     await loginDirect(page, getSharedUserEmail(), TEST_PASSWORD);
