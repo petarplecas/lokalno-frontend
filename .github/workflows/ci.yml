@@ -169,7 +169,7 @@ jobs:
             cd /app/lokalno-backend
             git fetch origin develop
             git checkout origin/develop -- prisma/seed-e2e.ts
-            E2E_ADMIN_PASSWORD="${{ secrets.E2E_ADMIN_PASSWORD }}" npm run seed:e2e
+            DATABASE_URL="${{ secrets.E2E_STAGING_DB_URL }}" E2E_ADMIN_PASSWORD="${{ secrets.E2E_ADMIN_PASSWORD }}" npm run seed:e2e
 
       - name: Run Playwright tests
         run: npx playwright test
