@@ -27,13 +27,15 @@
 .home__search-input {
   width: 100%;
   padding: $spacing-sm $spacing-md $spacing-sm 44px;
-  border: 1px solid $color-border;
+  border: none;
   border-radius: $radius-full;
   font-family: $font-body;
   font-size: 0.938rem;
   color: $color-text;
   background: $color-surface;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: $shadow-sm;
+  transition: box-shadow $duration-base $ease-out;
+  touch-action: manipulation;
 
   &::placeholder {
     color: $color-text-secondary;
@@ -41,8 +43,7 @@
 
   &:focus {
     outline: none;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgb(32 178 170 / 15%);
+    box-shadow: 0 0 0 3px $color-primary-alpha-20, $shadow-sm;
   }
 }
 
@@ -53,6 +54,7 @@
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: $spacing-md;
+  overscroll-behavior: contain;
 
   &::-webkit-scrollbar {
     display: none;
@@ -62,7 +64,7 @@
 .home__pill {
   flex-shrink: 0;
   padding: $spacing-xs $spacing-md;
-  border: 1px solid $color-border;
+  border: none;
   border-radius: $radius-full;
   background: $color-surface;
   color: $color-text-secondary;
@@ -70,17 +72,20 @@
   font-size: 0.813rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  box-shadow: $shadow-sm;
+  transition: background-color $duration-base $ease-out, color $duration-base $ease-out, box-shadow $duration-base $ease-out;
+  touch-action: manipulation;
 
   &:hover {
-    border-color: $color-primary;
+    background: $color-primary-alpha-10;
     color: $color-primary;
+    box-shadow: $shadow-sm;
   }
 
   &--active {
     background: $color-primary;
-    border-color: $color-primary;
     color: #fff;
+    box-shadow: $shadow-primary;
 
     &:hover {
       background: $color-primary-dark;
@@ -99,7 +104,7 @@
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-md;
-  border: 1px solid $color-border;
+  border: none;
   border-radius: $radius-full;
   background: $color-surface;
   color: $color-text-secondary;
@@ -107,17 +112,19 @@
   font-size: 0.813rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  box-shadow: $shadow-sm;
+  transition: background-color $duration-base $ease-out, color $duration-base $ease-out, box-shadow $duration-base $ease-out;
+  touch-action: manipulation;
 
   &:hover {
-    border-color: $color-primary;
+    background: $color-primary-alpha-10;
     color: $color-primary;
   }
 
   &--active {
     background: $color-primary;
-    border-color: $color-primary;
     color: #fff;
+    box-shadow: $shadow-primary;
 
     &:hover {
       background: $color-primary-dark;
@@ -136,25 +143,27 @@
 
 .home__radius-chip {
   padding: 4px 12px;
-  border: 1.5px solid $color-border;
+  border: none;
   border-radius: $radius-full;
   background: $color-surface;
   color: $color-text-secondary;
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  box-shadow: $shadow-sm;
+  transition: background-color $duration-base $ease-out, color $duration-base $ease-out, box-shadow $duration-base $ease-out;
   white-space: nowrap;
+  touch-action: manipulation;
 
   &:hover {
-    border-color: $color-primary;
+    background: $color-primary-alpha-10;
     color: $color-primary;
   }
 
   &--active {
-    border-color: $color-primary;
     background: $color-primary;
     color: #fff;
+    box-shadow: $shadow-primary;
   }
 }
 
@@ -162,7 +171,7 @@
   font-size: 0.8rem;
   color: $color-text;
   margin-top: $spacing-sm;
-  background: rgba($color-warning, 0.1);
+  background: $color-warning-alpha-10;
   border-left: 3px solid $color-warning;
   border-radius: $radius-sm;
   padding: $spacing-sm $spacing-md;
@@ -210,17 +219,19 @@
 
 .home__sort {
   padding: $spacing-xs $spacing-sm;
-  border: 1px solid $color-border;
+  border: none;
   border-radius: $radius-sm;
   font-family: $font-body;
   font-size: 0.813rem;
   color: $color-text;
   background: $color-surface;
+  box-shadow: $shadow-sm;
   cursor: pointer;
+  touch-action: manipulation;
 
   &:focus {
     outline: none;
-    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-primary-alpha-20, $shadow-sm;
   }
 }
 
@@ -255,6 +266,7 @@
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: $spacing-xs;
+  overscroll-behavior: contain;
 
   &::-webkit-scrollbar {
     display: none;
@@ -300,4 +312,15 @@
   justify-content: center;
   padding: $spacing-lg 0;
   min-height: 48px;
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .home__search-input,
+  .home__pill,
+  .home__location-btn,
+  .home__radius-chip,
+  .home__sort {
+    transition: none;
+  }
 }
