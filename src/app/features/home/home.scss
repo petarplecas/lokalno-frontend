@@ -267,6 +267,7 @@
   scrollbar-width: none;
   padding-bottom: $spacing-xs;
   overscroll-behavior: contain;
+  touch-action: pan-x;
 
   &::-webkit-scrollbar {
     display: none;
@@ -293,11 +294,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
+  align-items: start;
 
   app-discount-card {
     display: flex;
     flex-direction: column;
-    height: 100%;
   }
 }
 
