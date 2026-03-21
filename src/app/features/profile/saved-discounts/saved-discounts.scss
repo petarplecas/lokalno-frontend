@@ -36,8 +36,10 @@
   display: flex;
   gap: $spacing-md;
   padding: $spacing-md;
+  min-height: 44px;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  touch-action: manipulation;
+  transition: box-shadow $duration-base;
 
   &:hover {
     box-shadow: $shadow-md;
@@ -78,4 +80,10 @@
 .saved__business {
   font-size: 0.75rem;
   color: $color-text-secondary;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saved__card {
+    transition: none;
+  }
 }

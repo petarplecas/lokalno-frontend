@@ -21,10 +21,10 @@ export class Profile {
   readonly Role = Role;
 
   readonly menuItems = [
-    { label: 'Izmeni profil', icon: '✏️', route: '/profile/edit' },
-    { label: 'Promeni lozinku', icon: '🔒', route: '/profile/password' },
-    { label: 'Omiljeni biznisi', icon: '❤️', route: '/profile/favorites' },
-    { label: 'Sačuvani popusti', icon: '🔖', route: '/profile/saved' },
+    { label: 'Izmeni profil', route: '/profile/edit' },
+    { label: 'Promeni lozinku', route: '/profile/password' },
+    { label: 'Omiljeni biznisi', route: '/profile/favorites' },
+    { label: 'Sacuvani popusti', route: '/profile/saved' },
   ];
 
   logout(): void {

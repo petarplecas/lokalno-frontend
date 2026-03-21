@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .edit-profile {
   padding: $spacing-md;
@@ -28,6 +29,14 @@
 .edit-profile__submit {
   width: 100%;
   padding: $spacing-md;
+  min-height: 44px;
   font-size: 1rem;
   margin-top: $spacing-sm;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edit-profile__submit {
+    transition: none;
+  }
 }

@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .profile {
   padding: $spacing-md;
@@ -44,6 +45,7 @@
   justify-content: center;
   gap: $spacing-sm;
   padding: $spacing-md;
+  min-height: 44px;
   margin-bottom: $spacing-md;
   background: $gradient-primary;
   color: #fff;
@@ -51,7 +53,8 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.938rem;
-  transition: opacity 0.2s;
+  touch-action: manipulation;
+  transition: opacity $duration-base;
 
   svg {
     width: 20px;
@@ -71,6 +74,7 @@
   justify-content: center;
   gap: $spacing-sm;
   padding: $spacing-md;
+  min-height: 44px;
   margin-bottom: $spacing-md;
   background: $color-secondary;
   color: #fff;
@@ -78,7 +82,8 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.938rem;
-  transition: opacity 0.2s;
+  touch-action: manipulation;
+  transition: opacity $duration-base;
 
   svg {
     width: 20px;
@@ -105,9 +110,11 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md;
+  min-height: 44px;
   color: $color-text;
   text-decoration: none;
-  transition: background-color 0.15s;
+  touch-action: manipulation;
+  transition: background-color $duration-fast;
 
   &:not(:last-child) {
     border-bottom: 1px solid $color-divider;
@@ -120,9 +127,18 @@
 }
 
 .profile__menu-icon {
-  font-size: 1.25rem;
-  width: 32px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: $color-text-secondary;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .profile__menu-label {
@@ -142,6 +158,7 @@
   display: block;
   width: 100%;
   padding: $spacing-md;
+  min-height: 44px;
   background: none;
   border: 2px solid $color-error;
   border-radius: $radius-md;
@@ -150,10 +167,20 @@
   font-size: 0.938rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  touch-action: manipulation;
+  transition: background-color $duration-base, color $duration-base, border-color $duration-base;
 
   &:hover {
     background: $color-error;
     color: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile__menu-item,
+  .profile__logout,
+  .profile__business-link,
+  .profile__add-business {
+    transition: none;
   }
 }

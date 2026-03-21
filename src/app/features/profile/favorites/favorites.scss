@@ -37,11 +37,13 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md;
+  min-height: 44px;
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.1s;
+  touch-action: manipulation;
+  transition: box-shadow $duration-base, transform $duration-fast;
 
   &:hover {
-    box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+    box-shadow: $shadow-md;
     transform: translateY(-1px);
   }
 
@@ -100,4 +102,18 @@
   color: $color-text-secondary;
   flex-shrink: 0;
   margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .favorites__card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &:active {
+      transform: none;
+    }
+  }
 }
