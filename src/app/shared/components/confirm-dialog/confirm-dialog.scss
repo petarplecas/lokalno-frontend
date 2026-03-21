@@ -1,9 +1,12 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .dialog-backdrop {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 50%);
+  background: $color-black-alpha-40;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,11 +20,15 @@
   padding: $spacing-lg;
   max-width: 360px;
   width: 100%;
-  box-shadow: $shadow-lg;
+  box-shadow: $shadow-xl;
   z-index: $z-modal;
+  animation: dialog-in $duration-slow $ease-out;
 
   &__title {
+    font-family: $font-heading;
     font-size: 1.125rem;
+    font-weight: 700;
+    color: $color-text;
     margin-bottom: $spacing-sm;
   }
 
@@ -36,5 +43,28 @@
     display: flex;
     gap: $spacing-sm;
     justify-content: flex-end;
+
+    button {
+      touch-action: manipulation;
+      @include touch-target;
+    }
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    animation: none;
   }
 }

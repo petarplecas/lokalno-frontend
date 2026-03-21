@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .biz-header {
   position: sticky;
@@ -7,8 +8,8 @@
   align-items: center;
   height: 56px;
   padding: 0 $spacing-md;
-  background: $color-surface;
-  border-bottom: 1px solid $color-border;
+  @include frosted-glass(12px);
+  box-shadow: 0 1px 0 0 $color-primary-alpha-15, 0 2px 12px $color-black-alpha-06;
   z-index: $z-header;
 
   &__title {
@@ -18,6 +19,7 @@
     color: $color-primary;
     text-decoration: none;
     flex: 1;
+    touch-action: manipulation;
 
     &:hover {
       text-decoration: none;
@@ -34,7 +36,9 @@
     text-decoration: none;
     padding: $spacing-xs $spacing-sm;
     border-radius: $radius-sm;
-    transition: background-color 0.2s, color 0.2s;
+    touch-action: manipulation;
+    @include touch-target;
+    transition: background-color $duration-base, color $duration-base;
 
     &:hover {
       background: $color-background;
@@ -46,7 +50,7 @@
 
 .biz-content {
   padding-bottom: 72px;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
 }
 
 .biz-nav {
@@ -58,8 +62,8 @@
   align-items: center;
   justify-content: space-around;
   height: 56px;
-  background: $color-surface;
-  border-top: 1px solid $color-border;
+  @include frosted-glass(12px);
+  box-shadow: 0 -1px 0 0 $color-primary-alpha-08, 0 -2px 12px $color-black-alpha-06;
   z-index: $z-bottom-nav;
   padding-bottom: env(safe-area-inset-bottom, 0);
 
@@ -73,7 +77,10 @@
     text-decoration: none;
     font-size: 0.625rem;
     font-weight: 500;
-    transition: color 0.2s;
+    touch-action: manipulation;
+    @include touch-target;
+    transition: color $duration-base;
+    position: relative;
 
     &:hover {
       color: $color-primary;
@@ -82,6 +89,33 @@
 
     &.active {
       color: $color-primary;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: $color-primary;
+        border-radius: $radius-full;
+      }
     }
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biz-header__switch {
+    transition: none;
+  }
+
+  .biz-nav__item {
+    transition: none;
   }
 }

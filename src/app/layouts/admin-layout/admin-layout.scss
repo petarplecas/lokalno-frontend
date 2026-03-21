@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .admin-header {
   position: sticky;
@@ -19,13 +20,17 @@
   }
 
   &__nav a {
-    color: rgb(255 255 255 / 70%);
+    color: $color-white-alpha-70;
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 500;
     padding: $spacing-xs $spacing-sm;
     border-radius: $radius-sm;
-    transition: color 0.2s, background-color 0.2s;
+    touch-action: manipulation;
+    @include touch-target;
+    display: inline-flex;
+    align-items: center;
+    transition: color $duration-base, background-color $duration-base;
 
     &:hover {
       color: #fff;
@@ -34,12 +39,18 @@
 
     &.active {
       color: #fff;
-      background: rgb(255 255 255 / 15%);
+      background: $color-white-alpha-15;
     }
   }
 }
 
 .admin-content {
-  min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
   padding: $spacing-md;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-header__nav a {
+    transition: none;
+  }
 }

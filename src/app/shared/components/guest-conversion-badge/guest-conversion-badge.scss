@@ -1,13 +1,14 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .gcb {
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  background: $gradient-primary;
   border-radius: $radius-md;
   padding: $spacing-md;
-  box-shadow: $shadow-sm;
+  box-shadow: $shadow-md;
 
   &__content {
     flex: 1;
@@ -15,7 +16,7 @@
 
   &__text {
     font-size: 0.813rem;
-    color: rgb(255 255 255 / 90%);
+    color: $color-white-alpha-90;
     margin: 0 0 $spacing-sm;
     line-height: 1.4;
   }
@@ -35,13 +36,27 @@
     color: $color-primary;
     border-radius: $radius-full;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    @include touch-target;
+    transition: box-shadow $duration-base;
+
+    &:hover {
+      box-shadow: $shadow-md;
+    }
   }
 
   &__login {
     font-size: 0.75rem;
-    color: rgb(255 255 255 / 80%);
+    color: $color-white-alpha-80;
     text-decoration: none;
+    touch-action: manipulation;
+    @include touch-target;
+    display: inline-flex;
+    align-items: center;
+    transition: color $duration-base;
 
     &:hover {
       color: #fff;
@@ -51,15 +66,31 @@
   &__dismiss {
     background: none;
     border: none;
-    color: rgb(255 255 255 / 70%);
+    color: $color-white-alpha-70;
     cursor: pointer;
     font-size: 1rem;
     padding: 0;
     flex-shrink: 0;
     line-height: 1;
+    touch-action: manipulation;
+    @include touch-target;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color $duration-base;
 
     &:hover {
       color: #fff;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gcb {
+    &__cta,
+    &__login,
+    &__dismiss {
+      transition: none;
     }
   }
 }

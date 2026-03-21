@@ -9,10 +9,10 @@
   align-items: center;
   height: 56px;
   padding: 0 $spacing-md;
-  background: rgba(255, 255, 255, 0.92);
+  background: $color-white-alpha-92;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1px 0 0 rgba(32, 178, 170, 0.15), 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 0 0 $color-primary-alpha-15, 0 2px 12px $color-black-alpha-06;
   z-index: $z-header;
 
   &__back {
@@ -25,11 +25,13 @@
     background: transparent;
     border-radius: $radius-full;
     color: $color-text;
-    transition: background-color 0.2s, color 0.2s;
     cursor: pointer;
+    touch-action: manipulation;
+    @include touch-target;
+    transition: background-color $duration-base, color $duration-base;
 
     &:hover {
-      background-color: rgba(32, 178, 170, 0.08);
+      background-color: $color-primary-alpha-08;
       color: $color-primary;
     }
 
@@ -40,7 +42,7 @@
 
   &__title {
     font-family: $font-heading;
-    font-size: 0.95rem;
+    font-size: 0.938rem;
     font-weight: 600;
     color: $color-text;
     text-align: center;
@@ -51,5 +53,13 @@
 
   &__spacer {
     width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-header {
+    &__back {
+      transition: none;
+    }
   }
 }

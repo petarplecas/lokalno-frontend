@@ -5,20 +5,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: $color-surface;
   border-radius: $radius-full;
   color: $color-text;
   box-shadow: $shadow-sm;
-  transition: box-shadow 0.2s;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: box-shadow $duration-base $ease-out;
 
   &:hover {
     box-shadow: $shadow-md;
   }
 
+  &:active {
+    transform: scale(0.97);
+  }
+
   &:focus-visible {
     @include focus-ring;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-button {
+    transition: none;
+
+    &:active {
+      transform: none;
+    }
   }
 }

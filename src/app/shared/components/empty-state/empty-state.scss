@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .empty-state {
   display: flex;
@@ -11,10 +12,21 @@
   &__icon {
     font-size: 3rem;
     margin-bottom: $spacing-md;
+    line-height: 1;
+  }
+
+  &__illustration {
+    width: 80px;
+    height: 80px;
+    margin-bottom: $spacing-lg;
+    color: $color-primary;
+    opacity: 0.6;
   }
 
   &__title {
+    font-family: $font-heading;
     font-size: 1.125rem;
+    font-weight: 700;
     color: $color-text;
     margin-bottom: $spacing-sm;
   }
@@ -22,7 +34,12 @@
   &__message {
     font-size: 0.875rem;
     color: $color-text-secondary;
+    line-height: 1.5;
     max-width: 280px;
     margin-bottom: $spacing-lg;
+  }
+
+  &__action {
+    @include touch-target;
   }
 }

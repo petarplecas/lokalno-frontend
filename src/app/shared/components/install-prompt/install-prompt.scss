@@ -1,19 +1,23 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .install-banner {
   position: fixed;
   bottom: 80px;
   left: $spacing-md;
   right: $spacing-md;
-  background: $color-surface;
+  background: $color-white-alpha-95;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: $radius-md;
   box-shadow: $shadow-lg;
   padding: $spacing-md;
+  padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
   z-index: $z-modal;
-  animation: slideUp 0.3s ease-out;
+  animation: slideUp $duration-slow $ease-out;
 }
 
 .install-content {
@@ -29,7 +33,7 @@
   height: 40px;
   border-radius: $radius-sm;
   background: $color-primary;
-  color: white;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +42,7 @@
 .install-text {
   margin: 0;
   font-family: $font-body;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: $color-text;
 }
 
@@ -51,17 +55,25 @@
 .btn-install {
   padding: $spacing-xs $spacing-md;
   background: $color-primary;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: $radius-full;
   font-family: $font-body;
-  font-size: 13px;
+  font-size: 0.813rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  touch-action: manipulation;
+  @include touch-target;
+  transition: background-color $duration-base;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
 
   &:active {
     background: $color-primary-dark;
+    transform: scale(0.97);
   }
 }
 
@@ -71,9 +83,16 @@
   color: $color-text-secondary;
   border: none;
   font-family: $font-body;
-  font-size: 13px;
+  font-size: 0.813rem;
   cursor: pointer;
   white-space: nowrap;
+  touch-action: manipulation;
+  @include touch-target;
+  transition: color $duration-base;
+
+  &:hover {
+    color: $color-text;
+  }
 }
 
 @keyframes slideUp {
@@ -81,8 +100,27 @@
     transform: translateY(100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-banner {
+    animation: none;
+  }
+
+  .btn-install {
+    transition: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+
+  .btn-dismiss {
+    transition: none;
   }
 }
