@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -8,4 +9,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './bottom-nav.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BottomNav {}
+export class BottomNav {
+  private readonly authService = inject(AuthService);
+  readonly isAuthenticated = this.authService.isAuthenticated;
+}
