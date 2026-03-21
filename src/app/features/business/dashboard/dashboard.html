@@ -97,3 +97,13 @@
     </div>
   </section>
 }
+
+@if (deleteTargetId()) {
+  <app-confirm-dialog
+    title="Obriši popust"
+    message="Da li ste sigurni da želite da obrišete ovaj popust? Ova akcija se ne može poništiti."
+    confirmLabel="Obriši"
+    cancelLabel="Otkaži"
+    (confirmed)="$event ? onConfirmDelete() : onCancelDelete()"
+  />
+}
