@@ -1,10 +1,6 @@
 @use 'styles/variables' as *;
 @use 'styles/mixins' as *;
 
-// =========================================================
-// DISCOUNT CARD — Redesigned
-// =========================================================
-
 .discount-card {
   @include card;
 
@@ -12,7 +8,7 @@
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform $duration-base $ease-out, box-shadow $duration-base $ease-out;
 
   &:hover {
     transform: translateY(-2px);
@@ -33,7 +29,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s;
+      transition: transform $duration-slow $ease-out;
     }
   }
 
@@ -59,7 +55,6 @@
   }
 
   // ── Discount hero value — bottom-left on image ──────────
-  // Primary marketing element: ~3x larger than previous badge
   &__discount-hero {
     position: absolute;
     bottom: $spacing-sm;
@@ -94,8 +89,8 @@
 
     &--percent   { background: $color-secondary; }
     &--fixed     { background: $color-primary; }
-    &--new-price { background: #27ae60; }
-    &--bogo      { background: #8e44ad; }
+    &--new-price { background: $color-success; }
+    &--bogo      { background: $color-purple; }
   }
 
   // ── Save button — top-right, frosted glass ───────────────
@@ -103,8 +98,9 @@
     position: absolute;
     top: 6px;
     right: 6px;
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
+    border: none;
     border-radius: 50%;
     background: rgb(255 255 255 / 88%);
     backdrop-filter: blur(6px);
@@ -113,19 +109,21 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
-    transition: all 0.2s;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color $duration-base $ease-out, transform $duration-fast $ease-spring;
 
     svg {
-      width: 13px;
-      height: 13px;
+      width: 16px;
+      height: 16px;
       color: $color-text-secondary;
       fill: none;
-      transition: color 0.2s, fill 0.2s;
+      transition: color $duration-base, fill $duration-base;
     }
 
     &:hover {
       background: #fff;
-      transform: scale(1.15);
+      transform: scale(1.1);
     }
 
     &--saved svg {
@@ -161,7 +159,6 @@
   }
 
   // ── Price comparison row ─────────────────────────────────
-  // Loss aversion: strikethrough oldPrice + teal newPrice
   &__price-row {
     display: flex;
     align-items: baseline;
@@ -199,41 +196,40 @@
     text-transform: uppercase;
 
     &--hot {
-      background: rgb(231 76 60 / 10%);
-      color: #e74c3c;
-      border: 1px solid rgb(231 76 60 / 20%);
+      background: $color-error-alpha-10;
+      color: $color-error;
+      border: 1px solid $color-error-alpha-20;
 
       &::before {
         content: '';
         display: inline-block;
         width: 5px;
         height: 5px;
-        background: #e74c3c;
+        background: $color-error;
         border-radius: 50%;
         animation: dc-pulse 1.4s ease-in-out infinite;
       }
     }
 
     &--warm {
-      background: rgb(243 156 18 / 10%);
-      color: #f39c12;
+      background: $color-warning-alpha-10;
+      color: $color-warning;
       border: 1px solid rgb(243 156 18 / 20%);
     }
 
     &--new {
-      background: rgb(32 178 170 / 10%);
+      background: $color-primary-alpha-10;
       color: $color-primary;
-      border: 1px solid rgb(32 178 170 / 20%);
+      border: 1px solid $color-primary-alpha-20;
     }
   }
 
   @keyframes dc-pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.4; transform: scale(0.7); }
+    50%      { opacity: 0.4; transform: scale(0.7); }
   }
 
   // ── Coupon progress bar ──────────────────────────────────
-  // Visual scarcity signal: replaces old "3/25" gray micro-text
   &__coupon-bar {
     margin-bottom: $spacing-xs;
   }
@@ -249,10 +245,10 @@
     height: 100%;
     border-radius: 2px;
     background: $color-primary;
-    transition: width 0.3s;
+    transition: width $duration-slow $ease-out;
 
     &--critical {
-      background: #e74c3c;
+      background: $color-error;
     }
   }
 
@@ -290,6 +286,44 @@
       width: 11px;
       height: 11px;
       flex-shrink: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discount-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &__image img {
+      transition: none;
+    }
+
+    &:hover .discount-card__image img {
+      transform: none;
+    }
+
+    &__save-btn {
+      transition: none;
+
+      svg {
+        transition: none;
+      }
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    &__urgency-badge--hot::before {
+      animation: none;
+    }
+
+    &__coupon-bar-fill {
+      transition: none;
     }
   }
 }

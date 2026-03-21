@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .toast-container {
   position: fixed;
@@ -19,25 +20,29 @@
   gap: $spacing-sm;
   padding: $spacing-sm $spacing-md;
   border-radius: $radius-sm;
-  color: #fff;
   font-size: 0.875rem;
-  box-shadow: $shadow-md;
-  animation: slide-in 0.3s ease-out;
+  box-shadow: $shadow-lg;
+  animation: toast-in $duration-slow $ease-out;
+  background: rgb(255 255 255 / 88%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: $color-text;
+  border-left: 3px solid transparent;
 
   &--success {
-    background-color: $color-success;
+    border-left-color: $color-success;
   }
 
   &--error {
-    background-color: $color-error;
+    border-left-color: $color-error;
   }
 
   &--warning {
-    background-color: $color-warning;
+    border-left-color: $color-warning;
   }
 
   &--info {
-    background-color: $color-info;
+    border-left-color: $color-info;
   }
 
   &__message {
@@ -47,19 +52,26 @@
   &__dismiss {
     background: none;
     border: none;
-    color: inherit;
-    font-size: 1.25rem;
+    color: $color-text-secondary;
+    font-size: 1.125rem;
     line-height: 1;
     padding: 0;
-    opacity: 0.8;
+    min-width: 24px;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: color $duration-fast;
 
     &:hover {
-      opacity: 1;
+      color: $color-text;
     }
   }
 }
 
-@keyframes slide-in {
+@keyframes toast-in {
   from {
     transform: translateY(-100%);
     opacity: 0;
@@ -68,5 +80,15 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+
+  .toast__dismiss {
+    transition: none;
   }
 }
