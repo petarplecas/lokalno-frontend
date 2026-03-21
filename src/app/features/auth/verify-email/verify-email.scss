@@ -14,7 +14,7 @@
   max-width: 400px;
   background: $color-surface;
   border-radius: $radius-xl;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 15%);
+  box-shadow: $shadow-xl;
   padding: $spacing-xl $spacing-xl $spacing-lg;
 }
 
@@ -51,7 +51,7 @@
   padding: $spacing-md 0;
 
   p {
-    font-size: 0.9rem;
+    font-size: 0.938rem;
     color: $color-text-secondary;
     margin: 0;
   }
@@ -60,7 +60,7 @@
 .auth-success {
   text-align: center;
   padding: $spacing-md;
-  background: rgba($color-primary, 0.08);
+  background: $color-primary-alpha-08;
   border-radius: $radius-md;
   margin-bottom: $spacing-md;
 
@@ -78,13 +78,13 @@
   }
 
   p {
-    font-size: 0.9rem;
+    font-size: 0.938rem;
     color: $color-text;
     margin: 0 0 $spacing-xs;
   }
 
   .success-note {
-    font-size: 0.8rem;
+    font-size: 0.813rem;
     color: $color-text-secondary;
     margin: 0;
   }
@@ -101,7 +101,7 @@
 .auth-error-state {
   text-align: center;
   padding: $spacing-md;
-  background: rgba($color-error, 0.08);
+  background: $color-error-alpha-08;
   border-radius: $radius-md;
   margin-bottom: $spacing-md;
 
@@ -120,7 +120,7 @@
   }
 
   p {
-    font-size: 0.9rem;
+    font-size: 0.938rem;
     color: $color-text;
     margin: 0;
   }
@@ -131,6 +131,7 @@
   padding: $spacing-md;
   font-size: 1rem;
   gap: $spacing-sm;
+  touch-action: manipulation;
 }
 
 .auth-link {
@@ -142,5 +143,17 @@
   a {
     color: $color-primary;
     font-weight: 600;
+    touch-action: manipulation;
+    transition: color $duration-fast;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-link a {
+    transition: none;
   }
 }

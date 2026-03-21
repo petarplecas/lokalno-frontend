@@ -14,7 +14,7 @@
   max-width: 400px;
   background: $color-surface;
   border-radius: $radius-xl;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 15%);
+  box-shadow: $shadow-xl;
   padding: $spacing-xl $spacing-xl $spacing-lg;
 }
 
@@ -44,17 +44,18 @@
 
   &__tagline {
     font-family: $font-body;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: $color-text-secondary;
     margin: $spacing-xs 0 0;
   }
 }
 
 .auth-error {
-  background-color: rgba($color-error, 0.1);
+  background: $color-error-alpha-10;
   color: $color-error;
   padding: $spacing-sm $spacing-md;
   border-radius: $radius-sm;
+  border-left: 3px solid $color-error;
   font-size: 0.875rem;
   margin-bottom: $spacing-md;
   text-align: center;
@@ -66,6 +67,7 @@
   font-size: 1rem;
   margin-top: $spacing-sm;
   gap: $spacing-sm;
+  touch-action: manipulation;
 }
 
 .auth-link {
@@ -77,5 +79,17 @@
   a {
     color: $color-primary;
     font-weight: 600;
+    touch-action: manipulation;
+    transition: color $duration-fast;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-link a {
+    transition: none;
   }
 }
