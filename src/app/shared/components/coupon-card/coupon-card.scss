@@ -6,6 +6,22 @@
 
   display: flex;
   overflow: hidden;
+  touch-action: manipulation;
+  cursor: pointer;
+  transition:
+    box-shadow $duration-base $ease-out,
+    transform $duration-base $ease-out;
+
+  &:hover {
+    box-shadow: $shadow-card-hover;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // --- Left panel (gradient badge) ---
 
   &__left {
     display: flex;
@@ -25,6 +41,8 @@
     padding: $spacing-xs;
   }
 
+  // --- Body ---
+
   &__body {
     flex: 1;
     padding: $spacing-sm $spacing-md;
@@ -34,6 +52,7 @@
   &__title {
     font-size: 0.875rem;
     font-weight: 600;
+    color: $color-text;
     margin-bottom: 2px;
 
     @include truncate(1);
@@ -61,10 +80,11 @@
 
   &__status {
     font-size: 0.688rem;
-    font-weight: 500;
-    padding: 1px $spacing-xs;
+    font-weight: 600;
+    padding: 2px $spacing-xs;
     border-radius: $radius-sm;
     background: $color-background;
+    color: $color-text-secondary;
   }
 
   &__expires {
@@ -72,11 +92,47 @@
     color: $color-text-secondary;
   }
 
-  &--expired {
-    opacity: 0.6;
+  // --- Status modifiers ---
+
+  &--active &__status {
+    background: $color-success-alpha-10;
+    color: $color-success;
   }
 
-  &--used .coupon-card__left {
-    background: $color-text-secondary;
+  &--expired {
+    opacity: 0.7;
+    filter: grayscale(40%);
+
+    .coupon-card__left {
+      background: $color-text-secondary;
+    }
+
+    .coupon-card__status {
+      background: $color-error-alpha-10;
+      color: $color-error;
+    }
+  }
+
+  &--used {
+    filter: grayscale(20%);
+
+    .coupon-card__left {
+      background: $color-text-secondary;
+    }
+
+    .coupon-card__status {
+      background: $color-primary-alpha-10;
+      color: $color-primary;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }

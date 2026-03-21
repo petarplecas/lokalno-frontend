@@ -1,4 +1,9 @@
-<article class="coupon-card" [class]="'coupon-card--' + coupon().status.toLowerCase()">
+<article
+  class="coupon-card"
+  [class.coupon-card--active]="coupon().status === 'ACTIVE'"
+  [class.coupon-card--expired]="coupon().status === 'EXPIRED'"
+  [class.coupon-card--used]="coupon().status === 'USED'"
+>
   <div class="coupon-card__left">
     <span class="coupon-card__discount">
       {{ coupon().discount.discountType | discountLabel:coupon().discount.discountValue:coupon().discount.newPrice }}
@@ -12,7 +17,7 @@
       <span class="coupon-card__status">{{ statusLabel() }}</span>
     </div>
     <p class="coupon-card__expires">
-      Ističe: {{ coupon().expiresAt | date:'dd.MM.yyyy HH:mm' }}
+      Istice: {{ coupon().expiresAt | date:'dd.MM.yyyy HH:mm' }}
     </p>
   </div>
 </article>

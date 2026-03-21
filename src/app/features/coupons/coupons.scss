@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .coupons {
   padding: $spacing-md;
@@ -9,6 +10,8 @@
 .coupons__title {
   font-family: $font-heading;
   font-size: 1.25rem;
+  font-weight: 700;
+  color: $color-text;
   margin-bottom: $spacing-md;
 }
 
@@ -23,6 +26,7 @@
 .coupons__tab {
   flex: 1;
   padding: $spacing-sm $spacing-md;
+  min-height: 44px;
   background: none;
   border: none;
   font-family: $font-body;
@@ -30,8 +34,9 @@
   font-weight: 500;
   color: $color-text-secondary;
   cursor: pointer;
+  touch-action: manipulation;
   position: relative;
-  transition: color 0.2s;
+  transition: color $duration-base;
 
   &::after {
     content: '';
@@ -41,15 +46,20 @@
     right: 0;
     height: 2px;
     background: transparent;
-    transition: background 0.2s;
+    transition: background $duration-base;
   }
 
   &:hover {
     color: $color-primary;
   }
 
+  &:focus-visible {
+    @include focus-ring;
+  }
+
   &--active {
     color: $color-primary;
+    font-weight: 600;
 
     &::after {
       background: $color-primary;
@@ -69,4 +79,14 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupons__tab {
+    transition: none;
+
+    &::after {
+      transition: none;
+    }
+  }
 }
