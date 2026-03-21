@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .dash {
   padding: $spacing-md;
@@ -22,27 +23,27 @@
   margin-bottom: $spacing-md;
 
   &--pending {
-    background: rgba($color-warning, 0.1);
+    background: $color-warning-alpha-10;
     color: $color-warning;
   }
 
   &--rejected {
-    background: rgba($color-error, 0.1);
+    background: $color-error-alpha-10;
     color: $color-error;
   }
 
   &--suspended {
-    background: rgba(#e67e22, 0.1);
-    color: #e67e22;
+    background: $color-orange-alpha-10;
+    color: $color-orange;
   }
 
   &--expired {
-    background: rgba($color-error, 0.1);
+    background: $color-error-alpha-10;
     color: $color-error;
   }
 
   &--warning {
-    background: rgba($color-warning, 0.1);
+    background: $color-warning-alpha-10;
     color: $color-warning;
   }
 }
@@ -63,6 +64,7 @@
   flex-shrink: 0;
   font-size: 0.813rem;
   padding: $spacing-xs $spacing-md;
+  touch-action: manipulation;
 }
 
 .dash__category {
@@ -83,6 +85,13 @@
   box-shadow: $shadow-sm;
   padding: $spacing-md;
   text-align: center;
+  cursor: default;
+  transition: box-shadow $duration-base $ease-out, transform $duration-base $ease-out;
+
+  &:hover {
+    box-shadow: $shadow-card-hover;
+    transform: translateY(-1px);
+  }
 }
 
 .dash__stat-value {
@@ -115,7 +124,7 @@
 
 .dash__sub-trial {
   font-size: 0.75rem;
-  background: rgba($color-success, 0.1);
+  background: $color-success-alpha-10;
   color: $color-success;
   padding: 2px $spacing-sm;
   border-radius: $radius-full;
@@ -126,7 +135,7 @@
   align-items: center;
   gap: $spacing-sm;
   padding: $spacing-sm $spacing-md;
-  background: rgba($color-warning, 0.1);
+  background: $color-warning-alpha-10;
   color: $color-warning;
   border-radius: $radius-sm;
   font-size: 0.875rem;
@@ -156,6 +165,7 @@
   font-size: 0.813rem;
   padding: $spacing-xs $spacing-md;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 
 .dash__discounts-loading {
@@ -175,4 +185,14 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash__stat-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
 }

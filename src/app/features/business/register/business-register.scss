@@ -1,4 +1,5 @@
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .wizard {
   padding: $spacing-md;
@@ -35,7 +36,8 @@
   align-items: center;
   justify-content: center;
   cursor: default;
-  transition: background 0.2s, transform 0.15s;
+  transition: background $duration-base, transform $duration-fast;
+  touch-action: manipulation;
 
   &--active {
     background: $color-primary;
@@ -55,7 +57,9 @@
   }
 
   &:disabled:not(&--active):not(&--done) {
-    opacity: 0.6;
+    color: $color-text-secondary;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }
 
@@ -66,7 +70,7 @@
 }
 
 .wizard__error {
-  background-color: rgba($color-error, 0.1);
+  background-color: $color-error-alpha-10;
   color: $color-error;
   padding: $spacing-sm $spacing-md;
   border-radius: $radius-sm;
@@ -123,5 +127,16 @@
   button {
     flex: 1;
     padding: $spacing-md;
+    touch-action: manipulation;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard__step {
+    transition: none;
+
+    &--clickable:hover {
+      transform: none;
+    }
   }
 }

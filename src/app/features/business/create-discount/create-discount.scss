@@ -1,5 +1,6 @@
 @use 'sass:color';
 @use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .wizard {
   padding: $spacing-md;
@@ -7,7 +8,7 @@
   margin: 0 auto;
 }
 
-// ── Step indicator ──────────────────────────────────────────
+// -- Step indicator --
 .wizard__steps {
   display: flex;
   align-items: flex-start;
@@ -36,14 +37,15 @@
   align-items: center;
   justify-content: center;
   cursor: default;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  transition: background $duration-base, border-color $duration-base, transform $duration-fast;
   position: relative;
   z-index: 1;
+  touch-action: manipulation;
 
   &--active {
     background: $color-primary;
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+    box-shadow: 0 0 0 3px $color-primary-alpha-20;
   }
 
   &--done {
@@ -70,7 +72,7 @@
   margin-top: 4px;
   text-align: center;
   white-space: nowrap;
-  transition: color 0.2s;
+  transition: color $duration-base;
 
   &--active {
     color: $color-primary;
@@ -85,15 +87,15 @@
   right: calc(-50% + 18px);
   height: 2px;
   background: $color-border;
-  transition: background 0.3s;
+  transition: background $duration-slow;
   z-index: 0;
 
   &--done { background: $color-primary; }
 }
 
-// ── Error ───────────────────────────────────────────────────
+// -- Error --
 .wizard__error {
-  background-color: rgba($color-error, 0.1);
+  background-color: $color-error-alpha-10;
   color: $color-error;
   padding: $spacing-sm $spacing-md;
   border-radius: $radius-sm;
@@ -102,7 +104,7 @@
   text-align: center;
 }
 
-// ── Form card ───────────────────────────────────────────────
+// -- Form card --
 .wizard__form {
   background: $color-surface;
   border-radius: $radius-md;
@@ -137,7 +139,7 @@
   margin: 0;
 }
 
-// ── Form helpers ─────────────────────────────────────────────
+// -- Form helpers --
 .form-group {
   margin-bottom: $spacing-md;
 
@@ -162,18 +164,19 @@
     font-family: $font-body;
     color: $color-text;
     background: $color-background;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color $duration-fast, box-shadow $duration-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+      box-shadow: 0 0 0 3px $color-primary-alpha-15;
     }
 
     &:disabled {
-      opacity: 0.45;
+      color: $color-text-secondary;
       cursor: not-allowed;
+      pointer-events: none;
     }
   }
 
@@ -232,7 +235,7 @@
   white-space: nowrap;
 }
 
-// ── Type card selector ──────────────────────────────────────
+// -- Type card selector --
 .type-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -247,20 +250,21 @@
   background: $color-background;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  transition: border-color $duration-fast, box-shadow $duration-fast, background $duration-fast;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  touch-action: manipulation;
 
   &:hover:not(&--selected) {
-    border-color: rgba($color-primary, 0.5);
-    background: rgba($color-primary, 0.03);
+    border-color: $color-primary-alpha-50;
+    background: $color-primary-alpha-03;
   }
 
   &--selected {
     border-color: $color-primary;
-    background: rgba($color-primary, 0.06);
+    background: $color-primary-alpha-06;
     box-shadow: 0 0 0 1px $color-primary;
   }
 
@@ -312,13 +316,13 @@
   margin-top: $spacing-sm;
 }
 
-// ── Live preview ────────────────────────────────────────────
+// -- Live preview --
 .live-preview {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
   padding: $spacing-sm $spacing-md;
-  background: rgba($color-primary, 0.06);
+  background: $color-primary-alpha-06;
   border-radius: $radius-sm;
   border-left: 3px solid $color-primary;
   margin-top: $spacing-sm;
@@ -338,14 +342,14 @@
   }
 }
 
-// ── Date row ────────────────────────────────────────────────
+// -- Date row --
 .date-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
 }
 
-// ── Advanced toggle ─────────────────────────────────────────
+// -- Advanced toggle --
 .advanced-toggle {
   margin: $spacing-md 0 0;
 
@@ -360,6 +364,7 @@
     font-weight: 600;
     color: $color-text;
     padding: $spacing-sm 0;
+    touch-action: manipulation;
 
     &:hover { color: $color-primary; }
     &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; border-radius: 2px; }
@@ -367,7 +372,7 @@
 
   &__icon {
     font-size: 0.625rem;
-    transition: transform 0.2s;
+    transition: transform $duration-base;
     &--open { transform: rotate(90deg); }
   }
 
@@ -377,12 +382,12 @@
 .advanced-panel {
   margin-top: $spacing-md;
   padding: $spacing-md;
-  background: rgba($color-primary, 0.03);
+  background: $color-primary-alpha-03;
   border-radius: $radius-sm;
-  border: 1px solid rgba($color-primary, 0.15);
+  border: 1px solid $color-primary-alpha-15;
 }
 
-// ── Day picker ──────────────────────────────────────────────
+// -- Day picker --
 .day-picker {
   display: flex;
   gap: $spacing-xs;
@@ -397,7 +402,8 @@
     font-size: 0.813rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background $duration-fast, color $duration-fast, border-color $duration-fast;
+    touch-action: manipulation;
 
     &--active {
       background: $color-primary;
@@ -419,11 +425,11 @@
   margin-top: $spacing-md;
 }
 
-// ── Callout ─────────────────────────────────────────────────
+// -- Callout --
 .callout {
   display: flex;
   gap: $spacing-sm;
-  background: rgba($color-secondary, 0.08);
+  background: $color-secondary-alpha-08;
   border-left: 3px solid $color-secondary;
   border-radius: $radius-sm;
   padding: $spacing-md;
@@ -449,7 +455,7 @@
   }
 }
 
-// ── Toggle switch ────────────────────────────────────────────
+// -- Toggle switch --
 .toggle-group { margin-bottom: $spacing-md; }
 
 .toggle-label {
@@ -474,7 +480,7 @@
     border-radius: 12px;
     background: $color-border;
     position: relative;
-    transition: background 0.2s;
+    transition: background $duration-base;
     flex-shrink: 0;
 
     &::after {
@@ -486,8 +492,8 @@
       height: 18px;
       border-radius: 50%;
       background: #fff;
-      transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform $duration-base;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
     }
   }
 
@@ -497,7 +503,7 @@
   }
 
   &__input:focus-visible + &__track {
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.3);
+    box-shadow: 0 0 0 3px $color-primary-alpha-30;
   }
 
   &__text {
@@ -507,12 +513,12 @@
   }
 }
 
-// ── Coupon settings ──────────────────────────────────────────
+// -- Coupon settings --
 .coupon-settings {
   padding: $spacing-md;
-  background: rgba($color-primary, 0.04);
+  background: $color-primary-alpha-04;
   border-radius: $radius-sm;
-  border: 1px solid rgba($color-primary, 0.15);
+  border: 1px solid $color-primary-alpha-15;
   margin-bottom: $spacing-md;
 }
 
@@ -534,7 +540,8 @@
   font-size: 0.813rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background $duration-fast, color $duration-fast, border-color $duration-fast;
+  touch-action: manipulation;
 
   &--active {
     background: $color-primary;
@@ -565,7 +572,7 @@
   text-align: center;
 }
 
-// ── Section divider ──────────────────────────────────────────
+// -- Section divider --
 .section-divider {
   border: none;
   border-top: 1px solid $color-divider;
@@ -576,11 +583,11 @@
   margin-right: 4px;
 }
 
-// ── Preview card ─────────────────────────────────────────────
+// -- Preview card --
 .preview-card {
   border-radius: $radius-md;
   overflow: hidden;
-  border: 1px solid $color-border;
+  box-shadow: $shadow-sm;
   margin-bottom: $spacing-lg;
   background: $color-surface;
 
@@ -625,7 +632,7 @@
   }
 }
 
-// ── Review list ──────────────────────────────────────────────
+// -- Review list --
 .review-list {
   list-style: none;
   padding: 0;
@@ -659,17 +666,21 @@
   }
 }
 
-// ── Navigation ───────────────────────────────────────────────
+// -- Navigation --
 .wizard__nav {
   display: flex;
   justify-content: space-between;
   gap: $spacing-md;
   margin-top: $spacing-xl;
 
-  button { flex: 1; padding: $spacing-md; }
+  button {
+    flex: 1;
+    padding: $spacing-md;
+    touch-action: manipulation;
+  }
 }
 
-// ── Edit-specific ────────────────────────────────────────────
+// -- Edit-specific --
 .edit-header {
   display: flex;
   align-items: center;
@@ -679,6 +690,7 @@
   &__stats-btn {
     font-size: 0.875rem;
     white-space: nowrap;
+    touch-action: manipulation;
   }
 }
 
@@ -689,7 +701,7 @@
   object-fit: cover;
   border-radius: $radius-sm;
   margin-top: $spacing-sm;
-  border: 1px solid $color-border;
+  box-shadow: $shadow-sm;
 }
 
 .delete-section {
@@ -697,7 +709,7 @@
   text-align: center;
 }
 
-// ── Screen reader only ───────────────────────────────────────
+// -- Screen reader only --
 .sr-only {
   position: absolute;
   width: 1px;
@@ -708,4 +720,42 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard__step-dot {
+    transition: none;
+
+    &--done:hover {
+      transform: none;
+    }
+  }
+
+  .wizard__step-label {
+    transition: none;
+  }
+
+  .wizard__step-line {
+    transition: none;
+  }
+
+  .advanced-toggle__icon {
+    transition: none;
+  }
+
+  .toggle-label__track {
+    transition: none;
+
+    &::after {
+      transition: none;
+    }
+  }
+
+  .type-card {
+    transition: none;
+  }
+
+  .day-picker__btn {
+    transition: none;
+  }
 }
