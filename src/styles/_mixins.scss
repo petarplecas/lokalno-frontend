@@ -41,3 +41,40 @@
   outline: 2px solid $color-primary;
   outline-offset: 2px;
 }
+
+// Frosted glass surface
+@mixin frosted-glass($blur: 12px) {
+  background: rgb(255 255 255 / 95%);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// Minimum touch target + manipulation
+@mixin touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+// Skeleton shimmer loader
+@mixin skeleton($radius: $radius-sm) {
+  background: linear-gradient(
+    90deg,
+    $color-border 25%,
+    rgb(255 255 255 / 60%) 50%,
+    $color-border 75%
+  );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  border-radius: $radius;
+  animation: shimmer 1.4s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: $color-border;
+  }
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}

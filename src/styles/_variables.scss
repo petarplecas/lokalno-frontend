@@ -16,7 +16,9 @@ $color-divider: #eee;
 
 // Feedback Colors
 $color-success: #27ae60;
+$color-success-dark: #1e9450;
 $color-error: #e74c3c;
+$color-error-dark: #d4382a;
 $color-warning: #f39c12;
 $color-info: #3498db;
 
@@ -47,6 +49,73 @@ $shadow-sm: 0 1px 3px rgb(0 0 0 / 8%);
 $shadow-md: 0 4px 6px rgb(0 0 0 / 10%);
 $shadow-lg: 0 10px 20px rgb(0 0 0 / 12%);
 
+// Alpha tokens
+$color-primary-alpha-03: rgb(32 178 170 / 3%);
+$color-primary-alpha-04: rgb(32 178 170 / 4%);
+$color-primary-alpha-06: rgb(32 178 170 / 6%);
+$color-primary-alpha-08: rgb(32 178 170 / 8%);
+$color-primary-alpha-10: rgb(32 178 170 / 10%);
+$color-primary-alpha-15: rgb(32 178 170 / 15%);
+$color-primary-alpha-20: rgb(32 178 170 / 20%);
+$color-primary-alpha-50: rgb(32 178 170 / 50%);
+$color-primary-alpha-30: rgb(32 178 170 / 30%);
+$color-secondary-alpha-08: rgb(255 140 66 / 8%);
+$color-secondary-alpha-10: rgb(255 140 66 / 10%);
+$color-secondary-alpha-15: rgb(255 140 66 / 15%);
+$color-error-alpha-05: rgb(231 76 60 / 5%);
+$color-error-alpha-08: rgb(231 76 60 / 8%);
+$color-error-alpha-10: rgb(231 76 60 / 10%);
+$color-error-alpha-20: rgb(231 76 60 / 20%);
+$color-warning-alpha-10: rgb(243 156 18 / 10%);
+$color-success-alpha-10: rgb(39 174 96 / 10%);
+$color-orange-alpha-10: rgb(230 126 34 / 10%);
+$color-black-alpha-06: rgb(0 0 0 / 6%);
+$color-black-alpha-40: rgb(0 0 0 / 40%);
+$color-black-alpha-60: rgb(0 0 0 / 60%);
+$color-white-alpha-15: rgb(255 255 255 / 15%);
+$color-white-alpha-70: rgb(255 255 255 / 70%);
+$color-white-alpha-80: rgb(255 255 255 / 80%);
+$color-white-alpha-90: rgb(255 255 255 / 90%);
+$color-white-alpha-92: rgb(255 255 255 / 92%);
+$color-white-alpha-95: rgb(255 255 255 / 95%);
+
+// Extended shadows
+$shadow-primary: 0 4px 12px rgb(32 178 170 / 20%);
+$shadow-card-hover: 0 8px 24px rgb(0 0 0 / 14%);
+$shadow-xl: 0 20px 60px rgb(0 0 0 / 15%);
+
+// Extended gradients
+$gradient-warm: linear-gradient(135deg, $color-secondary 0%, #ffb347 100%);
+$gradient-surface: linear-gradient(180deg, #f0fdfc 0%, $color-background 100%);
+
+// Additional color tokens
+$color-purple: #8e44ad;
+$color-orange: #e67e22;
+$color-secondary-darker: #c96a1e;
+
+// Status badge tokens (business discount list)
+$color-status-active-bg: #dcfce7;
+$color-status-active-text: #166534;
+$color-status-expired-bg: #f3f4f6;
+$color-status-expired-text: #6b7280;
+$color-status-deactivated-bg: #fff7ed;
+$color-status-deactivated-text: #9a3412;
+$color-status-draft-bg: #eff6ff;
+$color-status-draft-text: #1d4ed8;
+$color-danger-hover-bg: #fef2f2;
+
+// Text-secondary alpha token
+$color-text-secondary-alpha-10: rgb(108 117 125 / 10%);
+
+// Animation tokens
+$duration-fast: 150ms;
+$duration-base: 200ms;
+$duration-slow: 300ms;
+$duration-xslow: 400ms;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in: cubic-bezier(0.4, 0, 1, 1);
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
 // Breakpoints
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
@@ -54,6 +123,8 @@ $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 
 // Z-index
+$z-dropdown-backdrop: 90;
+$z-dropdown: 95;
 $z-header: 100;
 $z-bottom-nav: 100;
 $z-modal-backdrop: 200;
